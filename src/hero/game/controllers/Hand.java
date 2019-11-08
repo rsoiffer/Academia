@@ -88,14 +88,13 @@ public class Hand extends Behavior {
         }
         if (handPos != null) {
             jumpTimer -= dt();
-            Vec3d dir = handPos.sub(controller.player.pose.position).normalize();
+            Vec3d dir = handPos.sub(controller.pos()).normalize();
             controller.player.physics.velocity = controller.player.physics.velocity
                     .lerp(dir.mul(20), 1 - Math.pow(1e-6, dt()));
         } else if (!controller.player.physics.onGround) {
-            controller.player.physics.applyForce(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(3),
+            controller.player.physics.applyForce(
+                    EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300),
                     controller.player.physics.centerOfMass.get());
-
-//            controller.player.physics.applyForce(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(3));
         }
     }
 }

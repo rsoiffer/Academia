@@ -20,7 +20,7 @@ public class Vive {
 
     public static final int MENU = 1, GRIP = 2, TRACKPAD = 32, TRIGGER = 33;
 
-    private static final Matrix4d COORD_CHANGE = new Matrix4d(
+    static final Matrix4d COORD_CHANGE = new Matrix4d(
             0, 0, -1, 0,
             -1, 0, 0, 0,
             0, 1, 0, 0,

@@ -19,8 +19,12 @@ public class EyeCamera extends Camera {
         eyeProjectionMatrix = getEyeProjectionMatrix(leftEye);
     }
 
-    public static Transformation headPose() {
+    private static Transformation headPoseInternal() {
         return vrCoords().mul(headPoseRaw);
+    }
+
+    public static Transformation headPose() {
+        return Vive.footTransform.get().mul(headPoseRaw.conjugate(new Transformation(Vive.COORD_CHANGE)));
     }
 
     @Override
@@ -31,7 +35,7 @@ public class EyeCamera extends Camera {
     @Override
     public Matrix4d viewMatrix() {
         return new Matrix4d(eyeToHeadTransform)
-                .mul(headPose().matrix().invert());
+                .mul(headPoseInternal().matrix().invert());
     }
 
     public static void waitUpdatePos() {
