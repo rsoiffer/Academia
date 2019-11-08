@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game;
 
 import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
@@ -11,6 +11,7 @@ import hero.game.World;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import beige_engine.graphics.Camera;
+import hero.game.controllers.*;
 import hero.graphics.passes.RenderPipeline;
 import beige_engine.util.Mutable;
 import static beige_engine.util.math.MathUtils.floor;

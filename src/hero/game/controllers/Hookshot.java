@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
@@ -23,7 +23,6 @@ public class Hookshot extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_gray.vox"));
         lineModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
         lineModel.color = new Vec3d(.5, .5, .5);
         lineRB = createRB(lineModel);

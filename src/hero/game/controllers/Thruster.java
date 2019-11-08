@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
@@ -6,7 +6,8 @@ import beige_engine.engine.Layer;
 import static hero.game.Player.POSTPHYSICS;
 import hero.game.RenderableBehavior;
 import static hero.game.RenderableBehavior.createRB;
-import hero.game.vr.Thruster.Particle;
+
+import hero.graphics.models.OpenVRModel;
 import hero.graphics.models.VoxelModel2;
 import hero.graphics.renderables.ColorModel;
 import hero.graphics.renderables.ColorModelParticles;
@@ -15,22 +16,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import beige_engine.util.math.MathUtils;
+import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import static beige_engine.vr.Vive.TRIGGER;
 
-public class Explosion extends Behavior {
+public class Thruster extends Behavior {
 
     public final ControllerBehavior controller = require(ControllerBehavior.class);
 
-    public double charge;
     public List<Particle> particles = new LinkedList();
     public ColorModelParticles particlesModel;
     public RenderableBehavior particlesRB;
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_orange.vox"));
         particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
         particlesRB = createRB(particlesModel);
         particlesRB.beforeRender = () -> {
@@ -50,30 +50,40 @@ public class Explosion extends Behavior {
 
     @Override
     public void step() {
-        charge += dt();
-        charge = Math.min(charge, 1.5);
-        if (controller.controller.buttonJustPressed(TRIGGER)) {
+        double t = controller.controller.trigger();
+        if (t > .1) {
             Vec3d pullDir = controller.sideways();
             if (controller.controller == Vive.LEFT) {
                 pullDir = pullDir.mul(-1);
             }
-
-//            double exag = controller.player.velocity.velocity.dot(pullDir);
-//            exag = Math.log(1 + Math.exp(.01 * exag));
-//            Vec3d impulse = pullDir.mul(charge * -15 * exag);
-//            controller.player.velocity.velocity = controller.player.velocity.velocity.add(impulse);
-            controller.player.physics.applyImpulse(pullDir.mul(charge * -1000), controller.pos());
-
-            for (int i = 0; i < 1000 * charge; i++) {
+//            controller.player.applyForce(pullDir.mul(t * -10), .03);
+            controller.player.physics.applyForce(pullDir.mul(t * -1000), controller.pos());
+//            double pullStrength = Math.exp(.02 * pullDir.dot(controller.player.velocity.velocity));
+//            controller.player.velocity.velocity = controller.player.velocity.velocity.add(pullDir.mul(dt() * t * pullStrength * -10));
+            for (int i = 0; i < 1000 * t * dt(); i++) {
                 particles.add(new Particle(controller.pos(), controller.player.physics.velocity.add(
                         pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5))));
             }
-            charge = 0;
         }
 
         for (Particle p : particles) {
             p.time += dt();
         }
-        particles.removeIf(p -> Math.random() < 5 * dt());
+        particles.removeIf(p -> p.time > .2);
+    }
+
+    public static class Particle {
+
+        public final Vec3d position, velocity;
+        public double time = 0;
+
+        public Particle(Vec3d position, Vec3d velocity) {
+            this.position = position;
+            this.velocity = velocity;
+        }
+
+        public Transformation transform() {
+            return Transformation.create(position.add(velocity.mul(time)).sub(1 / 8.), Quaternion.IDENTITY, 1 / 32.);
+        }
     }
 }

@@ -1,10 +1,11 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
 import static beige_engine.engine.Layer.POSTUPDATE;
 import hero.game.Player;
 import hero.game.RenderableBehavior;
+import hero.graphics.models.OpenVRModel;
 import hero.graphics.renderables.ColorModel;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
@@ -18,7 +19,7 @@ public class ControllerBehavior extends Behavior {
 
     public ViveController controller;
     public Player player;
-    public Vec3d modelOffset = new Vec3d(4, 4, 4);
+    public Transformation postTransform = Transformation.IDENTITY;
 
     public Transformation controllerPose() {
         return controller.pose();
@@ -32,13 +33,17 @@ public class ControllerBehavior extends Behavior {
                 .mul(controller.poseRaw());
     }
 
+    @Override
+    public void createInner() {
+        renderable.renderable = new ColorModel(new OpenVRModel(controller));
+    }
+
     public Vec3d forwards() {
         return controllerPose().applyRotation(new Vec3d(1, 0, 0));
     }
 
     public Transformation getTransform() {
-//        return controllerPose().scale(1 / 32.).translate(modelOffset.mul(-1));
-        return controllerPose();
+        return postTransform.mul(controllerPose());
     }
 
     @Override

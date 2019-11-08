@@ -2,7 +2,7 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import hero.game.trees.StemGenerator;
-import static hero.game.vr.IceCaster.iceModel;
+import static hero.game.controllers.IceCaster.iceModel;
 import hero.graphics.PBRTexture;
 import hero.graphics.models.CustomModel;
 import beige_engine.graphics.opengl.Texture;

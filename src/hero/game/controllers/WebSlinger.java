@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
@@ -24,7 +24,6 @@ public class WebSlinger extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller.vox"));
         webModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
         webRB = createRB(webModel);
         webRB.beforeRender = () -> {

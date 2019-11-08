@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
@@ -63,7 +63,6 @@ public class IceCaster extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_blue.vox"));
     }
 
     @Override

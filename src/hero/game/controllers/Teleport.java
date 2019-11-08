@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
@@ -23,7 +23,6 @@ public class Teleport extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_yellow.vox"));
         ColorModel markerModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
         markerModel.color = new Vec3d(.6, .2, .8);
 

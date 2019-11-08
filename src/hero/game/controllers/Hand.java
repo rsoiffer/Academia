@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
@@ -27,7 +27,6 @@ public class Hand extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_green.vox"));
         armModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
         armModel.color = new Vec3d(.5, 1, .4);
         armRB = createRB(armModel);

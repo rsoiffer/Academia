@@ -1,4 +1,4 @@
-package hero.game.vr;
+package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
@@ -18,11 +18,6 @@ public class Wing extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_wing.vox"));
-        if (controller.controller == Vive.LEFT) {
-            controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_wing_left.vox"));
-        }
-        controller.modelOffset = new Vec3d(16, 40, 2);
     }
 
     @Override

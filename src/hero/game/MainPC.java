@@ -1,4 +1,4 @@
-package hero.game.pc;
+package hero.game;
 
 import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
@@ -21,7 +21,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Vec3d;
 
-public class Main {
+public class MainPC {
 
     public static void main(String[] args) {
         Settings.SHOW_OPENGL_DEBUG_INFO = false;

@@ -5,8 +5,7 @@ import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Input;
 import beige_engine.engine.Layer;
 import static beige_engine.engine.Layer.PREUPDATE;
-import hero.game.pc.Main;
-import static hero.game.vr.IceCaster.iceModel;
+import static hero.game.controllers.IceCaster.iceModel;
 import static beige_engine.graphics.Camera.camera3d;
 import hero.graphics.SDF;
 import static hero.graphics.SDF.cylinder;
@@ -92,7 +91,7 @@ public class FrozoneAI extends Behavior {
                 fly = !fly;
             }
             if (fly) {
-                Main.moveCamera(player);
+                MainPC.moveCamera(player);
             } else {
                 camera3d.horAngle -= Input.mouseDelta().x * 16. / 3;
                 camera3d.vertAngle -= Input.mouseDelta().y * 3;
