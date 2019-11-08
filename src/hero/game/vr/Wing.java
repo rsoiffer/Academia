@@ -36,17 +36,17 @@ public class Wing extends Behavior {
         if (controller.controller != Vive.LEFT) {
             sideways = sideways.mul(-1);
         }
-        // Vec3d pos = controller.pos(5).add(sideways.mul(1.5));
-        Vec3d pos = controller.pos().add(sideways.mul(.5));
+         Vec3d pos = controller.pos(5).add(sideways.mul(1.5));
+//        Vec3d pos = controller.pos().add(sideways.mul(.5));
 
         if (prevPos != null) {
             Vec3d wingVel = pos.sub(prevPos).div(dt());
             if (wingVel.lengthSquared() >= 1e-6) {
                 Vec3d wingUp = controller.upwards();
                 double C = -wingVel.normalize().dot(wingUp);
-//                if (C < 0) {
-//                    C *= .2;
-//                }
+                if (C < 0) {
+                    C *= .2;
+                }
                 double strength = 10 * C * wingVel.lengthSquared();
                 if (Math.abs(strength) > 1e5) {
                     System.out.println(strength);

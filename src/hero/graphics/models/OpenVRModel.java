@@ -1,10 +1,13 @@
 package hero.graphics.models;
 
+import beige_engine.util.math.Quaternion;
 import hero.graphics.models.Vertex.VertexPBR;
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.opengl.VertexArrayObject;
+
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.PointerBuffer;
@@ -46,30 +49,49 @@ public class OpenVRModel implements Model {
         try (MemoryStack stack = stackPush()) {
             PointerBuffer pb = stack.callocPointer(1);
             String renderModelName = vc.getPropertyString(VR.ETrackedDeviceProperty_Prop_RenderModelName_String);
-            int success = VRRenderModels.VRRenderModels_LoadRenderModel_Async(renderModelName, null);
-            if (success != 1) {
-                throw new RuntimeException("Could not load OpenVR render model");
+            while (VRRenderModels.VRRenderModels_LoadRenderModel_Async(renderModelName, pb) == 100) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            int ecode = VRRenderModels.VRRenderModels_LoadRenderModel_Async(renderModelName, pb);
+            if (ecode != 0) {
+                throw new RuntimeException("Could not load OpenVR render model: "
+                        + VRRenderModels.VRRenderModels_GetRenderModelErrorNameFromEnum(ecode));
             }
             rm = RenderModel.create(pb.get());
         }
         RenderModelTextureMap rmtm;
         try (MemoryStack stack = stackPush()) {
             PointerBuffer pb = stack.callocPointer(1);
-            int success = VRRenderModels.VRRenderModels_LoadTexture_Async(rm.diffuseTextureId(), pb);
-            if (success != 1) {
-                throw new RuntimeException("Could not load OpenVR render model diffuse texture");
+            while (VRRenderModels.VRRenderModels_LoadTexture_Async(rm.diffuseTextureId(), pb) == 100) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            int ecode = VRRenderModels.VRRenderModels_LoadTexture_Async(rm.diffuseTextureId(), pb);
+            if (ecode != 0) {
+                throw new RuntimeException("Could not load OpenVR render model diffuse texture: "
+                        + VRRenderModels.VRRenderModels_GetRenderModelErrorNameFromEnum(ecode));
             }
             rmtm = RenderModelTextureMap.create(pb.get());
         }
 
+        Quaternion rotator = Quaternion.fromXYAxes(new Vec3d(0, -1, 0), new Vec3d(0, 0, 1));
         rm.rVertexData().forEach(rmv -> vertices.add(new VertexPBR(
-                toVec3d(rmv.vPosition()),
+                rotator.applyTo(toVec3d(rmv.vPosition())), // convert inches to meters
                 new Vec2d(rmv.rfTextureCoord(0), rmv.rfTextureCoord(1)),
-                toVec3d(rmv.vNormal()),
+                rotator.applyTo(toVec3d(rmv.vNormal())),
                 new Vec3d(0, 0, 0),
                 new Vec3d(0, 0, 0))));
-        for (int i : rm.IndexData().array()) {
-            indices.add(i);
+
+        var sb = rm.IndexData();
+        while (sb.hasRemaining()) {
+            indices.add((int) sb.get());
         }
 
         num = indices.size();

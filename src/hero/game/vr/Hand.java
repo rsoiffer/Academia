@@ -93,8 +93,10 @@ public class Hand extends Behavior {
             controller.player.physics.velocity = controller.player.physics.velocity
                     .lerp(dir.mul(20), 1 - Math.pow(1e-6, dt()));
         } else if (!controller.player.physics.onGround) {
-            controller.player.physics.applyForce(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300),
+            controller.player.physics.applyForce(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(3),
                     controller.player.physics.centerOfMass.get());
+
+//            controller.player.physics.applyForce(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(3));
         }
     }
 }

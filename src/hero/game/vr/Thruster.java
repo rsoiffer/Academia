@@ -6,6 +6,8 @@ import beige_engine.engine.Layer;
 import static hero.game.Player.POSTPHYSICS;
 import hero.game.RenderableBehavior;
 import static hero.game.RenderableBehavior.createRB;
+
+import hero.graphics.models.OpenVRModel;
 import hero.graphics.models.VoxelModel2;
 import hero.graphics.renderables.ColorModel;
 import hero.graphics.renderables.ColorModelParticles;
@@ -29,7 +31,8 @@ public class Thruster extends Behavior {
 
     @Override
     public void createInner() {
-        controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_red.vox"));
+        // controller.renderable.renderable = new ColorModel(VoxelModel2.load("controller_red.vox"));
+        controller.renderable.renderable = new ColorModel(new OpenVRModel(controller.controller));
         particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
         particlesRB = createRB(particlesModel);
         particlesRB.beforeRender = () -> {

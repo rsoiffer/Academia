@@ -37,7 +37,8 @@ public class ControllerBehavior extends Behavior {
     }
 
     public Transformation getTransform() {
-        return controllerPose().scale(1 / 32.).translate(modelOffset.mul(-1));
+//        return controllerPose().scale(1 / 32.).translate(modelOffset.mul(-1));
+        return controllerPose();
     }
 
     @Override
