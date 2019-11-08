@@ -146,8 +146,4 @@ public class Vec4d {
     public String toString() {
         return "Vec4d{" + "x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + '}';
     }
-    
-    public VectorN toVectorN(){
-        return VectorN.of(x, y, z, w);
-    }
 }

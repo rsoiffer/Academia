@@ -73,9 +73,9 @@ public class Shader extends GLObject {
 
     public static Shader loadGeom(String vert, String geom, String frag) {
         return new Shader(
-                vert == null ? null : Resources.loadFileAsString("src/hero/shaders/" + vert + ".vert"),
-                geom == null ? null : Resources.loadFileAsString("src/hero/shaders/" + geom + ".geom"),
-                frag == null ? null : Resources.loadFileAsString("src/hero/shaders/" + frag + ".frag"));
+                vert == null ? null : Resources.loadFileAsString("src/shaders/" + vert + ".vert"),
+                geom == null ? null : Resources.loadFileAsString("src/shaders/" + geom + ".geom"),
+                frag == null ? null : Resources.loadFileAsString("src/shaders/" + frag + ".frag"));
     }
 
     public void setMVP(Transformation t) {

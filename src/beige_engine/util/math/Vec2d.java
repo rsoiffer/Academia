@@ -132,8 +132,4 @@ public class Vec2d {
     public String toString() {
         return "Vec2d{" + "x=" + x + ", y=" + y + '}';
     }
-    
-    public VectorN toVectorN(){
-        return VectorN.of(x, y);
-    }
 }
