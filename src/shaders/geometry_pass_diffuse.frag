@@ -17,9 +17,13 @@ uniform float roughness;
 
 void main()
 {
+    vec4 color = texture(diffuseMap, TexCoords);
+    if (color.a < .5) {
+        discard;
+    }
     gPosition = FragPos;
     gNormal = normalize(Normal);
-    gAlbedo = texture(diffuseMap, TexCoords).rgb;
+    gAlbedo = color.rgb;
     gMRA = vec3(metallic, roughness, 1);
     gEmissive = vec3(0, 0, 0);
 }

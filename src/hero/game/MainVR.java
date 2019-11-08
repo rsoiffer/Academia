@@ -83,6 +83,7 @@ public class MainVR {
                 }
                 left.o.get(ControllerBehavior.class).controller = Vive.LEFT;
                 left.o.get(ControllerBehavior.class).player = p;
+                left.o.get(ControllerBehavior.class).myNum = leftType.o;
                 left.o.create();
             }
             if (Vive.RIGHT.buttonJustPressed(TRACKPAD)) {
@@ -101,6 +102,7 @@ public class MainVR {
                 }
                 right.o.get(ControllerBehavior.class).controller = Vive.RIGHT;
                 right.o.get(ControllerBehavior.class).player = p;
+                right.o.get(ControllerBehavior.class).myNum = rightType.o;
                 right.o.create();
             }
         });
