@@ -96,10 +96,10 @@ public class Vive {
                 if (deviceClass == VR.ETrackedDeviceClass_TrackedDeviceClass_Controller) {
                     ViveController vc = new ViveController(i);
                     vc.update();
-                    if (RIGHT == null) {
-                        RIGHT = vc;
-                    } else if (LEFT == null) {
+                    if (VRSystem.VRSystem_GetControllerRoleForTrackedDeviceIndex(i) == 1) {
                         LEFT = vc;
+                    } else {
+                        RIGHT = vc;
                     }
                 }
             }
