@@ -10,6 +10,7 @@ import hero.graphics.renderables.ColorModel;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
+import hero.graphics.renderables.DiffuseModel;
 
 public class ControllerBehavior extends Behavior {
 
@@ -35,7 +36,10 @@ public class ControllerBehavior extends Behavior {
 
     @Override
     public void createInner() {
-        renderable.renderable = new ColorModel(new OpenVRModel(controller));
+        var ovrModel = new OpenVRModel(controller);
+        var diffModel = new DiffuseModel(ovrModel, ovrModel.diffuseTexture);
+        diffModel.roughness = .5;
+        renderable.renderable = diffModel;
     }
 
     public Vec3d forwards() {
@@ -65,7 +69,7 @@ public class ControllerBehavior extends Behavior {
 
     @Override
     public void step() {
-        ((ColorModel) renderable.renderable).t = getTransform();
+        ((DiffuseModel) renderable.renderable).t = getTransform();
     }
 
     public Vec3d upwards() {
