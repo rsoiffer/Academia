@@ -6,12 +6,16 @@ import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
 import static beige_engine.engine.Layer.UPDATE;
 import beige_engine.engine.Settings;
+import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
 import hero.game.Player;
 import hero.game.World;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import beige_engine.graphics.Camera;
 import hero.game.controllers.*;
+import hero.graphics.AssimpFile;
+import hero.graphics.models.AssimpModel;
 import hero.graphics.passes.RenderPipeline;
 import beige_engine.util.Mutable;
 import static beige_engine.util.math.MathUtils.floor;
@@ -19,6 +23,9 @@ import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import hero.graphics.renderables.ColorModel;
+import hero.graphics.renderables.DiffuseModel;
+
 import static beige_engine.vr.Vive.MENU;
 import static beige_engine.vr.Vive.TRACKPAD;
 
@@ -106,6 +113,42 @@ public class MainVR {
                 right.o.create();
             }
         });
+
+//        var car = new ColorModel(AssimpModel.load("car_1.fbx"));
+//        car.color = new Vec3d(1, .2, .2);
+//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 1), Quaternion.IDENTITY, .0015);
+//        var carRB = RenderableBehavior.createRB(car);
+
+//        var car = new ColorModel(AssimpModel.load("SportCar20.fbx"));
+//        car.color = new Vec3d(1, .2, .2);
+//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, .001);
+//        var carRB = RenderableBehavior.createRB(car);
+
+//        var car = new ColorModel(AssimpModel.load("lamborghini/lamborghini-aventador-pbribl.obj"));
+//        car.color = new Vec3d(1, .2, .2);
+//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
+//        var carRB = RenderableBehavior.createRB(car);
+
+        var carModel = AssimpFile.load("lamborghini/lamborghini-aventador-pbribl.obj");
+        for (var m : carModel.meshes) {
+            System.out.println(m);
+            if (m == null || m.material == null) continue;
+            if (m.material.texture == null) {
+                var car = new ColorModel(m);
+                car.color = new Vec3d(m.material.diffuse.r, m.material.diffuse.g, m.material.diffuse.b);
+                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
+                var carRB = RenderableBehavior.createRB(car);
+            } else {
+                var car = new DiffuseModel(m, m.material.texture.texture);
+                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
+                var carRB = RenderableBehavior.createRB(car);
+            }
+        }
+
+        Car c1 = new Car();
+        c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+        c1.physics.world = world;
+        c1.create();
 
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;

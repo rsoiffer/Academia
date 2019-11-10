@@ -5,12 +5,16 @@ import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
+import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
 import hero.game.FrozoneAI;
 import hero.game.Player;
 import hero.game.World;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static beige_engine.graphics.Camera.camera3d;
+
+import hero.graphics.AssimpFile;
 import hero.graphics.passes.RenderPipeline;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -20,6 +24,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.renderables.ColorModel;
+import hero.graphics.renderables.DiffuseModel;
 
 public class MainPC {
 
@@ -36,31 +42,16 @@ public class MainPC {
         World world = new World();
         world.create();
 
-//        Player p = new Player();
-//        p.position.position = new Vec3d(10, 10, 10);
-//        p.hero.physics.world = world;
-//        p.create();
-//
-//        UPDATE.onStep(() -> {
-//            moveCamera(p);
-//        });
-//        AssimpModel gunModel = AssimpModel.load("Cerberus.fbx");
-//        PBRTexture gunTexture = PBRTexture.loadFromFolder("Cerberus", "tga");
-//        PBRModel gun = new PBRModel(gunModel, gunTexture);
-//        UPDATE.onStep(() -> gun.t = Transformation.create(camera3d.position.add(camera3d.facing().mul(2)),
-//                Quaternion.fromEulerAngles(camera3d.horAngle, camera3d.vertAngle, 0), .01));
-//        createRB(gun);
         FrozoneAI f = new FrozoneAI();
         f.player.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
         f.player.physics.world = world;
         f.create();
 
-//        Frozone f2 = new Frozone();
-//        f2.player.position.position = new Vec3d(7 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-//        f2.player.hero.physics.world = world;
-//        f2.player.cameraOffset = null;
-//        f2.isPlayer = false;
-//        f2.create();
+        Car c = new Car();
+        c.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+        c.physics.world = world;
+        c.create();
+
         RenderPipeline rp = new RenderPipeline();
         rp.create();
 

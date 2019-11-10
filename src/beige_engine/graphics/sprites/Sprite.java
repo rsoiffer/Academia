@@ -43,7 +43,7 @@ public class Sprite {
         glEnableVertexAttribArray(1);
     });
 
-    private final Texture texture;
+    public final Texture texture;
 
     private Sprite(String fileName) {
         this.texture = Texture.load(fileName);
