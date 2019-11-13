@@ -11,6 +11,7 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.vr.Vive;
 import hero.game.Player;
 import hero.game.RenderableBehavior;
+import hero.graphics.AssimpFile;
 import hero.graphics.models.CustomModel;
 import hero.graphics.models.OpenVRModel;
 import hero.graphics.models.VoxelModel2;
@@ -55,6 +56,27 @@ public class ControllerBehavior extends Behavior {
         var diffModel = new DiffuseModel(ovrModel, ovrModel.diffuseTexture);
         diffModel.roughness = .5;
         renderable.renderable = diffModel;
+
+//        {
+//            var carModel = AssimpFile.load("volkswagen/volkswagen-touareg.obj");
+//            var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
+//            var trans = Transformation.create(new Vec3d(0, 0, .01), rot, .00005);
+//            for (var m : carModel.meshes) {
+//                if (m == null || m.material == null) continue;
+//                if (m.material.texture == null) {
+//                    var car = new ColorModel(m);
+//                    car.color = new Vec3d(m.material.diffuse.r, m.material.diffuse.g, m.material.diffuse.b);
+//                    var carRB = RenderableBehavior.createRB(car);
+////                carRB.beforeRender = () -> car.t = trans.mul(pose.getTransform());
+//                    carRB.beforeRender = () -> car.t = getTransform().mul(trans);
+//                } else {
+//                    var car = new DiffuseModel(m, m.material.texture.texture);
+//                    var carRB = RenderableBehavior.createRB(car);
+////                carRB.beforeRender = () -> car.t = trans.mul(pose.getTransform());
+//                    carRB.beforeRender = () -> car.t = getTransform().mul(trans);
+//                }
+//            }
+//        }
 
         var square = new CustomModel();
         square.addRectangle(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),

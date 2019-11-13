@@ -129,26 +129,28 @@ public class MainVR {
 //        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
 //        var carRB = RenderableBehavior.createRB(car);
 
-        var carModel = AssimpFile.load("lamborghini/lamborghini-aventador-pbribl.obj");
-        for (var m : carModel.meshes) {
-            System.out.println(m);
-            if (m == null || m.material == null) continue;
-            if (m.material.texture == null) {
-                var car = new ColorModel(m);
-                car.color = new Vec3d(m.material.diffuse.r, m.material.diffuse.g, m.material.diffuse.b);
-                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
-                var carRB = RenderableBehavior.createRB(car);
-            } else {
-                var car = new DiffuseModel(m, m.material.texture.texture);
-                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
-                var carRB = RenderableBehavior.createRB(car);
-            }
-        }
+//        var carModel = AssimpFile.load("lamborghini/lamborghini-aventador-pbribl.obj");
+//        for (var m : carModel.meshes) {
+//            System.out.println(m);
+//            if (m == null || m.material == null) continue;
+//            if (m.material.texture == null) {
+//                var car = new ColorModel(m);
+//                car.color = new Vec3d(m.material.diffuse.r, m.material.diffuse.g, m.material.diffuse.b);
+//                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
+//                var carRB = RenderableBehavior.createRB(car);
+//            } else {
+//                var car = new DiffuseModel(m, m.material.texture.texture);
+//                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
+//                var carRB = RenderableBehavior.createRB(car);
+//            }
+//        }
 
-        Car c1 = new Car();
-        c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
-        c1.physics.world = world;
-        c1.create();
+        for (int i = 0; i < 10; i++) {
+            Car c1 = new Car();
+            c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+            c1.physics.world = world;
+            c1.create();
+        }
 
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;

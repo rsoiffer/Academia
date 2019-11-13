@@ -47,12 +47,12 @@ public class StemGenerator {
                 r.add(s.getRenderable(v));
             }
         }
-        for (int i = 0; i < treeInstances.size(); i++) {
-            Stem s = treeInstances.get(i);
-            for (Vec3d v : treePlacements.get(i)) {
-                r.add(s.getRenderableLeaves(v));
-            }
-        }
+//        for (int i = 0; i < treeInstances.size(); i++) {
+//            Stem s = treeInstances.get(i);
+//            for (Vec3d v : treePlacements.get(i)) {
+//                r.add(s.getRenderableLeaves(v));
+//            }
+//        }
         return r;
     }
 }
