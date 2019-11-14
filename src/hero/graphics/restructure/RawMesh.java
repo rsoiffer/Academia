@@ -53,6 +53,9 @@ public class RawMesh {
     }
 
     public float[] getAttrib(String name) {
+        if (!attribs.containsKey(name)) {
+            throw new IllegalArgumentException("Unknown attribute " + name);
+        }
         return attribs.get(name);
     }
 

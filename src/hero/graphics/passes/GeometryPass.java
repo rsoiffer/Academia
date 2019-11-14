@@ -82,7 +82,7 @@ public class GeometryPass implements RenderPass {
         GLState.disable(GL_BLEND);
         gBuffer.clear(BLACK);
         updateShaderUniforms();
-        RenderableBehavior.allRenderables().forEach(r -> r.renderGeom());
+        RenderableBehavior.allRenderables().forEach(r -> r.renderGeom(Transformation.IDENTITY));
         GLState.bindFramebuffer(null);
     }
 

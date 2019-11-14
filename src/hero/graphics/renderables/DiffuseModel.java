@@ -11,7 +11,6 @@ public class DiffuseModel extends Renderable {
 
     public Model model;
     public Texture tex;
-    public Transformation t = Transformation.IDENTITY;
     public double metallic = 0;
     public double roughness = .8;
     public boolean enableShadows = true;
@@ -22,7 +21,7 @@ public class DiffuseModel extends Renderable {
     }
 
     @Override
-    public void renderGeom() {
+    public void renderGeomInner(Transformation t) {
         bindAll(SHADER_DIFFUSE, tex);
         SHADER_DIFFUSE.setUniform("metallic", (float) metallic);
         SHADER_DIFFUSE.setUniform("roughness", (float) roughness);
@@ -31,7 +30,7 @@ public class DiffuseModel extends Renderable {
     }
 
     @Override
-    public void renderShadow() {
+    public void renderShadowInner(Transformation t) {
         if (enableShadows) {
             SHADER_SHADOW.bind();
             setTransform(t);

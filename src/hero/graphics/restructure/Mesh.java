@@ -15,7 +15,10 @@ public class Mesh {
     }
 
     public Renderable buildRenderable() {
-        if (material.opacity != 1) return null;
+        if (material.opacity != 1) {
+            System.out.println("Skipping mesh because opacity is not 1 in material " + material);
+            return null;
+        }
 
         if (material.texture == null) {
             String[] attribNames = {"positions", "normals"};

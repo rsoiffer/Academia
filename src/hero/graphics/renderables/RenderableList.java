@@ -1,5 +1,7 @@
 package hero.graphics.renderables;
 
+import beige_engine.util.math.Transformation;
+
 import java.util.Arrays;
 
 public class RenderableList extends Renderable {
@@ -15,12 +17,12 @@ public class RenderableList extends Renderable {
     }
 
     @Override
-    public void renderGeom() {
-        renderables.forEach(Renderable::renderGeom);
+    public void renderGeomInner(Transformation t) {
+        renderables.forEach(r -> r.renderGeom(t));
     }
 
     @Override
-    public void renderShadow() {
-        renderables.forEach(Renderable::renderShadow);
+    public void renderShadowInner(Transformation t) {
+        renderables.forEach(r -> r.renderShadow(t));
     }
 }

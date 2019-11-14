@@ -22,23 +22,23 @@ public class ColorModelParticles extends Renderable {
     }
 
     @Override
-    public void renderGeom() {
+    public void renderGeomInner(Transformation t) {
         SHADER_COLOR.bind();
         SHADER_COLOR.setUniform("color", color);
         SHADER_COLOR.setUniform("metallic", (float) metallic);
         SHADER_COLOR.setUniform("roughness", (float) roughness);
-        for (Transformation t : transforms) {
-            setTransform(t);
+        for (Transformation t2 : transforms) {
+            setTransform(t.mul(t2));
             model.render();
         }
     }
 
     @Override
-    public void renderShadow() {
+    public void renderShadowInner(Transformation t) {
         if (renderShadow) {
             SHADER_SHADOW.bind();
-            for (Transformation t : transforms) {
-                setTransform(t);
+            for (Transformation t2 : transforms) {
+                setTransform(t.mul(t2));
                 model.render();
             }
         }

@@ -9,7 +9,6 @@ import beige_engine.util.math.Vec3d;
 public class ColorModel extends Renderable {
 
     public Model model;
-    public Transformation t = Transformation.IDENTITY;
     public Vec3d color = new Vec3d(1, 1, 1);
     public double metallic = 0;
     public double roughness = .8;
@@ -19,7 +18,7 @@ public class ColorModel extends Renderable {
     }
 
     @Override
-    public void renderGeom() {
+    public void renderGeomInner(Transformation t) {
         SHADER_COLOR.bind();
         SHADER_COLOR.setUniform("color", color);
         SHADER_COLOR.setUniform("metallic", (float) metallic);
@@ -29,7 +28,7 @@ public class ColorModel extends Renderable {
     }
 
     @Override
-    public void renderShadow() {
+    public void renderShadowInner(Transformation t) {
         SHADER_SHADOW.bind();
         setTransform(t);
         model.render();

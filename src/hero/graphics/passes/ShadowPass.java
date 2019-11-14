@@ -112,7 +112,7 @@ public class ShadowPass implements RenderPass {
         GLState.enable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
         glCullFace(GL_FRONT);
-        RenderableBehavior.allRenderables().forEach(r -> r.renderShadow());
+        RenderableBehavior.allRenderables().forEach(r -> r.renderShadow(Transformation.IDENTITY));
         glCullFace(GL_BACK);
         GLState.bindFramebuffer(null);
     }

@@ -23,7 +23,6 @@ public class LODPBRModel extends Renderable {
     public int numLOD;
     public List<CustomModel> modelLODS;
     public PBRTexture tex;
-    public Transformation t = Transformation.IDENTITY;
     public boolean castShadow = true;
 
     public LODPBRModel(CustomModel model, PBRTexture tex, int numLOD) {
@@ -49,10 +48,9 @@ public class LODPBRModel extends Renderable {
         numLOD = other.numLOD;
         modelLODS = other.modelLODS;
         tex = other.tex;
-        t = other.t;
     }
 
-    private double getLOD() {
+    private double getLOD(Transformation t) {
         double minLOD = 0;
         if (RenderPipeline.currentPass instanceof ShadowPass) {
             minLOD = Math.log(1 - ((ShadowPass) RenderPipeline.currentPass).zMax) / Math.log(.2) - 3;
@@ -61,14 +59,14 @@ public class LODPBRModel extends Renderable {
         return clamp(Math.log(estimatedDist) / Math.log(2) - 5, Math.max(0, minLOD), numLOD);
     }
 
-    private double getLODFrac() {
-        double lod = getLOD();
+    private double getLODFrac(Transformation t) {
+        double lod = getLOD(t);
         return Math.max((lod - floor(lod)) * 10 - 9, 0);
     }
 
     @Override
-    public void renderGeom() {
-        double lod = getLOD(), lodFrac = getLODFrac();
+    public void renderGeomInner(Transformation t) {
+        double lod = getLOD(t), lodFrac = getLODFrac(t);
         if (lod < numLOD) {
             bindAll(SHADER_PBR, tex);
             SHADER_PBR.setUniform("lod", (float) lodFrac);
@@ -82,9 +80,9 @@ public class LODPBRModel extends Renderable {
     }
 
     @Override
-    public void renderShadow() {
+    public void renderShadowInner(Transformation t) {
         if (castShadow) {
-            double lod = getLOD(), lodFrac = getLODFrac();
+            double lod = getLOD(t), lodFrac = getLODFrac(t);
             if (lod < numLOD) {
                 if (tex.hasAlpha()) {
                     bindAll(SHADER_SHADOW_ALPHA, tex);

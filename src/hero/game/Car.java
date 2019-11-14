@@ -5,9 +5,8 @@ import beige_engine.util.Noise;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.renderables.RenderableList;
 import hero.graphics.restructure.AssimpLoader;
-import hero.graphics.renderables.ColorModel;
-import hero.graphics.renderables.DiffuseModel;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 
@@ -24,22 +23,22 @@ public class Car extends Behavior {
     @Override
     public void createInner() {
         physics.acceleration = new Vec3d(0, 0, -10);
-        var carModel = AssimpLoader.load("volkswagen/volkswagen-touareg.obj");
-        var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
-        var trans = Transformation.create(new Vec3d(0, 0, -1), rot, .001);
+
+        var carModel = AssimpLoader.load("drone model/05.fbx");
+        var rot = Quaternion.fromEulerAngles(-Math.PI  / 2, 0, Math.PI / 2);
+        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .01);
+
+//        var carModel = AssimpLoader.load("volkswagen/volkswagen-touareg.obj");
+//        var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
+//        var trans = Transformation.create(new Vec3d(0, 0, -1), rot, .001);
+
 //        var carModel = AssimpLoader.load("lamborghini/lamborghini-aventador-pbribl.obj");
 //        var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
 //        var trans = Transformation.create(new Vec3d(0, 0, -1), rot, 1);
-        for (var m : carModel.meshes) {
-            var car = m.buildRenderable();
-            if (car == null) continue;
-            var carRB = RenderableBehavior.createRB(car);
-            if (m.material.texture == null) {
-                 carRB.beforeRender = () -> ((ColorModel) car).t = pose.getTransform().mul(trans);
-            } else {
-                 carRB.beforeRender = () -> ((DiffuseModel) car).t = pose.getTransform().mul(trans);
-            }
-        }
+
+        var car = carModel.rootNode.buildRenderable();
+        var carRB = RenderableBehavior.createRB(car);
+        carRB.beforeRender = () -> ((RenderableList) car).t = pose.getTransform().mul(trans);
     }
 
     private Noise noise = new Noise(new Random());

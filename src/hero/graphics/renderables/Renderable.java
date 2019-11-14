@@ -6,12 +6,22 @@ import beige_engine.util.math.Transformation;
 
 public abstract class Renderable {
 
+    public Transformation t = Transformation.IDENTITY;
+
     Renderable() {
     }
 
-    public abstract void renderGeom();
+    public void renderGeom(Transformation t) {
+        renderGeomInner(t.mul(this.t));
+    }
 
-    public abstract void renderShadow();
+    public abstract void renderGeomInner(Transformation t);
+
+    public void renderShadow(Transformation t) {
+        renderShadowInner(t.mul(this.t));
+    }
+
+    public abstract void renderShadowInner(Transformation t);
 
     void setTransform(Matrix4d m) {
         GLState.getShaderProgram().setUniform("model", m);
