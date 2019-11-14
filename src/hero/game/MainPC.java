@@ -5,16 +5,11 @@ import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import hero.game.FrozoneAI;
-import hero.game.Player;
-import hero.game.World;
+
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static beige_engine.graphics.Camera.camera3d;
 
-import hero.graphics.AssimpFile;
 import hero.graphics.passes.RenderPipeline;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -24,13 +19,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.renderables.ColorModel;
-import hero.graphics.renderables.DiffuseModel;
 
 public class MainPC {
 
     public static void main(String[] args) {
-        Settings.SHOW_OPENGL_DEBUG_INFO = false;
+//        Settings.SHOW_OPENGL_DEBUG_INFO = false;
         Settings.SHOW_CURSOR = false;
         Settings.ENABLE_VSYNC = false;
         Settings.ANTI_ALIASING = 4;
@@ -47,10 +40,12 @@ public class MainPC {
         f.player.physics.world = world;
         f.create();
 
-        Car c = new Car();
-        c.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
-        c.physics.world = world;
-        c.create();
+        for (int i = 0; i < 1; i++) {
+            Car c1 = new Car();
+            c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+            c1.physics.world = world;
+            c1.create();
+        }
 
         RenderPipeline rp = new RenderPipeline();
         rp.create();

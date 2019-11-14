@@ -1,22 +1,17 @@
 package hero.graphics.models;
 
-import hero.graphics.models.Vertex.VertexColor;
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.VertexArrayObject;
-import static beige_engine.graphics.voxels.VoxelRenderer.DIRS;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDrawElements;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 import beige_engine.util.Resources;
-import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.models.Vertex.VertexColor;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static beige_engine.util.math.MathUtils.mod;
+import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 
 public class VoxelModel2 implements Model {
 
@@ -29,6 +24,11 @@ public class VoxelModel2 implements Model {
         }
         return MODEL_CACHE.get(fileName);
     }
+
+    public static final List<Vec3d> DIRS = Arrays.asList(
+            new Vec3d(-1, 0, 0), new Vec3d(1, 0, 0),
+            new Vec3d(0, -1, 0), new Vec3d(0, 1, 0),
+            new Vec3d(0, 0, -1), new Vec3d(0, 0, 1));
 
     private static final int[] DEFAULT_COLOR_PALETTE = {
         0x00000000, 0xffffffff, 0xffccffff, 0xff99ffff, 0xff66ffff, 0xff33ffff, 0xff00ffff, 0xffffccff, 0xffccccff, 0xff99ccff, 0xff66ccff, 0xff33ccff, 0xff00ccff, 0xffff99ff, 0xffcc99ff, 0xff9999ff,

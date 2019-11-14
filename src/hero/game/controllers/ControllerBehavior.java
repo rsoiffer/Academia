@@ -11,20 +11,15 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.vr.Vive;
 import hero.game.Player;
 import hero.game.RenderableBehavior;
-import hero.graphics.AssimpFile;
 import hero.graphics.models.CustomModel;
 import hero.graphics.models.OpenVRModel;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
-import hero.graphics.renderables.ColorModelParticles;
 import hero.graphics.renderables.DiffuseModel;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ControllerBehavior extends Behavior {
 

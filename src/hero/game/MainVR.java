@@ -6,16 +6,11 @@ import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
 import static beige_engine.engine.Layer.UPDATE;
 import beige_engine.engine.Settings;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import hero.game.Player;
-import hero.game.World;
+
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import beige_engine.graphics.Camera;
 import hero.game.controllers.*;
-import hero.graphics.AssimpFile;
-import hero.graphics.models.AssimpModel;
 import hero.graphics.passes.RenderPipeline;
 import beige_engine.util.Mutable;
 import static beige_engine.util.math.MathUtils.floor;
@@ -23,8 +18,6 @@ import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.graphics.renderables.ColorModel;
-import hero.graphics.renderables.DiffuseModel;
 
 import static beige_engine.vr.Vive.MENU;
 import static beige_engine.vr.Vive.TRACKPAD;

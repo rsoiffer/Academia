@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec3 FragPos;
-in vec3 Color;
 in vec3 Normal;
 
 layout (location = 0) out vec3 gPosition;
@@ -19,7 +18,7 @@ void main()
 {
     gPosition = FragPos;
     gNormal = normalize(Normal);
-    gAlbedo = color * Color;
+    gAlbedo = color;
     gMRA = vec3(metallic, roughness, 1);
     gEmissive = vec3(0, 0, 0);
 }

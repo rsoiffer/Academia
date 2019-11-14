@@ -1,29 +1,27 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
+import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.Noise;
+import beige_engine.util.math.Vec2d;
+import beige_engine.util.math.Vec3d;
 import hero.game.trees.StemGenerator;
-import static hero.game.controllers.IceCaster.iceModel;
 import hero.graphics.PBRTexture;
 import hero.graphics.models.CustomModel;
-import beige_engine.graphics.opengl.Texture;
 import hero.graphics.renderables.DiffuseModel;
 import hero.graphics.renderables.PBRModel;
 import hero.graphics.renderables.Renderable;
 import hero.graphics.renderables.RenderableList;
-import static beige_engine.graphics.voxels.VoxelRenderer.DIRS;
+import hero.physics.shapes.*;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import hero.physics.shapes.AABB;
-import hero.physics.shapes.CapsuleShape;
-import hero.physics.shapes.CollisionShape;
-import hero.physics.shapes.MultigridShape;
-import hero.physics.shapes.SurfaceNetShape;
-import beige_engine.util.Noise;
+
 import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import static hero.game.controllers.IceCaster.iceModel;
+import static hero.graphics.models.VoxelModel2.DIRS;
 
 public class World extends Behavior {
 
