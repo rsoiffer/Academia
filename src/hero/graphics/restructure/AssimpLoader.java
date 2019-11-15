@@ -89,7 +89,7 @@ public class AssimpLoader {
                 | aiProcess_Triangulate
                 | aiProcess_FixInfacingNormals
                 | aiProcess_CalcTangentSpace
-                | aiProcess_GenNormals
+//                | aiProcess_GenNormals
 //                | aiProcess_RemoveRedundantMaterials
 //                | aiProcess_OptimizeGraph
 //                | aiProcess_OptimizeMeshes
