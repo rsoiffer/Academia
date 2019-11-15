@@ -1,11 +1,12 @@
 package hero.physics.shapes;
 
+import beige_engine.util.math.Vec3d;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
-import beige_engine.util.math.Vec3d;
 
 public class UnionShape extends CollisionShape {
 

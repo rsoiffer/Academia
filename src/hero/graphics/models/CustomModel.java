@@ -1,27 +1,24 @@
 package hero.graphics.models;
 
-import hero.graphics.models.Vertex.VertexPBR;
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.VertexArrayObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.models.Vertex.VertexPBR;
+
+import java.util.*;
+
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class CustomModel implements Model {
 
     final List<VertexPBR> vertices = new ArrayList();
+    private final Vec3d randomDir = MathUtils.randomInSphere(new Random());
     private int numVertices;
     private BufferObject vbo;
     private VertexArrayObject vao;
-
-    private final Vec3d randomDir = MathUtils.randomInSphere(new Random());
 
     public void addCylinder(Vec3d p, Vec3d dir, double radius, int detail, double texW, double texH0, double texH1) {
         Vec3d dir1 = dir.cross(randomDir).normalize();

@@ -1,18 +1,19 @@
 package beige_engine.engine;
 
-import static beige_engine.engine.Layer.ALL_LAYERS;
 import beige_engine.graphics.Window;
 import beige_engine.graphics.opengl.Framebuffer;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
+import static beige_engine.engine.Layer.ALL_LAYERS;
+
 public abstract class Core {
 
+    private static final Collection<Runnable> TO_RUN = new LinkedList();
     public static Thread MAIN_THREAD;
-
     private static long prevTime;
     private static double dt;
-    private static final Collection<Runnable> TO_RUN = new LinkedList();
     private static boolean shouldClose;
 
     private static Collection<Runnable> clearToRun() {

@@ -1,44 +1,26 @@
 package beige_engine.graphics.opengl;
 
 import beige_engine.engine.Settings;
+
 import java.nio.ByteBuffer;
+
 import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
-import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+import static org.lwjgl.stb.STBImage.*;
 
 public class Texture extends GLObject {
 
     public static int MAG_FILTER = GL_NEAREST;
-    
+
     final int type;
-    private int width, height;
     public int num;
+    private int width, height;
 
     public Texture(int type) {
         super(glGenTextures());
         this.type = type;
-    }
-
-    @Override
-    public void bind() {
-        GLState.bindTexture(this);
-    }
-
-    @Override
-    public void destroy() {
-        glDeleteTextures(id);
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
     }
 
     public static Texture load(String fileName) {
@@ -57,6 +39,24 @@ public class Texture extends GLObject {
         t.setParameter(GL_TEXTURE_MAG_FILTER, MAG_FILTER);
         t.uploadData(widthArray[0], heightArray[0], image);
         return t;
+    }
+
+    @Override
+    public void bind() {
+        GLState.bindTexture(this);
+    }
+
+    @Override
+    public void destroy() {
+        glDeleteTextures(id);
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public void setParameter(int name, int value) {

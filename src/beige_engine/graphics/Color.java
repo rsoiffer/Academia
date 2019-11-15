@@ -50,6 +50,16 @@ public class Color {
     }
 
     /**
+     * Creates a gray based off of the value given.
+     *
+     * @param value The based value.
+     * @return The gray color based on the value.
+     */
+    public static Color gray(double value) {
+        return new Color(value, value, value);
+    }
+
+    /**
      * Replaces the old Alpha value with the new one.
      *
      * @param a The new value.
@@ -90,16 +100,6 @@ public class Color {
     }
 
     /**
-     * Creates a gray based off of the value given.
-     *
-     * @param value The based value.
-     * @return The gray color based on the value.
-     */
-    public static Color gray(double value) {
-        return new Color(value, value, value);
-    }
-
-    /**
      * Returns the grayscale version of the color.
      *
      * @return The grayscale version of the color.
@@ -112,7 +112,7 @@ public class Color {
     /**
      * Linearly interpolates between two colors.
      *
-     * @param c The second color to mix with.
+     * @param c   The second color to mix with.
      * @param amt The amount of the second color.
      * @return The interpolated color.
      */
@@ -122,6 +122,7 @@ public class Color {
 
     /**
      * Mixes color with alpha mixing.
+     *
      * @param top The color on top.
      * @return The new color.
      */

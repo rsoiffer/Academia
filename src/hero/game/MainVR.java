@@ -4,23 +4,22 @@ import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
-import static beige_engine.engine.Layer.UPDATE;
 import beige_engine.engine.Settings;
-
-import static hero.game.World.BLOCK_HEIGHT;
-import static hero.game.World.BLOCK_WIDTH;
 import beige_engine.graphics.Camera;
-import hero.game.controllers.*;
-import hero.graphics.passes.RenderPipeline;
 import beige_engine.util.Mutable;
-import static beige_engine.util.math.MathUtils.floor;
-import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import hero.game.controllers.*;
+import hero.graphics.passes.RenderPipeline;
 
+import static beige_engine.engine.Layer.UPDATE;
+import static beige_engine.util.math.MathUtils.floor;
+import static beige_engine.util.math.MathUtils.mod;
 import static beige_engine.vr.Vive.MENU;
 import static beige_engine.vr.Vive.TRACKPAD;
+import static hero.game.World.BLOCK_HEIGHT;
+import static hero.game.World.BLOCK_WIDTH;
 
 public class MainVR {
 
@@ -60,7 +59,7 @@ public class MainVR {
 //        Class[] c = {WebSlinger.class, Thruster.class, Hookshot.class, IceCaster.class,
 //            Wing.class, Hand.class, Explosion.class, Teleport.class};
         Class[] c = {WebSlinger.class, Thruster.class, IceCaster.class,
-            Wing.class, Hand.class, Teleport.class};
+                Wing.class, Hand.class, Teleport.class};
         Mutable<Integer> leftType = new Mutable(1);
         Mutable<Behavior> left = new Mutable(null);
         Mutable<Integer> rightType = new Mutable(1);

@@ -3,6 +3,7 @@ package beige_engine.behaviors;
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
+
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class QuitOnEscapeBehavior extends Behavior {

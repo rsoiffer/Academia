@@ -3,13 +3,17 @@ package hero.graphics.passes;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.Framebuffer;
-import static beige_engine.graphics.opengl.Framebuffer.FRAMEBUFFER_VAO;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.math.Vec2d;
+import beige_engine.util.math.Vec3d;
 import hero.graphics.passes.RenderPipeline.RenderPass;
+
 import java.util.List;
+
+import static beige_engine.graphics.opengl.Framebuffer.FRAMEBUFFER_VAO;
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
@@ -18,8 +22,6 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
 
 public class LightingPass implements RenderPass {
 
@@ -39,13 +41,12 @@ public class LightingPass implements RenderPass {
         BRDF_LUT.num = 5;
     }
 
-    public Camera camera;
-    public Color skyColor;
-    public Vec3d sunColor, sunDirection;
-
     private final GeometryPass gp;
     private final List<ShadowPass> spList;
     private final Framebuffer framebuffer;
+    public Camera camera;
+    public Color skyColor;
+    public Vec3d sunColor, sunDirection;
 
     public LightingPass(Vec2d framebufferSize, GeometryPass gp, List<ShadowPass> spList) {
         this.gp = gp;

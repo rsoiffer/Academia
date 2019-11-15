@@ -31,7 +31,7 @@ uniform float heightOffset = 0.5;
 // ----------------------------------------------------------------------------
 float rand(vec2 co)
 {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
 // ----------------------------------------------------------------------------
 vec2 ParallaxMapping(vec2 texCoords, vec3 N, vec3 viewDir)
@@ -52,7 +52,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 N, vec3 viewDir)
     vec2  currentTexCoords     = texCoords;
     float currentDepthMapValue = texture(heightMap, currentTexCoords).r;
 
-    while(currentLayerDepth > currentDepthMapValue)
+    while (currentLayerDepth > currentDepthMapValue)
     {
         // shift texture coordinates along direction of P
         currentTexCoords -= deltaTexCoords;

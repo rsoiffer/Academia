@@ -1,16 +1,17 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import static hero.game.Player.POSTPHYSICS;
-import hero.game.RenderableBehavior;
-import static hero.game.RenderableBehavior.createRB;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import hero.game.RenderableBehavior;
+import hero.graphics.models.VoxelModel2;
+import hero.graphics.renderables.ColorModel;
+
+import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
+import static hero.game.Player.POSTPHYSICS;
+import static hero.game.RenderableBehavior.createRB;
 
 public class Hookshot extends Behavior {
 
@@ -32,7 +33,7 @@ public class Hookshot extends Behavior {
                 Vec3d pos = controller.pos();
                 Vec3d forwards = hookPos.sub(pos);
                 Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-                Vec3d up = forwards.cross(side).setLength(.05);;
+                Vec3d up = forwards.cross(side).setLength(.05);
                 Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
                 lineModel.t = Transformation.create(pos2, forwards, side, up);
             }

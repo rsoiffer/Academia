@@ -2,6 +2,7 @@ package beige_engine.util.math;
 
 import org.joml.Matrix3d;
 import org.joml.Quaterniond;
+
 import static beige_engine.util.math.MathUtils.mod;
 
 public class Quaternion {
@@ -15,37 +16,6 @@ public class Quaternion {
         this.b = b;
         this.c = c;
         this.d = d;
-    }
-
-    public double angle() {
-        if (a < 0) {
-            return negate().angle();
-        }
-        return 2 * Math.atan2(Math.sqrt(b * b + c * c + d * d), a);
-    }
-
-    public Vec3d applyTo(Vec3d pos) {
-        Quaternion result = mul(new Quaternion(0, pos.x, pos.y, pos.z)).mul(inverse());
-        return new Vec3d(result.b, result.c, result.d);
-    }
-
-    public Vec3d applyToForwards() {
-        Quaternion result = mul(new Quaternion(0, 1, 0, 0)).mul(inverse());
-        return new Vec3d(result.b, result.c, result.d);
-    }
-
-    public Vec3d axis() {
-        if (a < 0) {
-            return negate().axis();
-        }
-        if (new Vec3d(b, c, d).lengthSquared() < 1e-12) {
-            return new Vec3d(1, 0, 0);
-        }
-        return new Vec3d(b, c, d).normalize();
-    }
-
-    public Quaternion div(Quaternion other) {
-        return other.inverse().mul(this);
     }
 
     public static Quaternion fromAngleAxis(Vec3d axis) {
@@ -81,6 +51,37 @@ public class Quaternion {
         Matrix3d m = new Matrix3d(x.toJOML(), y.toJOML(), z.toJOML());
         Quaterniond q = m.getUnnormalizedRotation(new Quaterniond());
         return new Quaternion(q.w, q.x, q.y, q.z);
+    }
+
+    public double angle() {
+        if (a < 0) {
+            return negate().angle();
+        }
+        return 2 * Math.atan2(Math.sqrt(b * b + c * c + d * d), a);
+    }
+
+    public Vec3d applyTo(Vec3d pos) {
+        Quaternion result = mul(new Quaternion(0, pos.x, pos.y, pos.z)).mul(inverse());
+        return new Vec3d(result.b, result.c, result.d);
+    }
+
+    public Vec3d applyToForwards() {
+        Quaternion result = mul(new Quaternion(0, 1, 0, 0)).mul(inverse());
+        return new Vec3d(result.b, result.c, result.d);
+    }
+
+    public Vec3d axis() {
+        if (a < 0) {
+            return negate().axis();
+        }
+        if (new Vec3d(b, c, d).lengthSquared() < 1e-12) {
+            return new Vec3d(1, 0, 0);
+        }
+        return new Vec3d(b, c, d).normalize();
+    }
+
+    public Quaternion div(Quaternion other) {
+        return other.inverse().mul(this);
     }
 
     public double getPitch() {

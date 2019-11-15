@@ -102,7 +102,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 }
 // ----------------------------------------------------------------------------
 vec3 CalculateLighting(vec3 Normal, vec3 Albedo, float Metallic, float Roughness,
-                        vec3 viewDir, vec3 F0, vec3 L, vec3 radiance)
+vec3 viewDir, vec3 F0, vec3 L, vec3 radiance)
 {
     vec3 H        = normalize(viewDir + L);
     float NDF     = DistributionGGX(Normal, H, Roughness);

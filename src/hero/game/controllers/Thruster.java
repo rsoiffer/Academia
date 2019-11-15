@@ -1,25 +1,24 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import static hero.game.Player.POSTPHYSICS;
-import hero.game.RenderableBehavior;
-import static hero.game.RenderableBehavior.createRB;
-
-import hero.graphics.models.OpenVRModel;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
-import hero.graphics.renderables.ColorModelParticles;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import hero.game.RenderableBehavior;
+import hero.graphics.models.VoxelModel2;
+import hero.graphics.renderables.ColorModelParticles;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import static beige_engine.engine.Core.dt;
+import static hero.game.Player.POSTPHYSICS;
+import static hero.game.RenderableBehavior.createRB;
 
 public class Thruster extends Behavior {
 

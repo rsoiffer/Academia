@@ -1,19 +1,16 @@
 package beige_engine.vr;
 
 import beige_engine.graphics.opengl.Framebuffer;
-import java.nio.IntBuffer;
-import java.util.function.Supplier;
-import org.joml.Matrix4d;
-import org.lwjgl.openvr.OpenVR;
-import org.lwjgl.openvr.Texture;
-import org.lwjgl.openvr.VR;
-import org.lwjgl.openvr.VRCompositor;
-import org.lwjgl.openvr.VRSystem;
-import org.lwjgl.openvr.VRTextureBounds;
-import org.lwjgl.system.MemoryStack;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import org.joml.Matrix4d;
+import org.lwjgl.openvr.*;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
+import java.util.function.Supplier;
+
 import static beige_engine.vr.OpenVRUtils.checkError;
 
 public class Vive {

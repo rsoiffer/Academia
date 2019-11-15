@@ -1,9 +1,10 @@
 package beige_engine.engine;
 
+import java.util.*;
+
 import static beige_engine.engine.Core.MAIN_THREAD;
 import static beige_engine.engine.Core.onMainThread;
 import static beige_engine.engine.Layer.UPDATE;
-import java.util.*;
 
 public abstract class Behavior {
 
@@ -27,6 +28,13 @@ public abstract class Behavior {
                 throw new RuntimeException("A behavior can only have one subbehavior of each type");
             }
         }
+    }
+
+    public static <T extends Behavior> Collection<T> track(Class<T> c) {
+        if (!TRACKED_BEHAVIORS.containsKey(c)) {
+            TRACKED_BEHAVIORS.put(c, new HashSet());
+        }
+        return (Collection) TRACKED_BEHAVIORS.get(c);
     }
 
     // Utility functions
@@ -123,13 +131,6 @@ public abstract class Behavior {
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException("Behavior does not have an empty public constructor: " + c.getSimpleName());
         }
-    }
-
-    public static <T extends Behavior> Collection<T> track(Class<T> c) {
-        if (!TRACKED_BEHAVIORS.containsKey(c)) {
-            TRACKED_BEHAVIORS.put(c, new HashSet());
-        }
-        return (Collection) TRACKED_BEHAVIORS.get(c);
     }
 
     // Overridable functions

@@ -1,22 +1,22 @@
 package hero.graphics.renderables;
 
 import beige_engine.graphics.Camera;
+import beige_engine.util.math.Transformation;
+import beige_engine.util.math.Vec3d;
 import hero.graphics.PBRTexture;
 import hero.graphics.models.CustomModel;
 import hero.graphics.models.ModelSimplifier3;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
-import static hero.graphics.passes.GeometryPass.SHADER_PBR;
 import hero.graphics.passes.RenderPipeline;
 import hero.graphics.passes.ShadowPass;
-import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import static hero.graphics.passes.ShadowPass.SHADER_SHADOW_ALPHA;
+
 import java.util.ArrayList;
 import java.util.List;
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.clamp;
-import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+
+import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static beige_engine.util.math.MathUtils.*;
+import static hero.graphics.passes.GeometryPass.SHADER_PBR;
+import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
+import static hero.graphics.passes.ShadowPass.SHADER_SHADOW_ALPHA;
 
 public class LODPBRModel extends Renderable {
 

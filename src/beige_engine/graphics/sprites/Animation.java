@@ -1,29 +1,16 @@
 package beige_engine.graphics.sprites;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import beige_engine.util.Resources;
+
+import java.util.*;
 
 public class Animation {
 
     private static final Map<String, Animation> ANIMATION_CACHE = new HashMap();
-
-    public static Animation load(String fileName) {
-        if (!ANIMATION_CACHE.containsKey(fileName)) {
-            Animation a = new Animation(fileName);
-            ANIMATION_CACHE.put(fileName, a);
-        }
-        return ANIMATION_CACHE.get(fileName);
-    }
-
     public int length;
     public double speed;
     public List<String> modes = Arrays.asList("");
     private Map<String, List<Sprite>> sprites;
-
     private Animation(String fileName) {
         try {
             String[] animSettings = Resources.loadFileAsString("sprites/" + fileName + "/anim_settings.txt").split("\n");
@@ -52,6 +39,14 @@ public class Animation {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static Animation load(String fileName) {
+        if (!ANIMATION_CACHE.containsKey(fileName)) {
+            Animation a = new Animation(fileName);
+            ANIMATION_CACHE.put(fileName, a);
+        }
+        return ANIMATION_CACHE.get(fileName);
     }
 
     public Sprite getSpriteOrNull(String mode, int index) {

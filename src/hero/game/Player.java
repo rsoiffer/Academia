@@ -1,14 +1,15 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
 import beige_engine.graphics.Camera;
-import hero.physics.PhysicsBehavior;
-import hero.physics.PoseBehavior;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import beige_engine.vr.Vive;
+import hero.physics.PhysicsBehavior;
+import hero.physics.PoseBehavior;
+
+import static beige_engine.engine.Core.dt;
 
 public class Player extends Behavior {
 
@@ -20,7 +21,7 @@ public class Player extends Behavior {
     public Vec3d cameraOffset = new Vec3d(0, 0, .8);
     public Vec3d prevVelocity = new Vec3d(0, 0, 0);
 
-//    public void applyForce(Vec3d force, double dampening) {
+    //    public void applyForce(Vec3d force, double dampening) {
 //        if (hero.physics.velocity.lengthSquared() >= 1e-6 && force.lengthSquared() >= 1e-6) {
 //            Vec3d v = hero.physics.velocity.normalize();
 //            Vec3d forceAlongVelocity = v.mul(v.dot(force));

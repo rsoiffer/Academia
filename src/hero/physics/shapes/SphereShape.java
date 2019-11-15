@@ -1,7 +1,8 @@
 package hero.physics.shapes;
 
-import java.util.OptionalDouble;
 import beige_engine.util.math.Vec3d;
+
+import java.util.OptionalDouble;
 
 public class SphereShape extends CollisionShape {
 

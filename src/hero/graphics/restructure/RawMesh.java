@@ -21,8 +21,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class RawMesh {
 
     public final int numFaces, numVerts;
-    private int[] indices;
     private final Map<String, float[]> attribs = new HashMap<>();
+    private int[] indices;
 
     public RawMesh(int numFaces, int numVerts) {
         this.numFaces = numFaces;
@@ -67,7 +67,22 @@ public class RawMesh {
         return indices;
     }
 
-    public float[] getMergedAttribs(String...names) {
+    public void setIndices(int[] values) {
+        if (values.length != numFaces * 3) {
+            throw new IllegalArgumentException("The values array is the wrong length");
+        }
+        indices = values;
+    }
+
+    public void setIndices(IntStream values) {
+        setIndices(values.toArray());
+    }
+
+    public void setIndices(Stream<Integer> values) {
+        setIndices(values.mapToInt(i -> i));
+    }
+
+    public float[] getMergedAttribs(String... names) {
         int totalSize = Stream.of(names).mapToInt(s -> getAttrib(s).length).sum();
         float[] data = new float[totalSize];
         int pos = 0;
@@ -97,20 +112,5 @@ public class RawMesh {
 
     public void setAttrib(String name, Stream<Float> values) {
         setAttrib(name, values.collect(Collectors.toList()));
-    }
-
-    public void setIndices(int[] values) {
-        if (values.length != numFaces * 3) {
-            throw new IllegalArgumentException("The values array is the wrong length");
-        }
-        indices = values;
-    }
-
-    public void setIndices(IntStream values) {
-        setIndices(values.toArray());
-    }
-
-    public void setIndices(Stream<Integer> values) {
-        setIndices(values.mapToInt(i -> i));
     }
 }

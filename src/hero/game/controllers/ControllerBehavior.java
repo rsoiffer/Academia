@@ -2,24 +2,24 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.POSTUPDATE;
-import static hero.game.RenderableBehavior.createRB;
-
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
+import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import beige_engine.vr.ViveController;
 import hero.game.Player;
 import hero.game.RenderableBehavior;
 import hero.graphics.models.CustomModel;
 import hero.graphics.models.OpenVRModel;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.ViveController;
 import hero.graphics.renderables.DiffuseModel;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static beige_engine.engine.Layer.POSTUPDATE;
+import static hero.game.RenderableBehavior.createRB;
 
 public class ControllerBehavior extends Behavior {
 

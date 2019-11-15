@@ -3,20 +3,29 @@ package beige_engine.engine;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Camera.Camera2d;
 import beige_engine.graphics.Window;
+import beige_engine.util.math.Vec2d;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import beige_engine.util.math.Vec2d;
 
 public abstract class Input {
-
-    private static final List<ReactiveInputListener> R_LISTENERS = new ArrayList();
 
     public static final int MOUSE_IN = 0;
     public static final int KEY_IN = 1;
     public static final int MOUSE_BUTTON_IN = 2;
     public static final int MOUSE_WHEEL_IN = 3;
+    private static final List<ReactiveInputListener> R_LISTENERS = new ArrayList();
+    private static BitSet keys = new BitSet();
+    private static BitSet prevKeys = new BitSet();
+    private static Vec2d mouse = new Vec2d(0, 0);
+    private static Vec2d prevMouse = new Vec2d(0, 0);
+    private static BitSet buttons = new BitSet();
+    private static BitSet prevButtons = new BitSet();
+    private static double mouseWheel;
+    private static Vec2d vecMouseWheel = new Vec2d(0, 0);
 
     static void init() {
         Window.window.setCursorPosCallback((window, xpos, ypos) -> {
@@ -51,8 +60,8 @@ public abstract class Input {
             mouseWheel = yoffset;
         });
     }
-    
-    public static void addListener(ReactiveInputListener ril){
+
+    public static void addListener(ReactiveInputListener ril) {
         R_LISTENERS.add(ril);
     }
 
@@ -62,18 +71,6 @@ public abstract class Input {
         prevButtons = (BitSet) buttons.clone();
         mouseWheel = 0;
     }
-
-    private static BitSet keys = new BitSet();
-    private static BitSet prevKeys = new BitSet();
-
-    private static Vec2d mouse = new Vec2d(0, 0);
-    private static Vec2d prevMouse = new Vec2d(0, 0);
-
-    private static BitSet buttons = new BitSet();
-    private static BitSet prevButtons = new BitSet();
-
-    private static double mouseWheel;
-    private static Vec2d vecMouseWheel = new Vec2d(0, 0);
 
     public static boolean keyDown(int key) {
         return keys.get(key);
@@ -121,6 +118,6 @@ public abstract class Input {
 
     public interface ReactiveInputListener {
 
-        public void receiveGeneralInput(int kind, Vec2d mouse, Vec2d deltaMouse, int key, boolean pressed, boolean changed);
+        void receiveGeneralInput(int kind, Vec2d mouse, Vec2d deltaMouse, int key, boolean pressed, boolean changed);
     }
 }

@@ -1,9 +1,10 @@
 package hero.physics.shapes;
 
+import beige_engine.util.math.Vec3d;
+import hero.physics.CommonPhysics;
+
 import java.util.Arrays;
 import java.util.OptionalDouble;
-import hero.physics.CommonPhysics;
-import beige_engine.util.math.Vec3d;
 
 public class CapsuleShape extends CollisionShape {
 

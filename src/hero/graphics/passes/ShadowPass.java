@@ -1,17 +1,22 @@
 package hero.graphics.passes;
 
-import hero.game.RenderableBehavior;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.opengl.Framebuffer;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.math.Transformation;
+import beige_engine.util.math.Vec3d;
+import hero.game.RenderableBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
-import java.util.LinkedList;
-import java.util.List;
+import hero.physics.shapes.AABB;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_BACK;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
@@ -26,33 +31,26 @@ import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glCullFace;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
-import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
-import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
+import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL30.GL_COMPARE_REF_TO_TEXTURE;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
-import hero.physics.shapes.AABB;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
 
 public class ShadowPass implements RenderPass {
 
     public static final Shader SHADER_SHADOW = Shader.load("shadow_pass");
     public static final Shader SHADER_SHADOW_ALPHA = Shader.load("shadow_pass_alpha");
+    public static ShadowPass current;
 
     static {
         SHADER_SHADOW_ALPHA.setUniform("alphaMap", 6);
     }
 
-    public static ShadowPass current;
-
-    public List<Camera> cameras;
-    public double zMin = -1, zMax = 1;
-    public Vec3d sunDirection;
-
     private final Framebuffer shadowMap;
     private final Texture shadowTexture;
     private final Camera sunCam;
+    public List<Camera> cameras;
+    public double zMin = -1, zMax = 1;
+    public Vec3d sunDirection;
 
     public ShadowPass() {
         shadowMap = new Framebuffer(4096, 4096);

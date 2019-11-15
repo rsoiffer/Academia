@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 public class Queryable<T> {
 
+    private static int maxModifierID;
     Property<TreeSet<Modifier>> modifiers;
 
     public Modifier addModifier(Function<T, T> modFunction) {
@@ -34,7 +35,30 @@ public class Queryable<T> {
         return returnVal;
     }
 
-    private static int maxModifierID;
+    public static class Property<T> extends Queryable<T> {
+
+        private T value;
+
+        public Property(T value) {
+            this.value = value;
+        }
+
+        public T get() {
+            return query(value);
+        }
+
+        public T getBaseValue() {
+            return value;
+        }
+
+        public void setBaseValue(T value) {
+            this.value = value;
+        }
+
+        private boolean shouldRemove() {
+            return (modifiers == null || modifiers.shouldRemove()) && ((TreeSet) value).isEmpty();
+        }
+    }
 
     public class Modifier implements Comparable<Modifier> {
 
@@ -60,31 +84,6 @@ public class Queryable<T> {
             if (modifiers.shouldRemove()) {
                 modifiers = null;
             }
-        }
-    }
-
-    public static class Property<T> extends Queryable<T> {
-
-        private T value;
-
-        public Property(T value) {
-            this.value = value;
-        }
-
-        public T get() {
-            return query(value);
-        }
-
-        public T getBaseValue() {
-            return value;
-        }
-
-        public void setBaseValue(T value) {
-            this.value = value;
-        }
-
-        private boolean shouldRemove() {
-            return (modifiers == null || modifiers.shouldRemove()) && ((TreeSet) value).isEmpty();
         }
     }
 }

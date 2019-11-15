@@ -2,52 +2,22 @@ package beige_engine.graphics;
 
 import beige_engine.engine.Settings;
 import beige_engine.graphics.opengl.GLState;
-import java.nio.IntBuffer;
 import org.lwjgl.glfw.*;
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.glViewport;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
+
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
     public static Window window;
-
-    public static void initGLFW() {
-        if (Settings.SHOW_OPENGL_DEBUG_INFO) {
-            GLFWErrorCallback.createThrow().set();
-            Configuration.DEBUG.set(true);
-        }
-
-        if (!glfwInit()) {
-            throw new RuntimeException("Failed to initialize GLFW");
-        }
-        window = new Window(true);
-        window.createContext();
-        if (Settings.ENABLE_VSYNC) {
-            glfwSwapInterval(1);
-        }
-
-        glfwSetFramebufferSizeCallback(window.handle, (w, wd, ht) -> Window.window.resize(wd, ht));
-
-        glfwShowWindow(window.handle);
-    }
-
-    public static void cleanupGLFW() {
-        window.cleanup();
-        glfwTerminate();
-        if (Settings.SHOW_OPENGL_DEBUG_INFO) {
-            glfwSetErrorCallback(null).free();
-        }
-    }
-
     private final long handle;
 
     public Window(boolean mainWindow) {
@@ -81,8 +51,36 @@ public class Window {
 
         setCursorEnabled(Settings.SHOW_CURSOR);
     }
-    
-    public void resizeWindow(int width, int height){
+
+    public static void initGLFW() {
+        if (Settings.SHOW_OPENGL_DEBUG_INFO) {
+            GLFWErrorCallback.createThrow().set();
+            Configuration.DEBUG.set(true);
+        }
+
+        if (!glfwInit()) {
+            throw new RuntimeException("Failed to initialize GLFW");
+        }
+        window = new Window(true);
+        window.createContext();
+        if (Settings.ENABLE_VSYNC) {
+            glfwSwapInterval(1);
+        }
+
+        glfwSetFramebufferSizeCallback(window.handle, (w, wd, ht) -> Window.window.resize(wd, ht));
+
+        glfwShowWindow(window.handle);
+    }
+
+    public static void cleanupGLFW() {
+        window.cleanup();
+        glfwTerminate();
+        if (Settings.SHOW_OPENGL_DEBUG_INFO) {
+            glfwSetErrorCallback(null).free();
+        }
+    }
+
+    public void resizeWindow(int width, int height) {
         glfwSetWindowSize(window.handle, width, height);
     }
 
@@ -90,22 +88,22 @@ public class Window {
         Settings.WINDOW_WIDTH = width;
         Settings.WINDOW_HEIGHT = height;
         glViewport(0, 0, Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
-        
+
         boolean resizeAgain = false;
-        
-        if(Settings.MIN_WINDOW_WIDTH > Settings.WINDOW_WIDTH || Settings.MIN_WINDOW_HEIGHT > Settings.WINDOW_HEIGHT){
+
+        if (Settings.MIN_WINDOW_WIDTH > Settings.WINDOW_WIDTH || Settings.MIN_WINDOW_HEIGHT > Settings.WINDOW_HEIGHT) {
             Settings.WINDOW_WIDTH = Math.max(width, Settings.MIN_WINDOW_WIDTH);
             Settings.WINDOW_HEIGHT = Math.max(height, Settings.MIN_WINDOW_HEIGHT);
             resizeAgain = true;
         }
-        
-        if(Settings.WINDOW_WIDTH % Settings.WINDOW_WIDTH_DIVISOR != 0 || Settings.WINDOW_HEIGHT % Settings.WINDOW_HEIGHT_DIVISOR != 0){
+
+        if (Settings.WINDOW_WIDTH % Settings.WINDOW_WIDTH_DIVISOR != 0 || Settings.WINDOW_HEIGHT % Settings.WINDOW_HEIGHT_DIVISOR != 0) {
             Settings.WINDOW_WIDTH += Settings.WINDOW_WIDTH_DIVISOR - (Settings.WINDOW_WIDTH % Settings.WINDOW_WIDTH_DIVISOR);
             Settings.WINDOW_HEIGHT += Settings.WINDOW_HEIGHT_DIVISOR - (Settings.WINDOW_HEIGHT % Settings.WINDOW_HEIGHT_DIVISOR);
             resizeAgain = true;
         }
-        
-        if(resizeAgain){
+
+        if (resizeAgain) {
             window.resizeWindow(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
         }
     }

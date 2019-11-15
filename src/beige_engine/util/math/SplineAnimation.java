@@ -9,24 +9,6 @@ public class SplineAnimation {
     private final List<Vec3d> keyframePositions = new ArrayList();
     private final List<Vec3d> keyframeVelocities = new ArrayList();
 
-    public void addKeyframe(double time, Vec3d position, Vec3d velocity) {
-        keyframeTimes.add(time);
-        keyframePositions.add(position);
-        keyframeVelocities.add(velocity);
-    }
-
-    public void clearKeyframesAfter(double t) {
-        for (int i = 0; i < keyframeTimes.size();) {
-            if (keyframeTimes.get(i) <= t) {
-                i++;
-            } else {
-                keyframeTimes.remove(i);
-                keyframePositions.remove(i);
-                keyframeVelocities.remove(i);
-            }
-        }
-    }
-
     private static Vec3d cubicInterp(double t, Vec3d p1, Vec3d v1, Vec3d p2, Vec3d v2) {
         Vec3d a = v1.sub(p2.sub(p1));
         Vec3d b = v2.mul(-1).add(p2.sub(p1));
@@ -37,6 +19,24 @@ public class SplineAnimation {
         Vec3d a = v1.sub(p2.sub(p1));
         Vec3d b = v2.mul(-1).add(p2.sub(p1));
         return p2.sub(p1).add(a.lerp(b, t).mul(1 - 2 * t)).add(b.sub(a).mul(t * (1 - t)));
+    }
+
+    public void addKeyframe(double time, Vec3d position, Vec3d velocity) {
+        keyframeTimes.add(time);
+        keyframePositions.add(position);
+        keyframeVelocities.add(velocity);
+    }
+
+    public void clearKeyframesAfter(double t) {
+        for (int i = 0; i < keyframeTimes.size(); ) {
+            if (keyframeTimes.get(i) <= t) {
+                i++;
+            } else {
+                keyframeTimes.remove(i);
+                keyframePositions.remove(i);
+                keyframeVelocities.remove(i);
+            }
+        }
     }
 
     public Vec3d getPosition(double time) {

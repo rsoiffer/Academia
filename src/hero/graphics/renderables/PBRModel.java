@@ -1,12 +1,13 @@
 package hero.graphics.renderables;
 
+import beige_engine.util.math.Transformation;
 import hero.graphics.PBRTexture;
 import hero.graphics.models.Model;
+
 import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.passes.GeometryPass.SHADER_PBR;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW_ALPHA;
-import beige_engine.util.math.Transformation;
 
 public class PBRModel extends Renderable {
 

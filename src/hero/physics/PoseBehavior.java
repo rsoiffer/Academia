@@ -1,10 +1,10 @@
 package hero.physics;
 
 import beige_engine.engine.Behavior;
-import org.joml.Matrix4d;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import org.joml.Matrix4d;
 
 public class PoseBehavior extends Behavior {
 

@@ -1,10 +1,6 @@
 package beige_engine.engine;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public final class Layer implements Comparable<Layer> {
 
@@ -16,9 +12,8 @@ public final class Layer implements Comparable<Layer> {
     public static final Layer RENDER3D = new Layer(20);
     public static final Layer RENDER2D = new Layer(30);
     public static final Layer POSTRENDER = new Layer(40);
-
-    public Collection<Behavior> behaviors = new HashSet();
     public final double order;
+    public Collection<Behavior> behaviors = new HashSet();
 
     public Layer(double order) {
         this.order = order;

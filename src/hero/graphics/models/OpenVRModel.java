@@ -1,32 +1,26 @@
 package hero.graphics.models;
 
-import beige_engine.util.math.Quaternion;
-import hero.graphics.models.Vertex.VertexPBR;
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.opengl.VertexArrayObject;
-
-import java.nio.ShortBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import org.lwjgl.PointerBuffer;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDrawElements;
-import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
-import org.lwjgl.openvr.HmdVector3;
-import org.lwjgl.openvr.RenderModel;
-import org.lwjgl.openvr.RenderModelTextureMap;
-import org.lwjgl.openvr.VR;
-import org.lwjgl.openvr.VRRenderModels;
-import org.lwjgl.system.MemoryStack;
-import static org.lwjgl.system.MemoryStack.stackPush;
+import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
+import hero.graphics.models.Vertex.VertexPBR;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.openvr.*;
+import org.lwjgl.system.MemoryStack;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class OpenVRModel implements Model {
 
@@ -103,13 +97,13 @@ public class OpenVRModel implements Model {
         diffuseTexture.uploadData(rmtm.unWidth(), rmtm.unHeight(), rmtm.rubTextureMapData(4 * rmtm.unWidth() * rmtm.unHeight()));
     }
 
+    private static Vec3d toVec3d(HmdVector3 v) {
+        return new Vec3d(v.v(0), v.v(1), v.v(2));
+    }
+
     @Override
     public void render() {
         vao.bind();
         glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
-    }
-
-    private static Vec3d toVec3d(HmdVector3 v) {
-        return new Vec3d(v.v(0), v.v(1), v.v(2));
     }
 }

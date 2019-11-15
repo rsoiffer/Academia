@@ -1,14 +1,16 @@
 package hero.physics;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import hero.game.World;
-import java.util.List;
-import java.util.function.Supplier;
-import hero.physics.shapes.SphereShape;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec3d;
+import hero.game.World;
+import hero.physics.shapes.SphereShape;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import static beige_engine.engine.Core.dt;
 
 public class PhysicsBehavior extends Behavior {
 

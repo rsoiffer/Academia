@@ -19,13 +19,15 @@ public class Car extends Behavior {
 
     public final PoseBehavior pose = require(PoseBehavior.class);
     public final PhysicsBehavior physics = require(PhysicsBehavior.class);
+    private Noise noise = new Noise(new Random());
+    private double time = 0;
 
     @Override
     public void createInner() {
         physics.acceleration = new Vec3d(0, 0, -10);
 
         var carModel = AssimpLoader.load("drone model/05.fbx");
-        var rot = Quaternion.fromEulerAngles(-Math.PI  / 2, 0, Math.PI / 2);
+        var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .01);
 
 //        var carModel = AssimpLoader.load("volkswagen/volkswagen-touareg.obj");
@@ -40,9 +42,6 @@ public class Car extends Behavior {
         var carRB = RenderableBehavior.createRB(car);
         carRB.beforeRender = () -> ((RenderableList) car).t = pose.getTransform().mul(trans);
     }
-
-    private Noise noise = new Noise(new Random());
-    private double time = 0;
 
     public void step() {
         time += dt();

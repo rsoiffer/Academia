@@ -1,29 +1,24 @@
 package beige_engine.graphics.opengl;
 
 import beige_engine.engine.Settings;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glViewport;
+
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.*;
 
 public class GLState {
 
     private static GLState state = new GLState();
-
-    private int blendFunc1, blendFunc2;
     private final Map<Integer, BufferObject> buffers = new HashMap();
     private final Map<Integer, Boolean> flags = new HashMap();
+    private int blendFunc1, blendFunc2;
     private Framebuffer framebuffer = null;
     private Shader shader = null;
     private Texture[] texture = new Texture[32];
@@ -79,19 +74,6 @@ public class GLState {
         }
     }
 
-    private GLState copy() {
-        GLState copy = new GLState();
-        copy.blendFunc1 = blendFunc1;
-        copy.blendFunc2 = blendFunc2;
-        copy.buffers.putAll(buffers);
-        copy.flags.putAll(flags);
-        copy.framebuffer = framebuffer;
-        copy.shader = shader;
-        copy.texture = texture;
-        copy.vao = vao;
-        return copy;
-    }
-
     public static void disable(int... flags) {
         for (int flag : flags) {
             setFlag(flag, false);
@@ -145,6 +127,19 @@ public class GLState {
                 glDisable(flag);
             }
         }
+    }
+
+    private GLState copy() {
+        GLState copy = new GLState();
+        copy.blendFunc1 = blendFunc1;
+        copy.blendFunc2 = blendFunc2;
+        copy.buffers.putAll(buffers);
+        copy.flags.putAll(flags);
+        copy.framebuffer = framebuffer;
+        copy.shader = shader;
+        copy.texture = texture;
+        copy.vao = vao;
+        return copy;
     }
 
     @Override

@@ -1,11 +1,12 @@
 package hero.graphics.renderables;
 
-import hero.graphics.models.Model;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.math.Transformation;
+import hero.graphics.models.Model;
+
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.passes.GeometryPass.SHADER_DIFFUSE;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import beige_engine.util.math.Transformation;
 
 public class DiffuseModel extends Renderable {
 

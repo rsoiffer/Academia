@@ -4,9 +4,7 @@ import beige_engine.util.math.Vec3d;
 
 public interface SDF {
 
-    public double value(Vec3d v);
-
-    public static SDF cone(Vec3d pos, Vec3d dir, double width) {
+    static SDF cone(Vec3d pos, Vec3d dir, double width) {
         Vec3d dir2 = dir.normalize();
         double d1 = width / Math.sqrt(1 + width * width);
         double d2 = 1 / Math.sqrt(1 + width * width);
@@ -16,21 +14,21 @@ public interface SDF {
         };
     }
 
-    public static SDF cylinder(Vec3d pos, Vec3d dir, double radius) {
+    static SDF cylinder(Vec3d pos, Vec3d dir, double radius) {
         Vec3d dir2 = dir.normalize();
         return v -> radius - v.sub(pos).sub(dir2.mul(v.sub(pos).dot(dir2))).length();
     }
 
-    public static SDF cylinder(Vec3d pos, Vec3d dir, double radius, double height) {
+    static SDF cylinder(Vec3d pos, Vec3d dir, double radius, double height) {
         return intersection(cylinder(pos, dir, radius), halfSpace(pos.add(dir.mul(-height)), dir), halfSpace(pos.add(dir.mul(height)), dir.mul(-1)));
     }
 
-    public static SDF halfSpace(Vec3d pos, Vec3d dir) {
+    static SDF halfSpace(Vec3d pos, Vec3d dir) {
         Vec3d dir2 = dir.normalize();
         return v -> v.sub(pos).dot(dir2);
     }
 
-    public static SDF intersection(SDF... a) {
+    static SDF intersection(SDF... a) {
         return v -> {
             double d = Double.MAX_VALUE;
             for (SDF s : a) {
@@ -40,7 +38,7 @@ public interface SDF {
         };
     }
 
-    public static SDF intersectionSmooth(double k, SDF... a) {
+    static SDF intersectionSmooth(double k, SDF... a) {
         return v -> {
             double d = 0;
             for (SDF s : a) {
@@ -50,23 +48,11 @@ public interface SDF {
         };
     }
 
-    public default SDF invert() {
-        return v -> -value(v);
-    }
-
-    public default SDF scale(double scale) {
-        return v -> scale * value(v.mul(scale));
-    }
-
-    public static SDF sphere(Vec3d pos, double size) {
+    static SDF sphere(Vec3d pos, double size) {
         return v -> size - v.sub(pos).length();
     }
 
-    public default SDF translate(Vec3d t) {
-        return v -> value(v.sub(t));
-    }
-
-    public static SDF union(SDF... a) {
+    static SDF union(SDF... a) {
         return v -> {
             double d = Double.MIN_VALUE;
             for (SDF s : a) {
@@ -74,5 +60,19 @@ public interface SDF {
             }
             return d;
         };
+    }
+
+    double value(Vec3d v);
+
+    default SDF invert() {
+        return v -> -value(v);
+    }
+
+    default SDF scale(double scale) {
+        return v -> scale * value(v.mul(scale));
+    }
+
+    default SDF translate(Vec3d t) {
+        return v -> value(v.sub(t));
     }
 }

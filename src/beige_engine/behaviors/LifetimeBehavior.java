@@ -1,6 +1,7 @@
 package beige_engine.behaviors;
 
 import beige_engine.engine.Behavior;
+
 import static beige_engine.engine.Core.dt;
 
 public class LifetimeBehavior extends Behavior {

@@ -1,23 +1,24 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import static hero.game.Player.POSTPHYSICS;
+import beige_engine.util.math.MathUtils;
+import beige_engine.util.math.Vec3d;
+import beige_engine.vr.Vive;
 import hero.game.RenderableBehavior;
-import static hero.game.RenderableBehavior.createRB;
 import hero.game.controllers.Thruster.Particle;
 import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 import hero.graphics.renderables.ColorModelParticles;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import beige_engine.util.math.MathUtils;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
+
+import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
+import static hero.game.Player.POSTPHYSICS;
+import static hero.game.RenderableBehavior.createRB;
 
 public class Explosion extends Behavior {
 

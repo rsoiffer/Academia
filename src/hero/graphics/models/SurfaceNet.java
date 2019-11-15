@@ -1,19 +1,14 @@
 package hero.graphics.models;
 
-import hero.graphics.SDF;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-import hero.physics.shapes.AABB;
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.clamp;
-import static beige_engine.util.math.MathUtils.floor;
-import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.SDF;
+import hero.physics.shapes.AABB;
+
+import java.util.*;
+import java.util.stream.Stream;
+
+import static beige_engine.util.math.MathUtils.*;
 
 public class SurfaceNet implements Model {
 
@@ -26,6 +21,10 @@ public class SurfaceNet implements Model {
 
     public SurfaceNet(double scale) {
         this.scale = scale;
+    }
+
+    private static double quantize(double d) {
+        return (floor(d * 32) + .5) / 32;
     }
 
     public Stream<Vec3d> crossingsNear(Vec3d v, double d) {
@@ -85,10 +84,6 @@ public class SurfaceNet implements Model {
         }
     }
 
-    private static double quantize(double d) {
-        return (floor(d * 32) + .5) / 32;
-    }
-
     @Override
     public void render() {
         for (Subnet s : subnets.values()) {
@@ -143,10 +138,9 @@ public class SurfaceNet implements Model {
         private final double[][][] data = new double[SUBNET_SIZE + 2][SUBNET_SIZE + 2][SUBNET_SIZE + 2];
         private final Set<Edge> surfaceEdges = new HashSet();
         private final CustomModel model = new CustomModel();
-        private boolean changed;
-
         private final Vec3d[][][] points = new Vec3d[SUBNET_SIZE + 1][SUBNET_SIZE + 1][SUBNET_SIZE + 1];
         private final int[][][] pointCounts = new int[SUBNET_SIZE + 1][SUBNET_SIZE + 1][SUBNET_SIZE + 1];
+        private boolean changed;
 
         private Subnet(int subnetX, int subnetY, int subnetZ) {
             subnetPos = new Vec3d(subnetX, subnetY, subnetZ).mul(SUBNET_SIZE);
@@ -309,10 +303,7 @@ public class SurfaceNet implements Model {
                 if (this.y1 != other.y1) {
                     return false;
                 }
-                if (this.z1 != other.z1) {
-                    return false;
-                }
-                return true;
+                return this.z1 == other.z1;
             }
 
             @Override

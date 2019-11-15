@@ -9,14 +9,13 @@ import java.util.TreeMap;
 public class RLEColumn<T> implements Iterable<Entry<Integer, T>> {
 
     public final int x, y;
-
+    private final IntConverter<T> ic;
     /*
     Each element in data is a compressed representation of a paired position
     and block. The position occupies the lower 32 bits of the long, and the
     block ID occupies the upper 32 bits of the long.
      */
     private long[] data = {};
-    private final IntConverter<T> ic;
 
     public RLEColumn(int x, int y, IntConverter<T> ic) {
         this.x = x;

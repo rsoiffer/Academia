@@ -2,44 +2,36 @@ package hero.graphics.passes;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.RENDER3D;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.sprites.Sprite;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glFlush;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import beige_engine.vr.Vive;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static beige_engine.engine.Layer.RENDER3D;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glFlush;
+
 public class RenderPipeline extends Behavior {
 
-    public interface RenderPass extends Runnable {
-
-        public default void doPass() {
-            currentPass = this;
-            run();
-        }
-    }
-
     public static RenderPass currentPass;
-
+    private final List<GeometryPass> gpList = new ArrayList();
+    private final List<ShadowPass> spList = new ArrayList();
+    private final List<LightingPass> lpList = new ArrayList();
     public Color skyColor = new Color(.4, .7, 1, 1);
     public Vec3d sunColor = new Vec3d(10, 9, 8).mul(.35);
     public Vec3d sunDirection = new Vec3d(.3, -.15, 1);
     public boolean isVR;
-
     private List<Camera> cameras;
     private List<Vec2d> framebufferSizes;
-    private final List<GeometryPass> gpList = new ArrayList();
-    private final List<ShadowPass> spList = new ArrayList();
-    private final List<LightingPass> lpList = new ArrayList();
 
     @Override
     public void createInner() {
@@ -96,6 +88,14 @@ public class RenderPipeline extends Behavior {
             Sprite.drawTexture(lpList.get(1).colorBuffer(), Transformation.create(new Vec2d(.75, .5), new Vec2d(.48, 0), new Vec2d(0, .96)), Color.WHITE);
         } else {
             Sprite.drawTexture(lpList.get(0).colorBuffer(), Transformation.create(new Vec2d(.5, .5), 0, 1), Color.WHITE);
+        }
+    }
+
+    public interface RenderPass extends Runnable {
+
+        default void doPass() {
+            currentPass = this;
+            run();
         }
     }
 }

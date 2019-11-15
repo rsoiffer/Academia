@@ -1,8 +1,8 @@
 package hero.graphics.renderables;
 
 import beige_engine.graphics.opengl.GLState;
-import org.joml.Matrix4d;
 import beige_engine.util.math.Transformation;
+import org.joml.Matrix4d;
 
 public abstract class Renderable {
 

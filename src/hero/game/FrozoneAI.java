@@ -1,25 +1,23 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Input;
 import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.PREUPDATE;
-import static hero.game.controllers.IceCaster.iceModel;
-import static beige_engine.graphics.Camera.camera3d;
+import beige_engine.util.math.MathUtils;
+import beige_engine.util.math.Vec3d;
 import hero.graphics.SDF;
-import static hero.graphics.SDF.cylinder;
-import static hero.graphics.SDF.halfSpace;
-import static hero.graphics.SDF.intersectionSmooth;
+import hero.physics.shapes.AABB;
+
 import java.util.Arrays;
 import java.util.Random;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import hero.physics.shapes.AABB;
-import beige_engine.util.math.MathUtils;
+
+import static beige_engine.engine.Core.dt;
+import static beige_engine.engine.Layer.PREUPDATE;
+import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
-import beige_engine.util.math.Vec3d;
+import static hero.game.controllers.IceCaster.iceModel;
+import static hero.graphics.SDF.*;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class FrozoneAI extends Behavior {
 

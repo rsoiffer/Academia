@@ -1,17 +1,13 @@
 package beige_engine.vr;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 import org.joml.Matrix4x3d;
-import org.lwjgl.openvr.HmdMatrix34;
-import org.lwjgl.openvr.HmdMatrix44;
-import org.lwjgl.openvr.TrackedDevicePose;
-import org.lwjgl.openvr.VR;
-import org.lwjgl.openvr.VRCompositor;
-import org.lwjgl.openvr.VRSystem;
+import org.lwjgl.openvr.*;
 import org.lwjgl.system.MemoryStack;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 abstract class OpenVRUtils {
 
@@ -21,7 +17,7 @@ abstract class OpenVRUtils {
         }
     }
 
-//    static Matrix4d getDeviceToAbsoluteTrackingPose() {
+    //    static Matrix4d getDeviceToAbsoluteTrackingPose() {
 //        try (MemoryStack stack = MemoryStack.stackPush()) {
 //            ByteBuffer bb = stack.malloc(128); // value unknown, 128 is a safe upper bound
 //            TrackedDevicePose.Buffer tdp = new TrackedDevicePose.Buffer(bb);

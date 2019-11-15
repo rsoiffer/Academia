@@ -1,23 +1,23 @@
 package hero.game.trees;
 
-import hero.graphics.PBRTexture;
-import hero.graphics.models.CustomModel;
-import hero.graphics.renderables.LODPBRModel;
-import hero.graphics.renderables.Renderable;
-import static java.lang.Double.NaN;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import hero.physics.shapes.CapsuleShape;
-import hero.physics.shapes.CollisionShape;
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.floor;
-import static beige_engine.util.math.MathUtils.lerp;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.PBRTexture;
+import hero.graphics.models.CustomModel;
+import hero.graphics.renderables.LODPBRModel;
+import hero.graphics.renderables.Renderable;
+import hero.physics.shapes.CapsuleShape;
+import hero.physics.shapes.CollisionShape;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static beige_engine.util.math.MathUtils.*;
+import static java.lang.Double.NaN;
 
 public class Stem {
 
@@ -148,6 +148,40 @@ public class Stem {
         }
     }
 
+    public static Stem generateTree() {
+        Quaternion q = Quaternion.fromAngleAxis(Math.random() * 2 * Math.PI, new Vec3d(0, 0, 1));
+        return new Stem(null, 0, new Vec3d(0, 0, 0), q);
+    }
+
+    private static double pm() {
+        return 2 * Math.random() - 1;
+    }
+
+    private static Quaternion rotateX(Quaternion q, double angle) {
+        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(1, 0, 0)));
+    }
+
+    private static Quaternion rotateY(Quaternion q, double angle) {
+        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(0, 1, 0)));
+    }
+
+    private static Quaternion rotateZ(Quaternion q, double angle) {
+        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(0, 0, 1)));
+    }
+
+    private static double shapeRatio(int shape, double ratio) {
+        switch (shape) {
+            case 0:
+                return 0.2 + 0.8 * ratio;
+            case 4:
+                return 0.5 + 0.5 * ratio;
+            case 5:
+                return ratio <= 0.7 ? (ratio / 0.7) : ((1.0 - ratio) / 0.3);
+            default:
+                throw new RuntimeException("Unknown shape " + shape);
+        }
+    }
+
     private void addToModel(CustomModel model, int maxLevel) {
         if (level >= maxLevel) {
             return;
@@ -258,11 +292,6 @@ public class Stem {
         }
     }
 
-    public static Stem generateTree() {
-        Quaternion q = Quaternion.fromAngleAxis(Math.random() * 2 * Math.PI, new Vec3d(0, 0, 1));
-        return new Stem(null, 0, new Vec3d(0, 0, 0), q);
-    }
-
     private Quaternion getDirZ(double z) {
         z *= numSegments;
         return tubeDirs.get(floor(z));
@@ -271,10 +300,6 @@ public class Stem {
     private Vec3d getPosZ(double z) {
         z *= numSegments;
         return tube.get(floor(z)).lerp(tube.get(ceil(z)), z - floor(z));
-    }
-
-    private static double pm() {
-        return 2 * Math.random() - 1;
     }
 
     private double radiusZ(double z, double angle) {
@@ -312,38 +337,13 @@ public class Stem {
         return radiusZ;
     }
 
-    private static Quaternion rotateX(Quaternion q, double angle) {
-        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(1, 0, 0)));
-    }
-
-    private static Quaternion rotateY(Quaternion q, double angle) {
-        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(0, 1, 0)));
-    }
-
-    private static Quaternion rotateZ(Quaternion q, double angle) {
-        return q.mul(Quaternion.fromAngleAxis(Math.toRadians(angle), new Vec3d(0, 0, 1)));
-    }
-
-    private static double shapeRatio(int shape, double ratio) {
-        switch (shape) {
-            case 0:
-                return 0.2 + 0.8 * ratio;
-            case 4:
-                return 0.5 + 0.5 * ratio;
-            case 5:
-                return ratio <= 0.7 ? (ratio / 0.7) : ((1.0 - ratio) / 0.3);
-            default:
-                throw new RuntimeException("Unknown shape " + shape);
-        }
-    }
-
     public Stream<CollisionShape> getCollisionShapes(Vec3d pos) {
         if (level >= 2) {
             return Stream.of();
         }
         return Stream.concat(
                 IntStream.range(0, numSegments).mapToObj(i -> new CapsuleShape(pos.add(tube.get(i)),
-                tube.get(i + 1).sub(tube.get(i)), radiusZ((i + .5) / numSegments, 0))),
+                        tube.get(i + 1).sub(tube.get(i)), radiusZ((i + .5) / numSegments, 0))),
                 children.stream().flatMap(c -> c.getCollisionShapes(pos))
         );
     }

@@ -2,27 +2,25 @@ package hero.graphics.models;
 
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.VertexArrayObject;
+import beige_engine.util.math.Vec2d;
+import beige_engine.util.math.Vec3d;
+
 import java.util.List;
 import java.util.stream.IntStream;
+
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_STREAM_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
 
 public interface Vertex {
 
-    public float[] data();
-
-    public int size();
-
-    public static VertexArrayObject createVAO(List<? extends Vertex> vertices, int[] attribs) {
+    static VertexArrayObject createVAO(List<? extends Vertex> vertices, int[] attribs) {
         return createVAO(createVBO(vertices), attribs);
     }
 
-    public static VertexArrayObject createVAO(BufferObject vbo, int[] attribs) {
+    static VertexArrayObject createVAO(BufferObject vbo, int[] attribs) {
         return VertexArrayObject.createVAO(() -> {
             vbo.bind();
             int pos = 0, size = IntStream.of(attribs).sum();
@@ -34,13 +32,13 @@ public interface Vertex {
         });
     }
 
-    public static BufferObject createVBO(List<? extends Vertex> vertices) {
+    static BufferObject createVBO(List<? extends Vertex> vertices) {
         BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER);
         fillVBO(vbo, vertices);
         return vbo;
     }
 
-    public static void fillVBO(BufferObject vbo, List<? extends Vertex> vertices) {
+    static void fillVBO(BufferObject vbo, List<? extends Vertex> vertices) {
         int totalSize = vertices.stream().mapToInt(Vertex::size).sum();
         float[] data = new float[totalSize];
         int pos = 0;
@@ -51,7 +49,11 @@ public interface Vertex {
         vbo.putData(data, GL_STREAM_DRAW);
     }
 
-    public class VertexColor implements Vertex {
+    float[] data();
+
+    int size();
+
+    class VertexColor implements Vertex {
 
         public final Vec3d position;
         public final Vec3d color;
@@ -66,9 +68,9 @@ public interface Vertex {
         @Override
         public float[] data() {
             return new float[]{
-                (float) position.x, (float) position.y, (float) position.z,
-                (float) color.x, (float) color.y, (float) color.z,
-                (float) normal.x, (float) normal.y, (float) normal.z
+                    (float) position.x, (float) position.y, (float) position.z,
+                    (float) color.x, (float) color.y, (float) color.z,
+                    (float) normal.x, (float) normal.y, (float) normal.z
             };
         }
 
@@ -83,7 +85,7 @@ public interface Vertex {
         }
     }
 
-    public class VertexPBR implements Vertex {
+    class VertexPBR implements Vertex {
 
         public final Vec3d position;
         public final Vec2d texCoord;
@@ -102,11 +104,11 @@ public interface Vertex {
         @Override
         public float[] data() {
             return new float[]{
-                (float) position.x, (float) position.y, (float) position.z,
-                (float) texCoord.x, (float) texCoord.y,
-                (float) normal.x, (float) normal.y, (float) normal.z,
-                (float) tangent.x, (float) tangent.y, (float) tangent.z,
-                (float) bitangent.x, (float) bitangent.y, (float) bitangent.z
+                    (float) position.x, (float) position.y, (float) position.z,
+                    (float) texCoord.x, (float) texCoord.y,
+                    (float) normal.x, (float) normal.y, (float) normal.z,
+                    (float) tangent.x, (float) tangent.y, (float) tangent.z,
+                    (float) bitangent.x, (float) bitangent.y, (float) bitangent.z
             };
         }
 

@@ -1,11 +1,10 @@
 package beige_engine.vr;
 
 import beige_engine.graphics.Camera;
-import org.joml.Matrix4d;
 import beige_engine.util.math.Transformation;
-import static beige_engine.vr.OpenVRUtils.getEyeProjectionMatrix;
-import static beige_engine.vr.OpenVRUtils.getEyeToHeadTransform;
-import static beige_engine.vr.OpenVRUtils.waitGetPoses;
+import org.joml.Matrix4d;
+
+import static beige_engine.vr.OpenVRUtils.*;
 import static beige_engine.vr.Vive.vrCoords;
 
 public class EyeCamera extends Camera {
@@ -27,6 +26,10 @@ public class EyeCamera extends Camera {
         return Vive.footTransform.get().mul(headPoseRaw.conjugate(new Transformation(Vive.COORD_CHANGE)));
     }
 
+    public static void waitUpdatePos() {
+        headPoseRaw = new Transformation(waitGetPoses());
+    }
+
     @Override
     public Matrix4d projectionMatrix() {
         return new Matrix4d(eyeProjectionMatrix);
@@ -36,9 +39,5 @@ public class EyeCamera extends Camera {
     public Matrix4d viewMatrix() {
         return new Matrix4d(eyeToHeadTransform)
                 .mul(headPoseInternal().matrix().invert());
-    }
-
-    public static void waitUpdatePos() {
-        headPoseRaw = new Transformation(waitGetPoses());
     }
 }

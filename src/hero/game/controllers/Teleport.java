@@ -2,18 +2,20 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import static hero.game.Player.POSTPHYSICS;
+import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
+import beige_engine.util.math.Vec3d;
 import hero.game.RenderableBehavior;
-import static hero.game.RenderableBehavior.createRB;
 import hero.graphics.models.VoxelModel2;
 import hero.graphics.renderables.ColorModel;
 import hero.graphics.renderables.ColorModelParticles;
 import hero.graphics.renderables.RenderableList;
+
 import java.util.LinkedList;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+
 import static beige_engine.vr.Vive.TRIGGER;
+import static hero.game.Player.POSTPHYSICS;
+import static hero.game.RenderableBehavior.createRB;
 
 public class Teleport extends Behavior {
 

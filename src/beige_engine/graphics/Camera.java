@@ -1,13 +1,11 @@
 package beige_engine.graphics;
 
 import beige_engine.engine.Settings;
-import org.joml.FrustumIntersection;
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
-import org.joml.Vector3d;
-import org.joml.Vector4d;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import org.joml.*;
+
+import java.lang.Math;
 
 public abstract class Camera {
 

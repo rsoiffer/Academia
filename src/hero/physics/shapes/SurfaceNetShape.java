@@ -1,13 +1,14 @@
 package hero.physics.shapes;
 
+import beige_engine.util.math.Vec3d;
 import hero.graphics.models.SurfaceNet;
 
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
+
 import static beige_engine.util.math.MathUtils.ceil;
 import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Vec3d;
 
 public class SurfaceNetShape extends CollisionShape {
 
@@ -29,7 +30,7 @@ public class SurfaceNetShape extends CollisionShape {
         return surfaceNet.getInterp(point) > 0;
     }
 
-//    @Override
+    //    @Override
 //    public List<Vec3d> intersect(SphereShape sphere) {
 //        List<Vec3d> r = new LinkedList();
 //        boolean inside = contains(sphere.pos);

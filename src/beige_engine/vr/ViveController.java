@@ -1,15 +1,17 @@
 package beige_engine.vr;
 
-import java.util.LinkedList;
-import java.util.List;
+import beige_engine.util.math.Transformation;
+import beige_engine.util.math.Vec2d;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.lwjgl.openvr.TrackedDevicePose;
 import org.lwjgl.openvr.VR;
 import org.lwjgl.openvr.VRControllerState;
 import org.lwjgl.openvr.VRSystem;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec2d;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import static beige_engine.vr.OpenVRUtils.read4x3Matrix;
 import static beige_engine.vr.Vive.vrCoords;
 

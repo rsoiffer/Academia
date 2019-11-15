@@ -1,18 +1,11 @@
 package hero.graphics.models;
 
+import beige_engine.util.math.Vec3d;
 import hero.graphics.models.Vertex.VertexPBR;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
 import org.joml.Matrix4d;
 import org.joml.Vector4d;
-import beige_engine.util.math.Vec3d;
+
+import java.util.*;
 
 public abstract class ModelSimplifier {
 
@@ -188,9 +181,9 @@ public abstract class ModelSimplifier {
     public static class Vertex {
 
         public final VertexPBR v;
-        public Quadric q;
         public final Set<Edge> edges = new HashSet();
         public final Set<Face> faces = new HashSet();
+        public Quadric q;
 
         public Vertex(VertexPBR v) {
             this.v = v;

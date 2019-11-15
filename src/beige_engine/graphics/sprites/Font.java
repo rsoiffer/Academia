@@ -3,46 +3,34 @@ package beige_engine.graphics.sprites;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.BufferObject;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.opengl.VertexArrayObject;
-import static java.lang.Integer.parseInt;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import beige_engine.util.Resources;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static java.lang.Integer.parseInt;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+
 public class Font {
 
     private static final Map<String, Font> FONT_CACHE = new HashMap();
-
-    public static Font load(String fileName) {
-        if (!FONT_CACHE.containsKey(fileName)) {
-            Font s = new Font(fileName);
-            FONT_CACHE.put(fileName, s);
-        }
-        return FONT_CACHE.get(fileName);
-    }
-
     private static final Shader FONT_SHADER = Shader.load("sprite", "font");
-
-    private Texture[] textures;
     private final Map<Integer, FontChar> charMap = new HashMap();
     private final Map<String, FontText> textMap = new HashMap();
-
+    private Texture[] textures;
     // See http://www.angelcode.com/products/bmfont/doc/file_format.html
     // Info
     private String face;
@@ -60,7 +48,6 @@ public class Font {
     private int base;
     private int scaleW, scaleH;
     private int pages;
-
     private Font(String name) {
         String[] fontDesc = Resources.loadFileAsString(Settings.FONT_LOAD_FOLDER + name + ".fnt").split("[\r\n]+");
         for (String line : fontDesc) {
@@ -124,6 +111,14 @@ public class Font {
         }
     }
 
+    public static Font load(String fileName) {
+        if (!FONT_CACHE.containsKey(fileName)) {
+            Font s = new Font(fileName);
+            FONT_CACHE.put(fileName, s);
+        }
+        return FONT_CACHE.get(fileName);
+    }
+
     private Map<String, String> parseNameValuePairs(String line) {
         HashMap<String, String> r = new HashMap();
         for (String pair : line.split(" +")) {
@@ -161,10 +156,10 @@ public class Font {
                 float x = (float) cursor.x + fc.xoffset;
                 float y = (float) cursor.y + lineHeight / 2f - fc.yoffset - fc.height;
                 data[fc.page].add(new float[]{
-                    x, y, 0, fc.x / 256f, 1 - (fc.y + fc.height) / 256f,
-                    x + fc.width, y, 0, (fc.x + fc.width) / 256f, 1 - (fc.y + fc.height) / 256f,
-                    x + fc.width, y + fc.height, 0, (fc.x + fc.width) / 256f, 1 - fc.y / 256f,
-                    x, y + fc.height, 0, fc.x / 256f, 1 - fc.y / 256f,});
+                        x, y, 0, fc.x / 256f, 1 - (fc.y + fc.height) / 256f,
+                        x + fc.width, y, 0, (fc.x + fc.width) / 256f, 1 - (fc.y + fc.height) / 256f,
+                        x + fc.width, y + fc.height, 0, (fc.x + fc.width) / 256f, 1 - fc.y / 256f,
+                        x, y + fc.height, 0, fc.x / 256f, 1 - fc.y / 256f,});
                 prev = fc;
             }
 
@@ -178,8 +173,8 @@ public class Font {
                     for (int j = 0; j < ft.numChars[i]; j++) {
                         System.arraycopy(data[i].get(j), 0, vertices, j * 20, 20);
                         System.arraycopy(new int[]{
-                            0 + 4 * j, 1 + 4 * j, 2 + 4 * j,
-                            0 + 4 * j, 2 + 4 * j, 3 + 4 * j
+                                0 + 4 * j, 1 + 4 * j, 2 + 4 * j,
+                                0 + 4 * j, 2 + 4 * j, 3 + 4 * j
                         }, 0, indices, j * 6, 6);
                     }
                     ft.vaoArray[i] = VertexArrayObject.createVAO(() -> {
@@ -199,6 +194,7 @@ public class Font {
 
     private static class FontChar {
 
+        private final HashMap<Integer, Integer> kernings = new HashMap();
         private int id;
         private int x;
         private int y;
@@ -208,7 +204,6 @@ public class Font {
         private int yoffset;
         private int xadvance;
         private int page;
-        private final HashMap<Integer, Integer> kernings = new HashMap();
 
         private int getAdvance(int next) {
             if (kernings.containsKey(next)) {
@@ -251,8 +246,8 @@ public class Font {
         public void draw2dCentered(Transformation t, Color color, Color outlineColor) {
             draw2d(t.translate(new Vec3d(-width / 2, 0, 0)), color, outlineColor);
         }
-        
-        public double getWidth(){
+
+        public double getWidth() {
             return width;
         }
     }

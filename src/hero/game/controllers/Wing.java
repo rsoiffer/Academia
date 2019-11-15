@@ -1,14 +1,13 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import static hero.game.Player.POSTPHYSICS;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
-import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+
+import static beige_engine.engine.Core.dt;
+import static beige_engine.util.math.MathUtils.clamp;
+import static hero.game.Player.POSTPHYSICS;
 
 public class Wing extends Behavior {
 
@@ -31,7 +30,7 @@ public class Wing extends Behavior {
         if (controller.controller != Vive.LEFT) {
             sideways = sideways.mul(-1);
         }
-         Vec3d pos = controller.pos(5).add(sideways.mul(1.5));
+        Vec3d pos = controller.pos(5).add(sideways.mul(1.5));
 //        Vec3d pos = controller.pos().add(sideways.mul(.5));
 
         if (prevPos != null) {

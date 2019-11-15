@@ -5,20 +5,14 @@ import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
+import beige_engine.util.math.Vec3d;
+import hero.graphics.passes.RenderPipeline;
 
+import static beige_engine.graphics.Camera.camera3d;
+import static beige_engine.util.math.MathUtils.clamp;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
-import static beige_engine.graphics.Camera.camera3d;
-
-import hero.graphics.passes.RenderPipeline;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static beige_engine.util.math.MathUtils.clamp;
-import beige_engine.util.math.Vec3d;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class MainPC {
 

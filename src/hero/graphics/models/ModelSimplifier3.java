@@ -1,7 +1,7 @@
 package hero.graphics.models;
 
-import hero.graphics.models.Vertex.VertexPBR;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.models.Vertex.VertexPBR;
 
 public class ModelSimplifier3 {
 

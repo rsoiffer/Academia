@@ -35,13 +35,10 @@ public class World extends Behavior {
     private static final double[] WALL_SCALES = {2, 9, 3, 8, 4, 3, 3, 4, 12, 12, 10};
     private static final double[] WALL_SCALES_X = {1, 1, 1, 1, 1, 1, 1, 1, 1, .5, 1};
     private static final String[] WALL_TEXTURES = {"tower.png", "glass_0.png", "glass_1.png",
-        "highrise_0.png", "highrise_1.png", "highrise_2.png", "highrise_3.png", "highrise_4.png"};
+            "highrise_0.png", "highrise_1.png", "highrise_2.png", "highrise_3.png", "highrise_4.png"};
     private static final String[] WALL_PBR_TEXTURES = {"highrise_facade_1", "highrise_facade_2", "highrise_facade_3"};
 
     public final RenderableBehavior renderable = require(RenderableBehavior.class);
-
-    public CollisionShape collisionShape;
-
     private final List<AABB> buildings = new ArrayList();
     private final List<AABB> intersections = new ArrayList();
     private final List<AABB> roads = new ArrayList();
@@ -50,6 +47,7 @@ public class World extends Behavior {
     private final StemGenerator treeGenerator = new StemGenerator();
     private final List<AABB> billboards = new ArrayList();
     private final List<CapsuleShape> poles = new ArrayList();
+    public CollisionShape collisionShape;
 
     @Override
     public void createInner() {

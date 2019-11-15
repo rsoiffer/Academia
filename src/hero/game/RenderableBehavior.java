@@ -2,10 +2,12 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.POSTUPDATE;
 import hero.graphics.renderables.Renderable;
+
 import java.util.Collection;
 import java.util.stream.Stream;
+
+import static beige_engine.engine.Layer.POSTUPDATE;
 
 public class RenderableBehavior extends Behavior {
 

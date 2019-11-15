@@ -1,11 +1,8 @@
 package hero.physics.shapes;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
 import beige_engine.util.math.Vec3d;
+
+import java.util.*;
 
 public class MultigridShape extends CollisionShape {
 

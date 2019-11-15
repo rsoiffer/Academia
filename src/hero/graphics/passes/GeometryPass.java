@@ -1,14 +1,17 @@
 package hero.graphics.passes;
 
-import hero.game.RenderableBehavior;
 import beige_engine.graphics.Camera;
-import static beige_engine.graphics.Color.BLACK;
 import beige_engine.graphics.opengl.Framebuffer;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.math.Transformation;
+import beige_engine.util.math.Vec2d;
+import hero.game.RenderableBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
+
+import static beige_engine.graphics.Color.BLACK;
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
@@ -16,15 +19,7 @@ import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGB;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT1;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT2;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT3;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT4;
-import static org.lwjgl.opengl.GL30.GL_RGB16F;
-import static org.lwjgl.opengl.GL30.GL_RGB32F;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec2d;
+import static org.lwjgl.opengl.GL30.*;
 
 public class GeometryPass implements RenderPass {
 
@@ -43,10 +38,9 @@ public class GeometryPass implements RenderPass {
         SHADER_PBR.setUniform("emissiveMap", 7);
     }
 
-    public Camera camera;
-
     private final Framebuffer gBuffer;
     private final Texture gPosition, gNormal, gAlbedo, gMRA, gEmissive;
+    public Camera camera;
 
     public GeometryPass(Vec2d framebufferSize) {
         if (framebufferSize == null) {
@@ -71,6 +65,13 @@ public class GeometryPass implements RenderPass {
         gEmissive.num = 4;
     }
 
+    public static void updateShaderUniforms() {
+        SHADER_COLOR.setMVP(Transformation.IDENTITY);
+        SHADER_DIFFUSE.setMVP(Transformation.IDENTITY);
+        SHADER_PBR.setMVP(Transformation.IDENTITY);
+        SHADER_PBR.setUniform("camPos", Camera.current.getPos());
+    }
+
     public void bindGBuffer() {
         bindAll(gPosition, gNormal, gAlbedo, gMRA, gEmissive);
     }
@@ -84,12 +85,5 @@ public class GeometryPass implements RenderPass {
         updateShaderUniforms();
         RenderableBehavior.allRenderables().forEach(r -> r.renderGeom(Transformation.IDENTITY));
         GLState.bindFramebuffer(null);
-    }
-
-    public static void updateShaderUniforms() {
-        SHADER_COLOR.setMVP(Transformation.IDENTITY);
-        SHADER_DIFFUSE.setMVP(Transformation.IDENTITY);
-        SHADER_PBR.setMVP(Transformation.IDENTITY);
-        SHADER_PBR.setUniform("camPos", Camera.current.getPos());
     }
 }

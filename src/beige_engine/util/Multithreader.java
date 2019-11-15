@@ -1,10 +1,12 @@
 package beige_engine.util;
 
-import static beige_engine.engine.Settings.MULTITHREADED_OPENGL;
 import beige_engine.graphics.Window;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static beige_engine.engine.Settings.MULTITHREADED_OPENGL;
 
 public abstract class Multithreader {
 

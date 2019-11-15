@@ -1,12 +1,14 @@
 package hero.graphics.renderables;
 
-import hero.graphics.models.Model;
-import static hero.graphics.passes.GeometryPass.SHADER_COLOR;
-import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import java.util.LinkedList;
-import java.util.List;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.models.Model;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static hero.graphics.passes.GeometryPass.SHADER_COLOR;
+import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
 
 public class ColorModelParticles extends Renderable {
 

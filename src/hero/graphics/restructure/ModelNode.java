@@ -4,7 +4,6 @@ import beige_engine.util.math.Transformation;
 import hero.graphics.renderables.Renderable;
 import hero.graphics.renderables.RenderableList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

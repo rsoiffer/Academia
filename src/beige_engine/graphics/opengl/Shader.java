@@ -2,15 +2,17 @@ package beige_engine.graphics.opengl;
 
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
-import java.util.HashMap;
-import org.joml.Matrix4d;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import beige_engine.util.Resources;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.util.math.Vec4d;
+import org.joml.Matrix4d;
+
+import java.util.HashMap;
+
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 public class Shader extends GLObject {
 
@@ -27,6 +29,25 @@ public class Shader extends GLObject {
         if (glGetProgrami(id, GL_LINK_STATUS) != GL_TRUE) {
             throw new RuntimeException("Shader program doesn't link:\n" + glGetProgramInfoLog(id));
         }
+    }
+
+    public static Shader load(String name) {
+        return load(name, name);
+    }
+
+    public static Shader loadGeom(String name) {
+        return loadGeom(name, name, name);
+    }
+
+    public static Shader load(String vert, String frag) {
+        return loadGeom(vert, null, frag);
+    }
+
+    public static Shader loadGeom(String vert, String geom, String frag) {
+        return new Shader(
+                vert == null ? null : Resources.loadFileAsString("src/shaders/" + vert + ".vert"),
+                geom == null ? null : Resources.loadFileAsString("src/shaders/" + geom + ".geom"),
+                frag == null ? null : Resources.loadFileAsString("src/shaders/" + frag + ".frag"));
     }
 
     private void attach(int type, String source) {
@@ -57,25 +78,6 @@ public class Shader extends GLObject {
             uniformLocations.put(name, glGetUniformLocation(id, name));
         }
         return uniformLocations.get(name);
-    }
-
-    public static Shader load(String name) {
-        return load(name, name);
-    }
-
-    public static Shader loadGeom(String name) {
-        return loadGeom(name, name, name);
-    }
-
-    public static Shader load(String vert, String frag) {
-        return loadGeom(vert, null, frag);
-    }
-
-    public static Shader loadGeom(String vert, String geom, String frag) {
-        return new Shader(
-                vert == null ? null : Resources.loadFileAsString("src/shaders/" + vert + ".vert"),
-                geom == null ? null : Resources.loadFileAsString("src/shaders/" + geom + ".geom"),
-                frag == null ? null : Resources.loadFileAsString("src/shaders/" + frag + ".frag"));
     }
 
     public void setMVP(Transformation t) {
@@ -128,9 +130,9 @@ public class Shader extends GLObject {
         bind();
         int uniform = getUniformLocation(name);
         glUniformMatrix4fv(uniform, false, new float[]{
-            (float) mat.m00(), (float) mat.m01(), (float) mat.m02(), (float) mat.m03(),
-            (float) mat.m10(), (float) mat.m11(), (float) mat.m12(), (float) mat.m13(),
-            (float) mat.m20(), (float) mat.m21(), (float) mat.m22(), (float) mat.m23(),
-            (float) mat.m30(), (float) mat.m31(), (float) mat.m32(), (float) mat.m33()});
+                (float) mat.m00(), (float) mat.m01(), (float) mat.m02(), (float) mat.m03(),
+                (float) mat.m10(), (float) mat.m11(), (float) mat.m12(), (float) mat.m13(),
+                (float) mat.m20(), (float) mat.m21(), (float) mat.m22(), (float) mat.m23(),
+                (float) mat.m30(), (float) mat.m31(), (float) mat.m32(), (float) mat.m33()});
     }
 }

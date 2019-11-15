@@ -1,9 +1,10 @@
 package hero.physics.shapes;
 
+import beige_engine.util.math.Vec3d;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalDouble;
-import beige_engine.util.math.Vec3d;
 
 public abstract class CollisionShape {
 

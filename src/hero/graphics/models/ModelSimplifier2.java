@@ -1,20 +1,13 @@
 package hero.graphics.models;
 
+import beige_engine.util.math.Vec3d;
 import hero.graphics.models.Vertex.VertexPBR;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.joml.Matrix4d;
 import org.joml.Vector4d;
-import beige_engine.util.math.Vec3d;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ModelSimplifier2 {
 
@@ -147,6 +140,50 @@ public class ModelSimplifier2 {
         }
     }
 
+    private static class Quadric {
+
+        private final Matrix4d Q, Qinv;
+
+        public Quadric(Matrix4d Q) {
+            this.Q = Q;
+            if (Math.abs(Q.determinant()) < 1e-12) {
+                Qinv = null;
+            } else {
+                Qinv = new Matrix4d(Q);
+                Qinv.setRow(3, new Vector4d(0, 0, 0, 1));
+                Qinv.invert();
+            }
+        }
+
+        public static Quadric fromFace(Face f) {
+            Vec3d n = f.normal();
+            double d = -f.e12.v1.v.position.dot(n);
+            Vector4d p = new Vector4d(n.x, n.y, n.z, d);
+            Matrix4d Q = new Matrix4d().set(
+                    p.mul(n.x, new Vector4d()), p.mul(n.y, new Vector4d()),
+                    p.mul(n.z, new Vector4d()), p.mul(d, new Vector4d()));
+            return new Quadric(Q);
+        }
+
+        public Quadric add(Quadric other) {
+            return new Quadric(Q.add(other.Q, new Matrix4d()));
+        }
+
+        public Vec3d minimumPos(Vec3d fallback) {
+            if (Qinv == null) {
+                return fallback;
+            }
+            Vector4d v = new Vector4d(0, 0, 0, 1).mul(Qinv);
+            return new Vec3d(v.x, v.y, v.z);
+        }
+
+        public double minimumVal(Vec3d fallback) {
+            Vec3d min = minimumPos(fallback);
+            Vector4d v = new Vector4d(min.x, min.y, min.z, 1);
+            return Math.abs(v.dot(v.mul(Q, new Vector4d())));
+        }
+    }
+
     private class Edge {
 
         private Vertex v1, v2;
@@ -265,50 +302,6 @@ public class ModelSimplifier2 {
 
         private List<Vertex> vertices() {
             return new LinkedList(Stream.of(e12, e13, e23).flatMap(e -> Stream.of(e.v1, e.v2)).collect(Collectors.toSet()));
-        }
-    }
-
-    private static class Quadric {
-
-        private final Matrix4d Q, Qinv;
-
-        public Quadric(Matrix4d Q) {
-            this.Q = Q;
-            if (Math.abs(Q.determinant()) < 1e-12) {
-                Qinv = null;
-            } else {
-                Qinv = new Matrix4d(Q);
-                Qinv.setRow(3, new Vector4d(0, 0, 0, 1));
-                Qinv.invert();
-            }
-        }
-
-        public Quadric add(Quadric other) {
-            return new Quadric(Q.add(other.Q, new Matrix4d()));
-        }
-
-        public static Quadric fromFace(Face f) {
-            Vec3d n = f.normal();
-            double d = -f.e12.v1.v.position.dot(n);
-            Vector4d p = new Vector4d(n.x, n.y, n.z, d);
-            Matrix4d Q = new Matrix4d().set(
-                    p.mul(n.x, new Vector4d()), p.mul(n.y, new Vector4d()),
-                    p.mul(n.z, new Vector4d()), p.mul(d, new Vector4d()));
-            return new Quadric(Q);
-        }
-
-        public Vec3d minimumPos(Vec3d fallback) {
-            if (Qinv == null) {
-                return fallback;
-            }
-            Vector4d v = new Vector4d(0, 0, 0, 1).mul(Qinv);
-            return new Vec3d(v.x, v.y, v.z);
-        }
-
-        public double minimumVal(Vec3d fallback) {
-            Vec3d min = minimumPos(fallback);
-            Vector4d v = new Vector4d(min.x, min.y, min.z, 1);
-            return Math.abs(v.dot(v.mul(Q, new Vector4d())));
         }
     }
 }

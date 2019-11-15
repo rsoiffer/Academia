@@ -1,25 +1,26 @@
 package beige_engine.util.rlestorage;
 
-import static beige_engine.util.math.MathUtils.clamp;
-import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 
+import static beige_engine.util.math.MathUtils.clamp;
+import static beige_engine.util.math.MathUtils.round;
+
 public interface IntConverter<T> {
 
-    public T fromInt(int i);
-
-    public static int pack(int value, int pos, int size) {
+    static int pack(int value, int pos, int size) {
         return (value & ((1 << size) - 1)) << pos;
     }
 
-    public int toInt(T t);
-
-    public static int unpack(int value, int pos, int size) {
+    static int unpack(int value, int pos, int size) {
         return (value >>> pos) & ((1 << size) - 1);
     }
 
-    public static class IntegerConverter implements IntConverter<Integer> {
+    T fromInt(int i);
+
+    int toInt(T t);
+
+    class IntegerConverter implements IntConverter<Integer> {
 
         @Override
         public Integer fromInt(int i) {
@@ -38,7 +39,7 @@ public interface IntConverter<T> {
         }
     }
 
-    public static class Vec2dConverter implements IntConverter<Vec2d> {
+    class Vec2dConverter implements IntConverter<Vec2d> {
 
         private static final double C = (1 << 16) - 1;
 
@@ -63,7 +64,7 @@ public interface IntConverter<T> {
         }
     }
 
-    public static class Vec3dConverter implements IntConverter<Vec3d> {
+    class Vec3dConverter implements IntConverter<Vec3d> {
 
         private static final double C = (1 << 10) - 1;
 
