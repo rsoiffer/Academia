@@ -44,6 +44,10 @@ public class Explosion extends Behavior {
 
     @Override
     public void step() {
+        for (Particle p : particles) {
+            p.time += dt();
+        }
+
         charge += dt();
         charge = Math.min(charge, 1.5);
         if (controller.controller.buttonJustPressed(TRIGGER)) {
@@ -65,9 +69,6 @@ public class Explosion extends Behavior {
             charge = 0;
         }
 
-        for (Particle p : particles) {
-            p.time += dt();
-        }
         particles.removeIf(p -> Math.random() < 5 * dt());
         material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
     }

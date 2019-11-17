@@ -32,7 +32,7 @@ public class ControllerBehavior extends Behavior {
     public int myNum;
     public Transformation postTransform = Transformation.IDENTITY;
     public List<Behavior> children = new LinkedList();
-    public ModelNode ovrNode;
+    public ModelNode ovrNode = new ModelNode();
 
     public Transformation controllerPose() {
         return controller.pose();
@@ -48,8 +48,8 @@ public class ControllerBehavior extends Behavior {
 
     @Override
     public void createInner() {
-        ovrNode = new OpenVRLoader(controller).rootNode;
         modelNode.node.addChild(ovrNode);
+        ovrNode.addChild(new OpenVRLoader(controller).rootNode);
 
         var squareRM = new RawMeshBuilder()
                 .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
