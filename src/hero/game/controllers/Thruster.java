@@ -8,10 +8,15 @@ import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.graphics.renderables.ColorModelParticles;
+import hero.graphics.restructure.Mesh;
+import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.loading.VoxelModelLoader;
+import hero.graphics.restructure.materials.ColorParticlesMaterial;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
@@ -21,16 +26,15 @@ public class Thruster extends Behavior {
     public final ControllerBehavior controller = require(ControllerBehavior.class);
 
     public List<Particle> particles = new LinkedList();
-//    public ColorModelParticles particlesModel;
-//    public RenderableBehavior particlesRB;
+    public ColorParticlesMaterial material;
 
     @Override
     public void createInner() {
-//        particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
-//        particlesRB = createRB(particlesModel);
-//        particlesRB.beforeRender = () -> {
-//            particlesModel.transforms = particles.stream().map(p -> p.transform()).collect(Collectors.toList());
-//        };
+        material = new ColorParticlesMaterial();
+        material.color = new Vec3d(1, 0, 0);
+        material.hasShadows = false;
+        var node = new ModelNode(new Mesh(VoxelModelLoader.load("fireball.vox").rawMesh, material));
+        controller.modelNode.node.addChild(node);
     }
 
     @Override
@@ -40,6 +44,10 @@ public class Thruster extends Behavior {
 
     @Override
     public void step() {
+        for (Particle p : particles) {
+            p.time += dt();
+        }
+
         double t = controller.controller.trigger();
         if (t > .1) {
             Vec3d pullDir = controller.sideways();
@@ -51,15 +59,15 @@ public class Thruster extends Behavior {
 //            double pullStrength = Math.exp(.02 * pullDir.dot(controller.player.velocity.velocity));
 //            controller.player.velocity.velocity = controller.player.velocity.velocity.add(pullDir.mul(dt() * t * pullStrength * -10));
             for (int i = 0; i < 1000 * t * dt(); i++) {
-                particles.add(new Particle(controller.pos(), controller.player.physics.velocity.add(
-                        pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5))));
+                Vec3d vel = pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5);
+                particles.add(new Particle(
+                        controller.pos().add(vel.mul(.002 + dt() * Math.random())),
+                        controller.player.physics.velocity.add(vel)));
             }
         }
 
-        for (Particle p : particles) {
-            p.time += dt();
-        }
         particles.removeIf(p -> p.time > .2);
+        material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
     }
 
     public static class Particle {

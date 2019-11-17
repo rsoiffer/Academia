@@ -52,7 +52,7 @@ public class ControllerBehavior extends Behavior {
         modelNode.node.addChild(ovrNode);
 
         var squareRM = new RawMeshBuilder()
-                .addRectangle(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
+                .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
                         new Vec2d(0, 0), new Vec2d(1, 0), new Vec2d(0, 1))
                 .toRawMesh();
 
@@ -62,7 +62,7 @@ public class ControllerBehavior extends Behavior {
             var iconMat = DiffuseMaterial.load(textures[i]);
             iconMat.hasShadows = false;
             var icon = new ModelNode(new Mesh(squareRM, iconMat));
-            modelNode.node.addChild(icon);
+            ovrNode.addChild(icon);
 
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25);
             if (controller == Vive.LEFT) {
@@ -75,10 +75,10 @@ public class ControllerBehavior extends Behavior {
         var selectedMat = DiffuseMaterial.load("selected_icon.png");
         selectedMat.hasShadows = false;
         var selected = new ModelNode(new Mesh(squareRM, selectedMat));
-        modelNode.node.addChild(selected);
+        ovrNode.addChild(selected);
 
         modelNode.beforeRender = () -> {
-            modelNode.node.transform = getTransform();
+            ovrNode.transform = getTransform();
 
             var i = (7 - myNum) % 6;
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24);

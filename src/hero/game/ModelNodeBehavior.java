@@ -2,8 +2,6 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import hero.graphics.models.Model;
-import hero.graphics.renderables.Renderable;
 import hero.graphics.restructure.ModelNode;
 
 import java.util.Collection;

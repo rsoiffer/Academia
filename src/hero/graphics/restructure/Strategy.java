@@ -29,6 +29,11 @@ public interface Strategy {
             model.render();
         }
 
+        protected void drawModelOffset(Transformation t2) {
+            GLState.getShaderProgram().setUniform("model", t.mul(t2).matrix());
+            model.render();
+        }
+
         public void render(Transformation t, int pass) {
             this.t = t;
             switch (pass) {

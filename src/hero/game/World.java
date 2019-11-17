@@ -129,38 +129,38 @@ public class World extends Behavior {
     public ModelNode createModelNode() {
         RawMeshBuilder intersectionsModel = new RawMeshBuilder();
         for (AABB b : intersections) {
-            intersectionsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            intersectionsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(.5, .5), new Vec2d(b.size().x / 6, 0), new Vec2d(0, b.size().y / 3));
         }
 
         RawMeshBuilder roadsModel = new RawMeshBuilder();
         for (AABB b : roads) {
             if (b.size().x >= b.size().y) {
-                roadsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+                roadsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                         new Vec2d(.5, .5), new Vec2d(b.size().x / 6, 0), new Vec2d(0, b.size().y / 3));
             } else {
-                roadsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setX(0).setZ(0), b.size().setY(0).setZ(0),
+                roadsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setX(0).setZ(0), b.size().setY(0).setZ(0),
                         new Vec2d(.5, .5), new Vec2d(b.size().y / 6, 0), new Vec2d(0, b.size().x / 3));
             }
         }
 
         RawMeshBuilder sidewalksModel = new RawMeshBuilder();
         for (AABB b : sidewalks) {
-            sidewalksModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            sidewalksModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, sidewalksModel);
         }
 
         RawMeshBuilder parksModel = new RawMeshBuilder();
         for (AABB b : parks) {
-            parksModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            parksModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, parksModel);
         }
 
         RawMeshBuilder roofs = new RawMeshBuilder();
         for (AABB b : buildings) {
-            roofs.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            roofs.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
         }
 
@@ -175,16 +175,16 @@ public class World extends Behavior {
 
         RawMeshBuilder billboardsModel = new RawMeshBuilder();
         for (AABB b : billboards) {
-            billboardsModel.addRectangle(b.lower, b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            billboardsModel.addRectangleUV(b.lower, b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
-            billboardsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
+            billboardsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
             createWalls(b, 4, 1, billboardsModel);
         }
 
         RawMeshBuilder polesModel = new RawMeshBuilder();
         for (CapsuleShape c : poles) {
-            polesModel.addCylinder(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
+            polesModel.addCylinderUV(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
         }
         polesModel.smoothVertexNormals();
 
@@ -215,7 +215,7 @@ public class World extends Behavior {
             Vec3d v = b.lower.add(b.size().div(2)).add(dir.div(2)).sub(dir2.div(2)).sub(dir3.div(2));
             float texW = (float) (Math.abs(dir2.x + dir2.y + dir2.z) / scale / scaleX);
             float texH = (float) (Math.abs(dir3.x + dir3.y + dir3.z) / scale);
-            m.addRectangle(v, dir2, dir3, new Vec2d(0, 0), new Vec2d(texW, 0), new Vec2d(0, texH));
+            m.addRectangleUV(v, dir2, dir3, new Vec2d(0, 0), new Vec2d(texW, 0), new Vec2d(0, texH));
         }
     }
 

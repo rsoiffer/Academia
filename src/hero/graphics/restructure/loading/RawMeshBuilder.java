@@ -44,14 +44,14 @@ public class RawMeshBuilder {
         }
     }
 
-    public void addCylinder(Vec3d p, Vec3d dir, double radius, int detail, double texW, double texH0, double texH1) {
+    public void addCylinderUV(Vec3d p, Vec3d dir, double radius, int detail, double texW, double texH0, double texH1) {
         Vec3d dir1 = dir.cross(randomDir).normalize();
         Vec3d dir2 = dir.cross(dir1).normalize();
         for (int i = 0; i < detail; i++) {
             double angle0 = i * 2 * Math.PI / detail, angle1 = (i + 1) * 2 * Math.PI / detail;
             Vec3d v0 = p.add(dir1.mul(Math.cos(angle0) * radius)).add(dir2.mul(Math.sin(angle0) * radius));
             Vec3d v1 = p.add(dir1.mul(Math.cos(angle1) * radius)).add(dir2.mul(Math.sin(angle1) * radius));
-            addRectangle(v0, v1.sub(v0), dir, new Vec2d(texW * i / detail, texH0), new Vec2d(texW / detail, 0), new Vec2d(0, texH1 - texH0));
+            addRectangleUV(v0, v1.sub(v0), dir, new Vec2d(texW * i / detail, texH0), new Vec2d(texW / detail, 0), new Vec2d(0, texH1 - texH0));
         }
     }
 
@@ -63,13 +63,29 @@ public class RawMeshBuilder {
         return this;
     }
 
-    public RawMeshBuilder addRectangle(Vec3d p, Vec3d edge1, Vec3d edge2, Vec2d uv, Vec2d uvd1, Vec2d uvd2) {
-        addTriangle(p, uv, p.add(edge1), uv.add(uvd1), p.add(edge1).add(edge2), uv.add(uvd1).add(uvd2));
-        addTriangle(p, uv, p.add(edge1).add(edge2), uv.add(uvd1).add(uvd2), p.add(edge2), uv.add(uvd2));
+    public RawMeshBuilder addRectangle(Vec3d p, Vec3d edge1, Vec3d edge2) {
+        addTriangle(p, p.add(edge1), p.add(edge1).add(edge2));
+        addTriangle(p, p.add(edge1).add(edge2), p.add(edge2));
         return this;
     }
 
-    public RawMeshBuilder addTriangle(Vec3d p1, Vec2d uv1, Vec3d p2, Vec2d uv2, Vec3d p3, Vec2d uv3) {
+    public RawMeshBuilder addRectangleUV(Vec3d p, Vec3d edge1, Vec3d edge2, Vec2d uv, Vec2d uvd1, Vec2d uvd2) {
+        addTriangleUV(p, uv, p.add(edge1), uv.add(uvd1), p.add(edge1).add(edge2), uv.add(uvd1).add(uvd2));
+        addTriangleUV(p, uv, p.add(edge1).add(edge2), uv.add(uvd1).add(uvd2), p.add(edge2), uv.add(uvd2));
+        return this;
+    }
+
+    public RawMeshBuilder addTriangle(Vec3d p1, Vec3d p2, Vec3d p3) {
+        Vec3d edge1 = p2.sub(p1), edge2 = p3.sub(p1);
+        Vec3d normal = edge1.cross(edge2).normalize();
+        addIndices(numVerts, numVerts + 1, numVerts + 2);
+        addVertex(p1, normal);
+        addVertex(p2, normal);
+        addVertex(p3, normal);
+        return this;
+    }
+
+    public RawMeshBuilder addTriangleUV(Vec3d p1, Vec2d uv1, Vec3d p2, Vec2d uv2, Vec3d p3, Vec2d uv3) {
         Vec3d edge1 = p2.sub(p1), edge2 = p3.sub(p1);
         Vec2d duv1 = uv2.sub(uv1), duv2 = uv3.sub(uv1);
         Vec3d normal = edge1.cross(edge2).normalize();

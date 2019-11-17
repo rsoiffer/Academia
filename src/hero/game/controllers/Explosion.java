@@ -6,11 +6,15 @@ import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.game.controllers.Thruster.Particle;
-import hero.graphics.renderables.ColorModelParticles;
+import hero.graphics.restructure.Mesh;
+import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.loading.VoxelModelLoader;
+import hero.graphics.restructure.materials.ColorParticlesMaterial;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
@@ -22,16 +26,15 @@ public class Explosion extends Behavior {
 
     public double charge;
     public List<Particle> particles = new LinkedList();
-//    public ColorModelParticles particlesModel;
-//    public RenderableBehavior particlesRB;
+    public ColorParticlesMaterial material;
 
     @Override
     public void createInner() {
-//        particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
-//        particlesRB = createRB(particlesModel);
-//        particlesRB.beforeRender = () -> {
-//            particlesModel.transforms = particles.stream().map(p -> p.transform()).collect(Collectors.toList());
-//        };
+        material = new ColorParticlesMaterial();
+        material.color = new Vec3d(1, 0, 0);
+        material.hasShadows = false;
+        var node = new ModelNode(new Mesh(VoxelModelLoader.load("fireball.vox").rawMesh, material));
+        controller.modelNode.node.addChild(node);
     }
 
     @Override
@@ -66,5 +69,6 @@ public class Explosion extends Behavior {
             p.time += dt();
         }
         particles.removeIf(p -> Math.random() < 5 * dt());
+        material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
     }
 }
