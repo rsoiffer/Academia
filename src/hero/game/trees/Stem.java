@@ -360,7 +360,7 @@ public class Stem {
             renderable = new LODPBRModel(l, bark);
         }
         LODPBRModel m = new LODPBRModel(renderable);
-        m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
+        // m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
         return m;
     }
 
@@ -376,7 +376,7 @@ public class Stem {
             renderableLeaves = new LODPBRModel(l, leaf);
         }
         LODPBRModel m = new LODPBRModel(renderableLeaves);
-        m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
+        // m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
         return m;
     }
 }

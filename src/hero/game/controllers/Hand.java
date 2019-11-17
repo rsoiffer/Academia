@@ -2,19 +2,14 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
-import hero.game.RenderableBehavior;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 
 import java.util.OptionalDouble;
 
 import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.game.RenderableBehavior.createRB;
 
 public class Hand extends Behavior {
 
@@ -24,42 +19,37 @@ public class Hand extends Behavior {
 
     public Vec3d handPos;
 
-    public ColorModel armModel;
-    public RenderableBehavior armRB;
+//    public ColorModel armModel;
+//    public RenderableBehavior armRB;
 
     @Override
     public void createInner() {
-        armModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
-        armModel.color = new Vec3d(.5, 1, .4);
-        armRB = createRB(armModel);
-        armRB.beforeRender = () -> {
-            Vec3d v = handPos;
-            if (v == null) {
-                Vec3d start = controller.pos();
-                Vec3d dir = controller.forwards();
-//                double t = controller.player.hero.physics.world.buildings.stream().mapToDouble(a -> a.raycast(start, dir))
-//                        .filter(d -> d >= 0).min().orElse(-1);
-                OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
-                if (t.isPresent() && t.getAsDouble() <= 8) {
-                    v = start.add(dir.mul(t.getAsDouble()));
-                }
-            }
-
-            armRB.visible = v != null;
-            if (armRB.visible) {
-                Vec3d pos = controller.pos();
-                Vec3d forwards = v.sub(pos);
-                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-                Vec3d up = forwards.cross(side).setLength(.05);
-                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
-                armModel.t = Transformation.create(pos2, forwards, side, up);
-            }
-        };
-    }
-
-    @Override
-    public void destroyInner() {
-        armRB.destroy();
+//        armModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
+//        armModel.color = new Vec3d(.5, 1, .4);
+//        armRB = createRB(armModel);
+//        armRB.beforeRender = () -> {
+//            Vec3d v = handPos;
+//            if (v == null) {
+//                Vec3d start = controller.pos();
+//                Vec3d dir = controller.forwards();
+////                double t = controller.player.hero.physics.world.buildings.stream().mapToDouble(a -> a.raycast(start, dir))
+////                        .filter(d -> d >= 0).min().orElse(-1);
+//                OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
+//                if (t.isPresent() && t.getAsDouble() <= 8) {
+//                    v = start.add(dir.mul(t.getAsDouble()));
+//                }
+//            }
+//
+//            armRB.visible = v != null;
+//            if (armRB.visible) {
+//                Vec3d pos = controller.pos();
+//                Vec3d forwards = v.sub(pos);
+//                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
+//                Vec3d up = forwards.cross(side).setLength(.05);
+//                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
+////                armModel.t = Transformation.create(pos2, forwards, side, up);
+//            }
+//        };
     }
 
     @Override

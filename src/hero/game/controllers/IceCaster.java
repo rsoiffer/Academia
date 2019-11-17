@@ -4,12 +4,9 @@ import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
-import hero.game.RenderableBehavior;
 import hero.graphics.PBRTexture;
 import hero.graphics.SDF;
 import hero.graphics.models.SurfaceNet;
-import hero.graphics.renderables.PBRModel;
-import hero.graphics.renderables.Renderable;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
@@ -18,15 +15,14 @@ import java.util.Arrays;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.game.RenderableBehavior.createRB;
 import static hero.graphics.SDF.*;
 
 public class IceCaster extends Behavior {
 
     public static SurfaceNet iceModel = new SurfaceNet(.5);
     private static PBRTexture iceTexture = PBRTexture.loadFromFolder("ice2");
-    private static Renderable iceRenderable = new PBRModel(iceModel, iceTexture);
-    private static RenderableBehavior iceRB = createRB(iceRenderable);
+//    private static Renderable iceRenderable = new PBRModel(iceModel, iceTexture);
+//    private static RenderableBehavior iceRB = createRB(iceRenderable);
 
     public final ControllerBehavior controller = require(ControllerBehavior.class);
 
@@ -57,10 +53,6 @@ public class IceCaster extends Behavior {
                 halfSpace(pos2, dir.mul(-1)));
         AABB bounds = AABB.boundingBox(Arrays.asList(pos1.sub(radius), pos1.add(radius), pos2.sub(radius), pos2.add(radius)));
         iceModel.unionSDF(shape, bounds);
-    }
-
-    @Override
-    public void createInner() {
     }
 
     @Override

@@ -7,39 +7,30 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.game.RenderableBehavior;
-import hero.graphics.models.VoxelModel2;
 import hero.graphics.renderables.ColorModelParticles;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.game.RenderableBehavior.createRB;
 
 public class Thruster extends Behavior {
 
     public final ControllerBehavior controller = require(ControllerBehavior.class);
 
     public List<Particle> particles = new LinkedList();
-    public ColorModelParticles particlesModel;
-    public RenderableBehavior particlesRB;
+//    public ColorModelParticles particlesModel;
+//    public RenderableBehavior particlesRB;
 
     @Override
     public void createInner() {
-        particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
-        particlesRB = createRB(particlesModel);
-        particlesRB.beforeRender = () -> {
-            particlesModel.transforms = particles.stream().map(p -> p.transform()).collect(Collectors.toList());
-        };
-    }
-
-    @Override
-    public void destroyInner() {
-        particlesRB.destroy();
+//        particlesModel = new ColorModelParticles(VoxelModel2.load("fireball.vox"));
+//        particlesRB = createRB(particlesModel);
+//        particlesRB.beforeRender = () -> {
+//            particlesModel.transforms = particles.stream().map(p -> p.transform()).collect(Collectors.toList());
+//        };
     }
 
     @Override

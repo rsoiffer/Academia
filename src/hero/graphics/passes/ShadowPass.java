@@ -7,7 +7,7 @@ import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.game.RenderableBehavior;
+import hero.game.ModelNodeBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 import hero.physics.shapes.AABB;
 import org.joml.Matrix4d;
@@ -110,7 +110,7 @@ public class ShadowPass implements RenderPass {
         GLState.enable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
         glCullFace(GL_FRONT);
-        RenderableBehavior.allRenderables().forEach(r -> r.renderShadow(Transformation.IDENTITY));
+        ModelNodeBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 1));
         glCullFace(GL_BACK);
         GLState.bindFramebuffer(null);
     }

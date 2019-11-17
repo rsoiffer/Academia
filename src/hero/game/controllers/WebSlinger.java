@@ -2,17 +2,12 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.game.RenderableBehavior;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 
 import java.util.OptionalDouble;
 
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.game.RenderableBehavior.createRB;
 
 public class WebSlinger extends Behavior {
 
@@ -21,29 +16,24 @@ public class WebSlinger extends Behavior {
     public Vec3d web;
     public double prefLength;
 
-    public ColorModel webModel;
-    public RenderableBehavior webRB;
+//    public ColorModel webModel;
+//    public RenderableBehavior webRB;
 
     @Override
     public void createInner() {
-        webModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
-        webRB = createRB(webModel);
-        webRB.beforeRender = () -> {
-            webRB.visible = web != null;
-            if (webRB.visible) {
-                Vec3d pos = controller.pos();
-                Vec3d forwards = web.sub(pos);
-                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-                Vec3d up = forwards.cross(side).setLength(.05);
-                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
-                webModel.t = Transformation.create(pos2, forwards, side, up);
-            }
-        };
-    }
-
-    @Override
-    public void destroyInner() {
-        webRB.destroy();
+//        webModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
+//        webRB = createRB(webModel);
+//        webRB.beforeRender = () -> {
+//            webRB.visible = web != null;
+//            if (webRB.visible) {
+//                Vec3d pos = controller.pos();
+//                Vec3d forwards = web.sub(pos);
+//                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
+//                Vec3d up = forwards.cross(side).setLength(.05);
+//                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
+////                webModel.t = Transformation.create(pos2, forwards, side, up);
+//            }
+//        };
     }
 
     @Override

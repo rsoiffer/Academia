@@ -2,30 +2,25 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
+import hero.graphics.models.Model;
 import hero.graphics.renderables.Renderable;
+import hero.graphics.restructure.ModelNode;
 
 import java.util.Collection;
 import java.util.stream.Stream;
 
 import static beige_engine.engine.Layer.POSTUPDATE;
 
-public class RenderableBehavior extends Behavior {
+public class ModelNodeBehavior extends Behavior {
 
-    public static final Collection<RenderableBehavior> ALL = track(RenderableBehavior.class);
+    public static final Collection<ModelNodeBehavior> ALL = track(ModelNodeBehavior.class);
 
-    public Renderable renderable;
+    public ModelNode node = new ModelNode();
     public boolean visible = true;
     public Runnable beforeRender = null;
 
-    public static Stream<Renderable> allRenderables() {
-        return ALL.stream().filter(r -> r.visible).map(r -> r.renderable);
-    }
-
-    public static RenderableBehavior createRB(Renderable renderable) {
-        RenderableBehavior rb = new RenderableBehavior();
-        rb.renderable = renderable;
-        rb.create();
-        return rb;
+    public static Stream<ModelNode> allNodes() {
+        return ALL.stream().filter(r -> r.visible).map(r -> r.node);
     }
 
     @Override

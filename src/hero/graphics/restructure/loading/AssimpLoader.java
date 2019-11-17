@@ -1,9 +1,14 @@
-package hero.graphics.restructure;
+package hero.graphics.restructure.loading;
 
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.sprites.Sprite;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.renderables.DiffuseModel;
+import hero.graphics.restructure.*;
+import hero.graphics.restructure.materials.ColorMaterial;
+import hero.graphics.restructure.materials.DiffuseMaterial;
+import hero.graphics.restructure.materials.Material;
 import org.joml.Matrix4d;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -15,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static hero.graphics.restructure.VertexAttrib.*;
 import static org.lwjgl.assimp.Assimp.*;
 
 public class AssimpLoader {
@@ -104,25 +110,40 @@ public class AssimpLoader {
 
     private Texture loadMaterialTexture(AIMaterial aiMaterial, int type) {
         var path = loadMaterialTexturePath(aiMaterial, type);
-        if (path.isEmpty() || path.get() == null || path.get().length() == 0) {
-//            System.out.println("Failed to load texture, with result: " + path);
+        if (path.isEmpty() || path.get().length() == 0) {
             return null;
         }
-//        System.out.println("Loaded texture from: " + path);
         return Sprite.load(texturesDir + "/" + path.get()).texture;
     }
 
     private Material toMaterial(AIMaterial aiMaterial) {
-        var m = new Material();
-        m.diffuse = loadMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE).orElse(m.diffuse);
-        m.specular = loadMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR).orElse(m.specular);
-        m.opacity = loadMaterialFloat(aiMaterial, AI_MATKEY_OPACITY).orElse(m.opacity);
-        m.shininess = loadMaterialFloat(aiMaterial, AI_MATKEY_SHININESS).orElse(m.shininess);
-        m.texture = loadMaterialTexture(aiMaterial, aiTextureType_DIFFUSE);
-        return m;
+        var diffuse = loadMaterialColor(aiMaterial, AI_MATKEY_COLOR_DIFFUSE).orElse(new Vec3d(1, 0, 1));
+        var specular = loadMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR).orElse(new Vec3d(0, 0, 0));
+        var opacity = loadMaterialFloat(aiMaterial, AI_MATKEY_OPACITY).orElse(1.);
+        var shininess = loadMaterialFloat(aiMaterial, AI_MATKEY_SHININESS).orElse(2.);
+        var texture = loadMaterialTexture(aiMaterial, aiTextureType_DIFFUSE);
+
+        var metallic = specular.length() / Math.sqrt(3);
+        var roughness = Math.pow(2 / (shininess + 2), .25);
+
+        if (opacity != 1) return null;
+
+        if (texture == null) {
+            var m = new ColorMaterial();
+            m.color = diffuse.add(specular);
+            m.metallic = metallic;
+            m.roughness = roughness;
+            return m;
+        } else {
+            var m = new DiffuseMaterial();
+            m.texture = texture;
+            m.metallic = metallic;
+            m.roughness = roughness;
+            return m;
+        }
     }
 
-    private void possiblySetAttrib(RawMesh myMesh, String name, AIVector3D.Buffer buf) {
+    private void possiblySetAttrib(RawMesh myMesh, VertexAttrib name, AIVector3D.Buffer buf) {
         if (buf != null) {
             myMesh.setAttrib(name, streamBuf(buf).flatMap(AssimpLoader::streamVec));
         }
@@ -131,11 +152,11 @@ public class AssimpLoader {
     private Mesh toMesh(AIMesh aiMesh) {
         var rawMesh = new RawMesh(aiMesh.mNumFaces(), aiMesh.mNumVertices());
         rawMesh.setIndices(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
-        possiblySetAttrib(rawMesh, "positions", aiMesh.mVertices());
-        possiblySetAttrib(rawMesh, "normals", aiMesh.mNormals());
-        possiblySetAttrib(rawMesh, "texCoords", aiMesh.mTextureCoords(0));
-        possiblySetAttrib(rawMesh, "tangents", aiMesh.mTangents());
-        possiblySetAttrib(rawMesh, "bitangents", aiMesh.mBitangents());
+        possiblySetAttrib(rawMesh, POSITIONS, aiMesh.mVertices());
+        possiblySetAttrib(rawMesh, NORMALS, aiMesh.mNormals());
+        possiblySetAttrib(rawMesh, TEX_COORDS, aiMesh.mTextureCoords(0));
+        possiblySetAttrib(rawMesh, TANGENTS, aiMesh.mTangents());
+        possiblySetAttrib(rawMesh, BITANGENTS, aiMesh.mBitangents());
 
         var material = materials.get(aiMesh.mMaterialIndex());
         return new Mesh(rawMesh, material);

@@ -6,19 +6,14 @@ import org.joml.Matrix4d;
 
 public abstract class Renderable {
 
-    public Transformation t = Transformation.IDENTITY;
-
-    Renderable() {
-    }
-
     public void renderGeom(Transformation t) {
-        renderGeomInner(t.mul(this.t));
+        renderGeomInner(t);
     }
 
     public abstract void renderGeomInner(Transformation t);
 
     public void renderShadow(Transformation t) {
-        renderShadowInner(t.mul(this.t));
+        renderShadowInner(t);
     }
 
     public abstract void renderShadowInner(Transformation t);

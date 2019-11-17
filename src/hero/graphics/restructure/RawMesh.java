@@ -4,7 +4,7 @@ import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.VertexArrayObject;
 import hero.graphics.models.Model;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,8 +20,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class RawMesh {
 
-    public final int numFaces, numVerts;
-    private final Map<String, float[]> attribs = new HashMap<>();
+    private final int numFaces, numVerts;
+    private final Map<VertexAttrib, float[]> attribs = new EnumMap<>(VertexAttrib.class);
     private int[] indices;
 
     public RawMesh(int numFaces, int numVerts) {
@@ -29,7 +29,7 @@ public class RawMesh {
         this.numVerts = numVerts;
     }
 
-    public Model buildModel(String... names) {
+    public Model buildModel(List<VertexAttrib> names) {
         int[] attribSizes = getAttribSizes(names).toArray();
         var vbo = new BufferObject(GL_ARRAY_BUFFER, getMergedAttribs(names));
         var ebo = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, getIndices());
@@ -45,31 +45,52 @@ public class RawMesh {
             }
         });
 
+        // Sanity check
+        if (indices.length != numFaces * 3) {
+            throw new RuntimeException("Bad number of indices");
+        }
+        for (int i : indices) {
+            if (i < 0 || i >= numVerts) {
+                throw new RuntimeException("Index out of range: " + i);
+            }
+        }
+        for (float f : getMergedAttribs(names)) {
+            if (!Float.isFinite(f)) {
+                throw new RuntimeException("Bad data value: " + f);
+            }
+        }
+
+        int numIndices  = numFaces * 3;
         return () -> {
             vao.bind();
             ebo.bind();
-            glDrawElements(GL_TRIANGLES, numFaces * 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
         };
     }
 
-    public float[] getAttrib(String name) {
+    private float[] getAttrib(VertexAttrib name) {
         if (!attribs.containsKey(name)) {
             throw new IllegalArgumentException("Unknown attribute " + name);
         }
         return attribs.get(name);
     }
 
-    public IntStream getAttribSizes(String... names) {
-        return Stream.of(names).mapToInt(s -> getAttrib(s).length / numVerts);
+    private IntStream getAttribSizes(List<VertexAttrib> names) {
+        return names.stream().mapToInt(s -> getAttrib(s).length / numVerts);
     }
 
-    public int[] getIndices() {
+    private int[] getIndices() {
         return indices;
     }
 
     public void setIndices(int[] values) {
         if (values.length != numFaces * 3) {
             throw new IllegalArgumentException("The values array is the wrong length");
+        }
+        for (int i : values) {
+            if (i < 0 || i >= numVerts) {
+                throw new IllegalArgumentException("Index out of bounds");
+            }
         }
         indices = values;
     }
@@ -82,8 +103,8 @@ public class RawMesh {
         setIndices(values.mapToInt(i -> i));
     }
 
-    public float[] getMergedAttribs(String... names) {
-        int totalSize = Stream.of(names).mapToInt(s -> getAttrib(s).length).sum();
+    private float[] getMergedAttribs(List<VertexAttrib> names) {
+        int totalSize = names.stream().mapToInt(s -> getAttrib(s).length).sum();
         float[] data = new float[totalSize];
         int pos = 0;
         for (var name : names) {
@@ -94,14 +115,14 @@ public class RawMesh {
         return data;
     }
 
-    public void setAttrib(String name, float[] values) {
-        if (values.length % numVerts != 0) {
+    public void setAttrib(VertexAttrib name, float[] values) {
+        if (values.length != numVerts * name.size) {
             throw new IllegalArgumentException("The values array is the wrong length");
         }
         attribs.put(name, values);
     }
 
-    public void setAttrib(String name, List<Float> values) {
+    public void setAttrib(VertexAttrib name, List<Float> values) {
         float[] f = new float[values.size()];
         int pos = 0;
         for (float v : values) {
@@ -110,7 +131,7 @@ public class RawMesh {
         setAttrib(name, f);
     }
 
-    public void setAttrib(String name, Stream<Float> values) {
+    public void setAttrib(VertexAttrib name, Stream<Float> values) {
         setAttrib(name, values.collect(Collectors.toList()));
     }
 }

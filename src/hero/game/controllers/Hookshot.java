@@ -2,16 +2,11 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.game.RenderableBehavior;
-import hero.graphics.models.VoxelModel2;
-import hero.graphics.renderables.ColorModel;
 
 import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.game.RenderableBehavior.createRB;
 
 public class Hookshot extends Behavior {
 
@@ -19,30 +14,25 @@ public class Hookshot extends Behavior {
 
     public Vec3d hookPos, hookVel;
     public boolean grabbing;
-    public ColorModel lineModel;
-    public RenderableBehavior lineRB;
+//    public ColorModel lineModel;
+//    public RenderableBehavior lineRB;
 
     @Override
     public void createInner() {
-        lineModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
-        lineModel.color = new Vec3d(.5, .5, .5);
-        lineRB = createRB(lineModel);
-        lineRB.beforeRender = () -> {
-            lineRB.visible = hookPos != null;
-            if (lineRB.visible) {
-                Vec3d pos = controller.pos();
-                Vec3d forwards = hookPos.sub(pos);
-                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-                Vec3d up = forwards.cross(side).setLength(.05);
-                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
-                lineModel.t = Transformation.create(pos2, forwards, side, up);
-            }
-        };
-    }
-
-    @Override
-    public void destroyInner() {
-        lineRB.destroy();
+//        lineModel = new ColorModel(VoxelModel2.load("singlevoxel.vox"));
+//        lineModel.color = new Vec3d(.5, .5, .5);
+//        lineRB = createRB(lineModel);
+//        lineRB.beforeRender = () -> {
+//            lineRB.visible = hookPos != null;
+//            if (lineRB.visible) {
+//                Vec3d pos = controller.pos();
+//                Vec3d forwards = hookPos.sub(pos);
+//                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
+//                Vec3d up = forwards.cross(side).setLength(.05);
+//                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
+////                lineModel.t = Transformation.create(pos2, forwards, side, up);
+//            }
+//        };
     }
 
     @Override

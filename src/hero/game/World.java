@@ -3,21 +3,23 @@ package hero.game;
 import beige_engine.engine.Behavior;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.Noise;
+import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.game.trees.StemGenerator;
 import hero.graphics.PBRTexture;
-import hero.graphics.models.CustomModel;
 import hero.graphics.renderables.DiffuseModel;
 import hero.graphics.renderables.PBRModel;
 import hero.graphics.renderables.Renderable;
 import hero.graphics.renderables.RenderableList;
+import hero.graphics.restructure.Mesh;
+import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.loading.RawMeshBuilder;
+import hero.graphics.restructure.materials.DiffuseMaterial;
+import hero.graphics.restructure.materials.PBRMaterial;
 import hero.physics.shapes.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static beige_engine.util.math.MathUtils.floor;
 import static hero.game.controllers.IceCaster.iceModel;
@@ -38,7 +40,7 @@ public class World extends Behavior {
             "highrise_0.png", "highrise_1.png", "highrise_2.png", "highrise_3.png", "highrise_4.png"};
     private static final String[] WALL_PBR_TEXTURES = {"highrise_facade_1", "highrise_facade_2", "highrise_facade_3"};
 
-    public final RenderableBehavior renderable = require(RenderableBehavior.class);
+    public final ModelNodeBehavior modelNode = require(ModelNodeBehavior.class);
     private final List<AABB> buildings = new ArrayList();
     private final List<AABB> intersections = new ArrayList();
     private final List<AABB> roads = new ArrayList();
@@ -121,18 +123,17 @@ public class World extends Behavior {
         l.add(new SurfaceNetShape(iceModel));
         collisionShape = new MultigridShape(l);
 
-        renderable.renderable = createRenderable();
+        modelNode.node = createModelNode();
     }
 
-    public Renderable createRenderable() {
-        CustomModel intersectionsModel = new CustomModel();
+    public ModelNode createModelNode() {
+        RawMeshBuilder intersectionsModel = new RawMeshBuilder();
         for (AABB b : intersections) {
             intersectionsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(.5, .5), new Vec2d(b.size().x / 6, 0), new Vec2d(0, b.size().y / 3));
         }
-        intersectionsModel.createVAO();
 
-        CustomModel roadsModel = new CustomModel();
+        RawMeshBuilder roadsModel = new RawMeshBuilder();
         for (AABB b : roads) {
             if (b.size().x >= b.size().y) {
                 roadsModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
@@ -142,44 +143,37 @@ public class World extends Behavior {
                         new Vec2d(.5, .5), new Vec2d(b.size().y / 6, 0), new Vec2d(0, b.size().x / 3));
             }
         }
-        roadsModel.createVAO();
 
-        CustomModel sidewalksModel = new CustomModel();
+        RawMeshBuilder sidewalksModel = new RawMeshBuilder();
         for (AABB b : sidewalks) {
             sidewalksModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, sidewalksModel);
         }
-        sidewalksModel.createVAO();
 
-        CustomModel parksModel = new CustomModel();
+        RawMeshBuilder parksModel = new RawMeshBuilder();
         for (AABB b : parks) {
             parksModel.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, parksModel);
         }
-        parksModel.createVAO();
 
-        CustomModel roofs = new CustomModel();
+        RawMeshBuilder roofs = new RawMeshBuilder();
         for (AABB b : buildings) {
             roofs.addRectangle(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
         }
-        roofs.createVAO();
 
-        CustomModel[] walls = new CustomModel[NUM_WALL_TYPES];
+        RawMeshBuilder[] walls = new RawMeshBuilder[NUM_WALL_TYPES];
         for (int i = 0; i < NUM_WALL_TYPES; i++) {
-            walls[i] = new CustomModel();
+            walls[i] = new RawMeshBuilder();
         }
         for (AABB b : buildings) {
             int i = floor(Math.random() * NUM_WALL_TYPES);
             createWalls(b, FLOOR_HEIGHT * WALL_SCALES[i], WALL_SCALES_X[i], walls[i]);
         }
-        for (int i = 0; i < NUM_WALL_TYPES; i++) {
-            walls[i].createVAO();
-        }
 
-        CustomModel billboardsModel = new CustomModel();
+        RawMeshBuilder billboardsModel = new RawMeshBuilder();
         for (AABB b : billboards) {
             billboardsModel.addRectangle(b.lower, b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
@@ -187,35 +181,33 @@ public class World extends Behavior {
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
             createWalls(b, 4, 1, billboardsModel);
         }
-        billboardsModel.createVAO();
 
-        CustomModel polesModel = new CustomModel();
+        RawMeshBuilder polesModel = new RawMeshBuilder();
         for (CapsuleShape c : poles) {
             polesModel.addCylinder(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
         }
         polesModel.smoothVertexNormals();
-        polesModel.createVAO();
 
-        List<Renderable> parts = new LinkedList();
-        parts.add(new PBRModel(intersectionsModel, PBRTexture.loadFromFolder("road_empty")));
-        parts.add(new PBRModel(roadsModel, PBRTexture.loadFromFolder("road")));
-        parts.add(new PBRModel(sidewalksModel, PBRTexture.loadFromFolder("sidewalk")));
-        parts.add(new PBRModel(parksModel, PBRTexture.loadFromFolder("grass")));
-        parts.add(new PBRModel(roofs, PBRTexture.loadFromFolder("concrete_floor")));
-        // parts.add(new PBRModel(billboardsModel, PBRTexture.loadFromFolder("concrete_pole")));
-        parts.add(new PBRModel(polesModel, PBRTexture.loadFromFolder("concrete_pole")));
+        List<Mesh> meshes = new LinkedList<>();
+        meshes.add(new Mesh(intersectionsModel.toRawMesh(), PBRMaterial.load("road_empty")));
+        meshes.add(new Mesh(roadsModel.toRawMesh(), PBRMaterial.load("road")));
+        meshes.add(new Mesh(sidewalksModel.toRawMesh(), PBRMaterial.load("sidewalk")));
+        meshes.add(new Mesh(parksModel.toRawMesh(), PBRMaterial.load("grass")));
+        meshes.add(new Mesh(roofs.toRawMesh(), PBRMaterial.load("concrete_floor")));
+        // meshes.add(new Mesh(billboardsModel.toRawMesh(), PBRMaterial.load("concrete_pole")));
+        meshes.add(new Mesh(polesModel.toRawMesh(), PBRMaterial.load("concrete_pole")));
         for (int i = 0; i < NUM_WALL_TYPES; i++) {
             if (i < WALL_TEXTURES.length) {
-                parts.add(new DiffuseModel(walls[i], Texture.load(WALL_TEXTURES[i])));
+                meshes.add(new Mesh(walls[i].toRawMesh(), DiffuseMaterial.load(WALL_TEXTURES[i])));
             } else {
-                parts.add(new PBRModel(walls[i], PBRTexture.loadFromFolder(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length])));
+                meshes.add(new Mesh(walls[i].toRawMesh(), PBRMaterial.load(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length])));
             }
         }
-        parts.addAll(treeGenerator.renderables());
-        return new RenderableList(parts);
+        // meshes.addAll(treeGenerator.renderables());
+        return new ModelNode(Transformation.IDENTITY, meshes, Collections.emptyList());
     }
 
-    private void createWalls(AABB b, double scale, double scaleX, CustomModel m) {
+    private void createWalls(AABB b, double scale, double scaleX, RawMeshBuilder m) {
         for (int j = 0; j < 4; j++) {
             Vec3d dir = DIRS.get(j).mul(b.size());
             Vec3d dir2 = DIRS.get(j < 2 ? j + 2 : 3 - j).mul(b.size());
