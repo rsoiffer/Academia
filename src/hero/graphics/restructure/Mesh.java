@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class Mesh {
 
-    private final int numFaces, numVerts;
+    public final int numFaces, numVerts;
     private final Map<VertexAttrib, float[]> attribs = new EnumMap<>(VertexAttrib.class);
     private int[] indices;
 
@@ -95,6 +95,23 @@ public class Mesh {
             pos += attrib.length;
         }
         return data;
+    }
+
+    public int getIndex(int i) {
+        return indices[i];
+    }
+
+    public Map<VertexAttrib, float[]> getVertex(int i) {
+        if (i < 0 || i >= numVerts) {
+            throw new RuntimeException("Index out of bounds");
+        }
+        var r = new EnumMap<VertexAttrib, float[]>(VertexAttrib.class);
+        for (var v : attribs.keySet()) {
+            float[] f = new float[v.size];
+            System.arraycopy(attribs.get(v), v.size * i, f, 0, v.size);
+            r.put(v, f);
+        }
+        return r;
     }
 
     public void setAttrib(VertexAttrib name, float[] values) {

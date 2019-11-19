@@ -9,6 +9,7 @@ import hero.graphics.restructure.VertexAttrib;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static hero.graphics.restructure.VertexAttrib.*;
@@ -24,6 +25,9 @@ public class RawMeshBuilder {
         } else if (o instanceof Vec2d) {
             var v = (Vec2d) o;
             return DoubleStream.of(v.x, v.y).mapToObj(x -> (float) x);
+        } else if (o instanceof float[]) {
+            var f = (float[]) o;
+            return IntStream.range(0, f.length).mapToObj(i -> f[i]);
         }
         throw new IllegalArgumentException("Cannot parse object of type " + o.getClass());
     }
@@ -115,6 +119,16 @@ public class RawMeshBuilder {
 
     public void smoothVertexNormals() {
         // TODO - implement
+
+//        HashMap<Vec3d, Vec3d> normals = new HashMap();
+//        for (VertexPBR v : vertices) {
+//            normals.compute(v.position, (key, val) -> val == null ? v.normal : val.add(v.normal));
+//        }
+//        for (int i = 0; i < vertices.size(); i++) {
+//            VertexPBR v = vertices.get(i);
+//            VertexPBR v2 = new VertexPBR(v.position, v.texCoord, normals.get(v.position).normalize(), v.tangent, v.bitangent);
+//            vertices.set(i, v2);
+//        }
     }
 
     public Mesh toRawMesh() {

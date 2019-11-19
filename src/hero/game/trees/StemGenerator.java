@@ -1,7 +1,9 @@
 package hero.game.trees;
 
+import beige_engine.util.math.Quaternion;
+import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.renderables.Renderable;
+import hero.graphics.restructure.ModelNode;
 import hero.physics.shapes.CollisionShape;
 
 import java.util.ArrayList;
@@ -41,20 +43,24 @@ public class StemGenerator {
         treePlacements.get(chosen).add(pos);
     }
 
-    public List<Renderable> renderables() {
-        List<Renderable> r = new LinkedList();
+    public List<ModelNode> modelNodes() {
+        List<ModelNode> r = new LinkedList<>();
         for (int i = 0; i < treeInstances.size(); i++) {
             Stem s = treeInstances.get(i);
-            for (Vec3d v : treePlacements.get(i)) {
-                r.add(s.getRenderable(v));
+            for (var v : treePlacements.get(i)) {
+                var mn = new ModelNode(s.getStrategy());
+                mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
+                r.add(mn);
             }
         }
-//        for (int i = 0; i < treeInstances.size(); i++) {
-//            Stem s = treeInstances.get(i);
-//            for (Vec3d v : treePlacements.get(i)) {
-//                r.add(s.getRenderableLeaves(v));
-//            }
-//        }
+        for (int i = 0; i < treeInstances.size(); i++) {
+            Stem s = treeInstances.get(i);
+            for (var v : treePlacements.get(i)) {
+                var mn = new ModelNode(s.getStrategyLeaves());
+                mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
+                r.add(mn);
+            }
+        }
         return r;
     }
 }

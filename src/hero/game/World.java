@@ -16,8 +16,9 @@ import hero.physics.shapes.*;
 import java.util.*;
 
 import static beige_engine.util.math.MathUtils.floor;
+import static beige_engine.util.math.MathUtils.rotate;
 import static hero.game.controllers.IceCaster.iceModel;
-import static hero.graphics.models.VoxelModel2.DIRS;
+import static hero.graphics.restructure.loading.VoxelModelLoader.DIRS;
 
 public class World extends Behavior {
 
@@ -63,7 +64,7 @@ public class World extends Behavior {
                     for (int k = 0; k < 15; k++) {
                         double x = i + Math.random() * 2 * BUILDING_SIZE;
                         double y = j + Math.random() * 8 * BUILDING_SIZE;
-                        // treeGenerator.placeTree(new Vec3d(x, y, 0));
+                        treeGenerator.placeTree(new Vec3d(x, y, 0));
                     }
                 } else {
                     sidewalks.add(new AABB(new Vec3d(i - buffer2, j - buffer2, -500), new Vec3d(i + 2 * BUILDING_SIZE + buffer2, j + 8 * BUILDING_SIZE + buffer2, .1)));
@@ -197,8 +198,9 @@ public class World extends Behavior {
                 meshes.add(PBRMaterial.load(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length]).buildStrategy(walls[i]));
             }
         }
-        // meshes.addAll(treeGenerator.renderables());
-        return new ModelNode(Transformation.IDENTITY, meshes, Collections.emptyList());
+        var node = new ModelNode(Transformation.IDENTITY, meshes, Collections.emptyList());
+        treeGenerator.modelNodes().forEach(node::addChild);
+        return node;
     }
 
     private void createWalls(AABB b, double scale, double scaleX, RawMeshBuilder m) {

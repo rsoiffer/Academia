@@ -1,13 +1,15 @@
 package hero.game.trees;
 
 import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.PBRTexture;
-import hero.graphics.models.CustomModel;
-import hero.graphics.renderables.LODPBRModel;
-import hero.graphics.renderables.Renderable;
+import hero.graphics.models.Model;
+import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.Strategy;
+import hero.graphics.restructure.loading.RawMeshBuilder;
+import hero.graphics.restructure.materials.LODPBRMaterial;
+import hero.graphics.restructure.materials.PBRMaterial;
 import hero.physics.shapes.CapsuleShape;
 import hero.physics.shapes.CollisionShape;
 
@@ -67,8 +69,7 @@ public class Stem {
     public List<Vec3d> leaves;
     public List<Quaternion> leafDirs;
 
-    public LODPBRModel renderable;
-    public LODPBRModel renderableLeaves;
+    public Strategy strategy, strategyLeaves;
 
     // Trunk-only data
     public double lengthBase;
@@ -182,7 +183,7 @@ public class Stem {
         }
     }
 
-    private void addToModel(CustomModel model, int maxLevel) {
+    private void addToModel(RawMeshBuilder model, int maxLevel) {
         if (level >= maxLevel) {
             return;
         }
@@ -210,8 +211,8 @@ public class Stem {
                         .add(dirs2.get(i + 1).mul(Math.sin(angle1) * radiusZ(z1, angle1)));
 
                 Vec2d uv = new Vec2d(texW * j / detail, texH), uvd1 = new Vec2d(texW / detail, 0), uvd2 = new Vec2d(0, dTexH);
-                model.addTriangle(v00, uv, v01, uv.add(uvd1), v11, uv.add(uvd1).add(uvd2));
-                model.addTriangle(v00, uv, v11, uv.add(uvd1).add(uvd2), v10, uv.add(uvd2));
+                model.addTriangleUV(v00, uv, v01, uv.add(uvd1), v11, uv.add(uvd1).add(uvd2));
+                model.addTriangleUV(v00, uv, v11, uv.add(uvd1).add(uvd2), v10, uv.add(uvd2));
             }
             texH += dTexH;
         }
@@ -220,7 +221,7 @@ public class Stem {
         }
     }
 
-    private void addToModelLeaves(CustomModel model, double scale) {
+    private void addToModelLeaves(RawMeshBuilder model, double scale) {
         if (leaves != null) {
             for (int i = 0; i < leaves.size(); i++) {
                 if (Math.random() > 1 / (scale * scale)) {
@@ -249,14 +250,14 @@ public class Stem {
         }
     }
 
-    private void createLeaf(CustomModel model, Vec3d pos, Quaternion dir, double scale) {
+    private void createLeaf(RawMeshBuilder model, Vec3d pos, Quaternion dir, double scale) {
         double length = LeafScale / Math.sqrt(QUALITY) * scale;
         double width = length * LeafScaleX;
 
         Vec3d p = pos.add(dir.applyTo(new Vec3d(0, -0.5 * width, 0)));
         Vec3d edge1 = dir.applyTo(new Vec3d(0, width, 0));
         Vec3d edge2 = dir.applyTo(new Vec3d(0, 0, length));
-        model.addRectangle(p, edge1, edge2, new Vec2d(150 / 512., (512 - 200) / 512.),
+        model.addRectangleUV(p, edge1, edge2, new Vec2d(150 / 512., (512 - 200) / 512.),
                 new Vec2d(120 / 512., 0), new Vec2d(0, 200 / 512.));
 
 //        Vec3d tip = pos.add(dir.applyTo(new Vec3d(0, 0, length)));
@@ -348,35 +349,23 @@ public class Stem {
         );
     }
 
-    public Renderable getRenderable(Vec3d pos) {
-        if (renderable == null) {
-            List<CustomModel> l = new ArrayList();
-            for (int i = 0; i < 5; i++) {
-                CustomModel model = new CustomModel();
-                addToModel(model, Math.max(4 - i, 1));
-                model.createVAO();
-                l.add(model);
-            }
-            renderable = new LODPBRModel(l, bark);
+    public Strategy getStrategy() {
+        if (strategy == null) {
+            var RMB = new RawMeshBuilder();
+            addToModel(RMB, 4);
+            var material = LODPBRMaterial.load("bark");
+            strategy = material.buildStrategy(RMB);
         }
-        LODPBRModel m = new LODPBRModel(renderable);
-        // m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
-        return m;
+        return strategy;
     }
 
-    public Renderable getRenderableLeaves(Vec3d pos) {
-        if (renderableLeaves == null) {
-            List<CustomModel> l = new ArrayList();
-            for (int i = 0; i < 5; i++) {
-                CustomModel modelLeaves = new CustomModel();
-                addToModelLeaves(modelLeaves, Math.pow(2, i));
-                modelLeaves.createVAO();
-                l.add(modelLeaves);
-            }
-            renderableLeaves = new LODPBRModel(l, leaf);
+    public Strategy getStrategyLeaves() {
+        if (strategyLeaves == null) {
+            var RMB = new RawMeshBuilder();
+            addToModelLeaves(RMB, 1);
+            var material = LODPBRMaterial.load("leaf_maple");
+            strategyLeaves = material.buildStrategy(RMB);
         }
-        LODPBRModel m = new LODPBRModel(renderableLeaves);
-        // m.t = Transformation.create(pos, Quaternion.IDENTITY, 1);
-        return m;
+        return strategyLeaves;
     }
 }
