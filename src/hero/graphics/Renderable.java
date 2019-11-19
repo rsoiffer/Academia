@@ -5,7 +5,6 @@ import beige_engine.graphics.opengl.GLState;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.utils.MeshSimplifier;
-import hero.graphics.materials.Material;
 
 import java.util.List;
 
@@ -17,25 +16,23 @@ public interface Renderable {
 
     abstract class BasicRenderable implements Renderable {
 
-        protected final Material material;
-        private final Runnable model;
+        private final VAOWrapper model;
         private Transformation t;
 
-        public BasicRenderable(Mesh mesh, Material material) {
-            this.material = material;
-            this.model = mesh.buildModel(attribs());
+        public BasicRenderable(Mesh mesh) {
+            this.model = mesh.getVAOW(attribs());
         }
 
         protected abstract List<VertexAttrib> attribs();
 
         protected void drawModel() {
             GLState.getShaderProgram().setUniform("model", t.matrix());
-            model.run();
+            model.render();
         }
 
         protected void drawModelOffset(Transformation t2) {
             GLState.getShaderProgram().setUniform("model", t.mul(t2).matrix());
-            model.run();
+            model.render();
         }
 
         public void render(Transformation t, int pass) {
@@ -59,14 +56,12 @@ public interface Renderable {
         public static final int NUM_LOD = 6;
 
         private int numLod = NUM_LOD;
-        protected final Material material;
-        private final Runnable[] models = new Runnable[NUM_LOD];
+        private final VAOWrapper[] models = new VAOWrapper[NUM_LOD];
         private Transformation current;
 
-        public LODRenderable(Mesh mesh, Material material) {
-            this.material = material;
+        public LODRenderable(Mesh mesh) {
             for (int i = 0; i < NUM_LOD; i++) {
-                this.models[i] = mesh.buildModel(attribs());
+                this.models[i] = mesh.getVAOW(attribs());
                 mesh = MeshSimplifier.simplify(mesh, .1 * Math.pow(2, i));
                 if (mesh == null) {
                     numLod = i + 1;
@@ -84,10 +79,10 @@ public interface Renderable {
             if (lod < numLod) {
                 GLState.getShaderProgram().setUniform("lod", (float) lodFrac);
                 GLState.getShaderProgram().setUniform("model", t.matrix());
-                models[floor(lod)].run();
+                models[floor(lod)].render();
                 if (lodFrac > 0 && ceil(lod) < numLod) {
                     GLState.getShaderProgram().setUniform("lod", (float) lodFrac - 1);
-                    models[ceil(lod)].run();
+                    models[ceil(lod)].render();
                 }
             }
         }

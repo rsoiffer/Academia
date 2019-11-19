@@ -20,13 +20,13 @@ public class ColorMaterial extends Material {
     public double roughness = .5;
 
     public Renderable buildRenderable(Mesh mesh) {
-        return new ColorRenderable(mesh, this);
+        return new ColorRenderable(mesh);
     }
 
     public class ColorRenderable extends Renderable.BasicRenderable {
 
-        public ColorRenderable(Mesh mesh, Material material) {
-            super(mesh, material);
+        public ColorRenderable(Mesh mesh) {
+            super(mesh);
         }
 
         @Override

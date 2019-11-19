@@ -28,7 +28,7 @@ public class Mesh {
         this.numVerts = numVerts;
     }
 
-    public Runnable buildModel(List<VertexAttrib> names) {
+    public VAOWrapper getVAOW(List<VertexAttrib> names) {
         var vao = VertexArrayObject.createVAO(() -> {
             new BufferObject(GL_ARRAY_BUFFER, getMergedAttribs(names));
             new BufferObject(GL_ELEMENT_ARRAY_BUFFER, getIndices());
@@ -41,11 +41,7 @@ public class Mesh {
                 pos += attribSizes[i] * numVerts * 4;
             }
         });
-
-        return () -> {
-            vao.bind();
-            glDrawElements(GL_TRIANGLES, numFaces * 3, GL_UNSIGNED_INT, 0);
-        };
+        return new VAOWrapper(vao, numFaces);
     }
 
     private float[] getAttrib(VertexAttrib name) {

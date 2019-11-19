@@ -26,13 +26,13 @@ public class PBRMaterial extends Material {
 
     @Override
     public Renderable buildRenderable(Mesh mesh) {
-        return new PBRRenderable(mesh, this);
+        return new PBRRenderable(mesh);
     }
 
     public class PBRRenderable extends Renderable.BasicRenderable {
 
-        public PBRRenderable(Mesh mesh, Material material) {
-            super(mesh, material);
+        public PBRRenderable(Mesh mesh) {
+            super(mesh);
         }
 
         @Override

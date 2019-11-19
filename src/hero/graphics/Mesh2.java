@@ -1,0 +1,86 @@
+package hero.graphics;
+
+import beige_engine.graphics.opengl.BufferObject;
+import beige_engine.graphics.opengl.GLState;
+import beige_engine.graphics.opengl.VertexArrayObject;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+
+public class Mesh2 {
+
+    public final int numFaces, numVerts;
+    private final Map<VertexAttrib, Integer> attribPositions;
+    private final BufferObject vbo, ebo;
+
+    public Mesh2(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, int[] indices) {
+        if (attribs.isEmpty()) {
+            throw new IllegalArgumentException("attribs cannot be empty");
+        }
+        if (attribs.size() != data.size()) {
+            throw new IllegalArgumentException("attribs and data must be the same size");
+        }
+        if (indices.length == 0) {
+            throw new IllegalArgumentException("indices cannot be empty");
+        }
+        if (indices.length % 3 != 0) {
+            throw new IllegalArgumentException("Number of indices must be a multiple of 3");
+        }
+
+        numFaces = indices.length / 3;
+        numVerts = data.get(attribs.get(0)).length / attribs.get(0).size;
+
+        for (var a : attribs) {
+            if (data.get(a).length != numVerts * a.size) {
+                throw new IllegalArgumentException("data contains array of the wrong size");
+            }
+        }
+        for (int i : indices) {
+            if (i < 0 || i >= numVerts) {
+                throw new IllegalArgumentException("Index out of bounds");
+            }
+        }
+
+        attribPositions = new EnumMap<>(VertexAttrib.class);
+        int totalSize = attribs.stream().mapToInt(s -> data.get(s).length).sum();
+        var data2 = new float[totalSize];
+        int pos = 0;
+        for (var a : attribs) {
+            attribPositions.put(a, pos);
+            float[] f = data.get(a);
+            System.arraycopy(f, 0, data, pos, f.length);
+            pos += f.length;
+        }
+
+        GLState.bindVertexArrayObject(null);
+        vbo = new BufferObject(GL_ARRAY_BUFFER, data2);
+        ebo = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, indices);
+    }
+
+    public VAOWrapper getVAOW(List<VertexAttrib> attribs) {
+        var vao = VertexArrayObject.createVAO(() -> {
+            vbo.bind();
+            ebo.bind();
+
+            for (int i = 0; i < attribs.size(); i++) {
+                var a = attribs.get(i);
+                glVertexAttribPointer(i, a.size, GL_FLOAT, false, 0, attribPositions.get(a));
+                glEnableVertexAttribArray(i);
+            }
+            GLState.bindVertexArrayObject(null);
+        });
+        return new VAOWrapper(vao, numFaces);
+    }
+}

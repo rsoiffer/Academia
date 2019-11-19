@@ -26,13 +26,13 @@ public class ColorParticlesMaterial extends Material {
     public List<Transformation> particles = new LinkedList<>();
 
     public Renderable buildRenderable(Mesh mesh) {
-        return new ColorParticlesRenderable(mesh, this);
+        return new ColorParticlesRenderable(mesh);
     }
 
     public class ColorParticlesRenderable extends BasicRenderable {
 
-        public ColorParticlesRenderable(Mesh mesh, Material material) {
-            super(mesh, material);
+        public ColorParticlesRenderable(Mesh mesh) {
+            super(mesh);
         }
 
         @Override

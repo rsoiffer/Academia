@@ -29,13 +29,13 @@ public class DiffuseMaterial extends Material {
 
     @Override
     public Renderable buildRenderable(Mesh mesh) {
-        return new DiffuseRenderable(mesh, this);
+        return new DiffuseRenderable(mesh);
     }
 
     public class DiffuseRenderable extends BasicRenderable {
 
-        public DiffuseRenderable(Mesh mesh, Material material) {
-            super(mesh, material);
+        public DiffuseRenderable(Mesh mesh) {
+            super(mesh);
         }
 
         @Override

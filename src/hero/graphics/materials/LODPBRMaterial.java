@@ -27,13 +27,13 @@ public class LODPBRMaterial extends Material {
 
     @Override
     public Renderable buildRenderable(Mesh mesh) {
-        return new LODPBRRenderable(mesh, this);
+        return new LODPBRRenderable(mesh);
     }
 
     public class LODPBRRenderable extends LODRenderable {
 
-        public LODPBRRenderable(Mesh mesh, Material material) {
-            super(mesh, material);
+        public LODPBRRenderable(Mesh mesh) {
+            super(mesh);
         }
 
         @Override
