@@ -31,6 +31,13 @@ public class GLState {
         }
     }
 
+    public static void bindBuffer(BufferObject buffer, int type) {
+        if (state.buffers.get(type) != buffer) {
+            state.buffers.put(type, buffer);
+            glBindBuffer(type, buffer == null ? 0 : buffer.id);
+        }
+    }
+
     public static void bindFramebuffer(Framebuffer framebuffer) {
         if (framebuffer != state.framebuffer) {
             state.framebuffer = framebuffer;

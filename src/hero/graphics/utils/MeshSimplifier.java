@@ -41,6 +41,6 @@ public class MeshSimplifier {
                     newP2, asVec2d(v2.get(TEX_COORDS)),
                     newP3, asVec2d(v3.get(TEX_COORDS)));
         }
-        return newModel.toRawMesh();
+        return newModel.toMesh();
     }
 }

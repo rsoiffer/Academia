@@ -40,6 +40,6 @@ public class OpenVRLoader {
         var diffuseMat = new DiffuseMaterial();
         diffuseMat.texture = diffuseTexture;
 
-        rootNode = new ModelNode(diffuseMat.buildRenderable(RMB.toRawMesh()));
+        rootNode = new ModelNode(diffuseMat.buildRenderable(RMB.toMesh()));
     }
 }

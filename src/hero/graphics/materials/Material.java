@@ -32,6 +32,6 @@ public abstract class Material {
     public abstract Renderable buildRenderable(Mesh mesh);
 
     public Renderable buildRenderable(RawMeshBuilder rawMeshBuilder) {
-        return buildRenderable(rawMeshBuilder.toRawMesh());
+        return buildRenderable(rawMeshBuilder.toMesh());
     }
 }

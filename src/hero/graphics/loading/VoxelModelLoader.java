@@ -81,7 +81,7 @@ public class VoxelModelLoader {
                 }
             }
         }
-        mesh = RMB.toRawMesh();
+        mesh = RMB.toMesh();
     }
 
     public static VoxelModelLoader load(String fileName) {

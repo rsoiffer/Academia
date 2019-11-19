@@ -53,7 +53,7 @@ public class ControllerBehavior extends Behavior {
         var squareRM = new RawMeshBuilder()
                 .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
                         new Vec2d(0, 0), new Vec2d(1, 0), new Vec2d(0, 1))
-                .toRawMesh();
+                .toMesh();
 
         String[] textures = {"iron_man_icon.png", "spiderman_icon.png", "teleport_icon.png",
                 "hulk_icon.png", "wings_icon.png", "frozone_icon.png"};

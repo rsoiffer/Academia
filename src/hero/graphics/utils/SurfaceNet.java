@@ -225,7 +225,7 @@ public class SurfaceNet {
                 }
             }
             RMB.smoothVertexNormals();
-            mesh = RMB.toRawMesh();
+            mesh = RMB.toMesh();
         }
 
         private class Edge {

@@ -4,7 +4,6 @@ import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
-import hero.graphics.Mesh2;
 import hero.graphics.VertexAttrib;
 
 import java.util.*;
@@ -134,19 +133,7 @@ public class RawMeshBuilder {
 //        }
     }
 
-    public Mesh toRawMesh() {
-        if (numIndices == 0) {
-            return null;
-        }
-        var rawMesh = new Mesh(numIndices / 3, numVerts);
-        for (var name : names) {
-            rawMesh.setAttrib(name, attribs.get(name));
-        }
-        rawMesh.setIndices(indices.stream());
-        return rawMesh;
-    }
-
-    public Mesh2 toMesh() {
+    public Mesh toMesh() {
         if (numIndices == 0) {
             return null;
         }
@@ -156,6 +143,6 @@ public class RawMeshBuilder {
             data2.put(a, toFloatArray(attribs.get(a)));
         }
         var indices2 = toIntArray(indices);
-        return new Mesh2(attribs2, data2, indices2);
+        return new Mesh(attribs2, data2, indices2);
     }
 }

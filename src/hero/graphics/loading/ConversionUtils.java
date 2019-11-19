@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.lwjgl.assimp.Assimp.*;
@@ -104,9 +105,16 @@ public abstract class ConversionUtils {
         }
         return r;
     }
+    public static float[] toFloatArray(Stream<Float> s) {
+        return toFloatArray(s.collect(Collectors.toList()));
+    }
 
     public static int[] toIntArray(Collection<Integer> c) {
-        return c.stream().mapToInt(i -> i).toArray();
+        return toIntArray(c.stream());
+    }
+
+    public static int[] toIntArray(Stream<Integer> s) {
+        return s.mapToInt(i -> i).toArray();
     }
 
     public static Matrix4d toMatrix4d(AIMatrix4x4 m) {

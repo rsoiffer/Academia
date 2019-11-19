@@ -1,8 +1,10 @@
 package hero.graphics;
 
 import beige_engine.graphics.opengl.BufferObject;
+import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.VertexArrayObject;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -20,79 +22,77 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class Mesh {
 
     public final int numFaces, numVerts;
-    private final Map<VertexAttrib, float[]> attribs = new EnumMap<>(VertexAttrib.class);
-    private int[] indices;
+    private final Map<VertexAttrib, float[]> data;
+    private final int[] indices;
 
-    public Mesh(int numFaces, int numVerts) {
-        this.numFaces = numFaces;
-        this.numVerts = numVerts;
-    }
+    private final Map<VertexAttrib, Integer> attribPositions;
+    private final BufferObject vbo, ebo;
 
-    public VAOWrapper getVAOW(List<VertexAttrib> names) {
-        var vao = VertexArrayObject.createVAO(() -> {
-            new BufferObject(GL_ARRAY_BUFFER, getMergedAttribs(names));
-            new BufferObject(GL_ELEMENT_ARRAY_BUFFER, getIndices());
+    public Mesh(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, int[] indices) {
+        if (attribs.isEmpty()) {
+            throw new IllegalArgumentException("attribs cannot be empty");
+        }
+        if (attribs.size() != data.size()) {
+            throw new IllegalArgumentException("attribs and data must be the same size");
+        }
+        if (indices.length == 0) {
+            throw new IllegalArgumentException("indices cannot be empty");
+        }
+        if (indices.length % 3 != 0) {
+            throw new IllegalArgumentException("Number of indices must be a multiple of 3");
+        }
 
-            int pos = 0;
-            int[] attribSizes = getAttribSizes(names).toArray();
-            for (int i = 0; i < attribSizes.length; i++) {
-                glVertexAttribPointer(i, attribSizes[i], GL_FLOAT, false, 0, pos);
-                glEnableVertexAttribArray(i);
-                pos += attribSizes[i] * numVerts * 4;
+        numFaces = indices.length / 3;
+        numVerts = data.get(attribs.get(0)).length / attribs.get(0).size;
+        this.data = data;
+        this.indices = indices;
+
+        for (var a : attribs) {
+            if (data.get(a).length != numVerts * a.size) {
+                throw new IllegalArgumentException("data contains array of the wrong size");
             }
-        });
-        return new VAOWrapper(vao, numFaces);
-    }
-
-    private float[] getAttrib(VertexAttrib name) {
-        if (!attribs.containsKey(name)) {
-            throw new IllegalArgumentException("Unknown attribute " + name);
         }
-        return attribs.get(name);
-    }
-
-    private IntStream getAttribSizes(List<VertexAttrib> names) {
-        return names.stream().mapToInt(s -> getAttrib(s).length / numVerts);
-    }
-
-    private int[] getIndices() {
-        return indices;
-    }
-
-    public void setIndices(int[] values) {
-        if (values.length != numFaces * 3) {
-            throw new IllegalArgumentException("The values array is the wrong length");
-        }
-        for (int i : values) {
+        for (int i : indices) {
             if (i < 0 || i >= numVerts) {
                 throw new IllegalArgumentException("Index out of bounds");
             }
         }
-        indices = values;
-    }
 
-    public void setIndices(IntStream values) {
-        setIndices(values.toArray());
-    }
-
-    public void setIndices(Stream<Integer> values) {
-        setIndices(values.mapToInt(i -> i));
-    }
-
-    private float[] getMergedAttribs(List<VertexAttrib> names) {
-        int totalSize = names.stream().mapToInt(s -> getAttrib(s).length).sum();
-        float[] data = new float[totalSize];
+        attribPositions = new EnumMap<>(VertexAttrib.class);
+        int totalSize = attribs.stream().mapToInt(s -> data.get(s).length).sum();
+        var bufferData = new float[totalSize];
         int pos = 0;
-        for (var name : names) {
-            float[] attrib = getAttrib(name);
-            System.arraycopy(attrib, 0, data, pos, attrib.length);
-            pos += attrib.length;
+        for (var a : attribs) {
+            attribPositions.put(a, pos);
+            float[] f = data.get(a);
+            System.arraycopy(f, 0, bufferData, pos, f.length);
+            pos += f.length;
         }
-        return data;
+
+        GLState.bindVertexArrayObject(null);
+        vbo = new BufferObject(GL_ARRAY_BUFFER, bufferData);
+        ebo = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, indices);
+        GLState.bindBuffer(null, GL_ARRAY_BUFFER);
+        GLState.bindBuffer(null, GL_ELEMENT_ARRAY_BUFFER);
     }
 
-    public int getIndex(int i) {
+    public final int getIndex(int i) {
         return indices[i];
+    }
+
+    public VAOWrapper getVAOW(List<VertexAttrib> attribs) {
+        var vao = VertexArrayObject.createVAO(() -> {
+            vbo.bind();
+            ebo.bind();
+
+            for (int i = 0; i < attribs.size(); i++) {
+                var a = attribs.get(i);
+                glVertexAttribPointer(i, a.size, GL_FLOAT, false, 0, attribPositions.get(a) * 4);
+                glEnableVertexAttribArray(i);
+            }
+            GLState.bindVertexArrayObject(null);
+        });
+        return new VAOWrapper(vao, numFaces);
     }
 
     public Map<VertexAttrib, float[]> getVertex(int i) {
@@ -100,31 +100,11 @@ public class Mesh {
             throw new RuntimeException("Index out of bounds");
         }
         var r = new EnumMap<VertexAttrib, float[]>(VertexAttrib.class);
-        for (var v : attribs.keySet()) {
+        for (var v : data.keySet()) {
             float[] f = new float[v.size];
-            System.arraycopy(attribs.get(v), v.size * i, f, 0, v.size);
+            System.arraycopy(data.get(v), v.size * i, f, 0, v.size);
             r.put(v, f);
         }
         return r;
-    }
-
-    public void setAttrib(VertexAttrib name, float[] values) {
-        if (values.length != numVerts * name.size) {
-            throw new IllegalArgumentException("The values array is the wrong length");
-        }
-        attribs.put(name, values);
-    }
-
-    public void setAttrib(VertexAttrib name, List<Float> values) {
-        float[] f = new float[values.size()];
-        int pos = 0;
-        for (float v : values) {
-            f[pos++] = v;
-        }
-        setAttrib(name, f);
-    }
-
-    public void setAttrib(VertexAttrib name, Stream<Float> values) {
-        setAttrib(name, values.collect(Collectors.toList()));
     }
 }

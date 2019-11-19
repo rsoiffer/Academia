@@ -16,10 +16,7 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AINode;
 import org.lwjgl.assimp.AIVector3D;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static hero.graphics.VertexAttrib.*;
@@ -103,23 +100,26 @@ public class AssimpLoader {
         }
     }
 
-    private void possiblySetAttrib(Mesh myMesh, VertexAttrib name, AIVector3D.Buffer buf) {
+    private void possiblySetAttrib(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, VertexAttrib a, AIVector3D.Buffer buf) {
         if (buf != null) {
-            myMesh.setAttrib(name, streamBuf(buf).flatMap(ConversionUtils::streamVec));
+            attribs.add(a);
+            data.put(a, toFloatArray(streamBuf(buf).flatMap(ConversionUtils::streamVec)));
         }
     }
 
     private Renderable toRenderable(AIMesh aiMesh) {
-        var rawMesh = new Mesh(aiMesh.mNumFaces(), aiMesh.mNumVertices());
-        rawMesh.setIndices(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
-        possiblySetAttrib(rawMesh, POSITIONS, aiMesh.mVertices());
-        possiblySetAttrib(rawMesh, NORMALS, aiMesh.mNormals());
-        possiblySetAttrib(rawMesh, TEX_COORDS, aiMesh.mTextureCoords(0));
-        possiblySetAttrib(rawMesh, TANGENTS, aiMesh.mTangents());
-        possiblySetAttrib(rawMesh, BITANGENTS, aiMesh.mBitangents());
+        var attribs = new ArrayList<VertexAttrib>();
+        var data = new EnumMap<VertexAttrib, float[]>(VertexAttrib.class);
+        var indices = toIntArray(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
+        possiblySetAttrib(attribs, data, POSITIONS, aiMesh.mVertices());
+        possiblySetAttrib(attribs, data, NORMALS, aiMesh.mNormals());
+        possiblySetAttrib(attribs, data, TEX_COORDS, aiMesh.mTextureCoords(0));
+        possiblySetAttrib(attribs, data, TANGENTS, aiMesh.mTangents());
+        possiblySetAttrib(attribs, data, BITANGENTS, aiMesh.mBitangents());
 
+        var mesh = new Mesh(attribs, data, indices);
         var material = materials.get(aiMesh.mMaterialIndex());
-        return material.buildRenderable(rawMesh);
+        return material.buildRenderable(mesh);
     }
 
     private ModelNode toModelNode(AINode aiNode) {
