@@ -2,7 +2,7 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
-import hero.graphics.restructure.ModelNode;
+import hero.graphics.ModelNode;
 
 import java.util.Collection;
 import java.util.stream.Stream;

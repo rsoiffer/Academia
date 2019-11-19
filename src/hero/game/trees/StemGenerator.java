@@ -3,7 +3,7 @@ package hero.game.trees;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.ModelNode;
+import hero.graphics.ModelNode;
 import hero.physics.shapes.CollisionShape;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class StemGenerator {
         for (int i = 0; i < treeInstances.size(); i++) {
             Stem s = treeInstances.get(i);
             for (var v : treePlacements.get(i)) {
-                var mn = new ModelNode(s.getStrategy());
+                var mn = new ModelNode(s.getRenderable());
                 mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
                 r.add(mn);
             }
@@ -56,7 +56,7 @@ public class StemGenerator {
         for (int i = 0; i < treeInstances.size(); i++) {
             Stem s = treeInstances.get(i);
             for (var v : treePlacements.get(i)) {
-                var mn = new ModelNode(s.getStrategyLeaves());
+                var mn = new ModelNode(s.getRenderableLeaves());
                 mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
                 r.add(mn);
             }

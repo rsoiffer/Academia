@@ -1,14 +1,12 @@
-package hero.graphics.models;
+package hero.graphics.utils;
 
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.SDF;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.loading.RawMeshBuilder;
+import hero.graphics.Mesh;
+import hero.graphics.loading.RawMeshBuilder;
 import hero.physics.shapes.AABB;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static beige_engine.util.math.MathUtils.*;

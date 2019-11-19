@@ -1,10 +1,9 @@
-package hero.graphics.restructure.materials;
+package hero.graphics.materials;
 
-import hero.graphics.PBRTexture;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.Strategy;
-import hero.graphics.restructure.Strategy.LODStrategy;
-import hero.graphics.restructure.VertexAttrib;
+import hero.graphics.utils.PBRTexture;
+import hero.graphics.Mesh;
+import hero.graphics.Renderable;
+import hero.graphics.VertexAttrib;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,26 +12,26 @@ import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.passes.GeometryPass.SHADER_PBR;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW_ALPHA;
-import static hero.graphics.restructure.VertexAttrib.*;
+import static hero.graphics.VertexAttrib.*;
 
-public class LODPBRMaterial extends Material {
+public class PBRMaterial extends Material {
 
     public PBRTexture tex = null;
 
-    public static LODPBRMaterial load(String folder) {
-        var m = new LODPBRMaterial();
+    public static PBRMaterial load(String folder) {
+        var m = new PBRMaterial();
         m.tex = PBRTexture.loadFromFolder(folder);
         return m;
     }
 
     @Override
-    public Strategy buildStrategy(Mesh mesh) {
-        return new LODPBRStrategy(mesh, this);
+    public Renderable buildRenderable(Mesh mesh) {
+        return new PBRRenderable(mesh, this);
     }
 
-    public class LODPBRStrategy extends LODStrategy {
+    public class PBRRenderable extends Renderable.BasicRenderable {
 
-        public LODPBRStrategy(Mesh mesh, Material material) {
+        public PBRRenderable(Mesh mesh, Material material) {
             super(mesh, material);
         }
 

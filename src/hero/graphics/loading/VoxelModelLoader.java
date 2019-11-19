@@ -1,16 +1,15 @@
-package hero.graphics.restructure.loading;
+package hero.graphics.loading;
 
 import beige_engine.util.Resources;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.models.Vertex.VertexColor;
-import hero.graphics.restructure.Mesh;
+import hero.graphics.Mesh;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 import static beige_engine.util.math.MathUtils.mod;
-import static hero.graphics.restructure.VertexAttrib.NORMALS;
-import static hero.graphics.restructure.VertexAttrib.POSITIONS;
+import static hero.graphics.VertexAttrib.NORMALS;
+import static hero.graphics.VertexAttrib.POSITIONS;
 
 public class VoxelModelLoader {
 
@@ -64,7 +63,6 @@ public class VoxelModelLoader {
 
         var RMB = new RawMeshBuilder(POSITIONS, NORMALS);
 
-        List<VertexColor> vertices = new ArrayList();
         for (Entry<Vec3d, Integer> e : colors.entrySet()) {
             int colorHex = colorPalette[e.getValue()];
             Vec3d color = new Vec3d(mod(colorHex, 256), mod(colorHex >> 8, 256), mod(colorHex >> 16, 256)).div(255);

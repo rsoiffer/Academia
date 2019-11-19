@@ -1,4 +1,4 @@
-package hero.graphics.restructure;
+package hero.graphics;
 
 public enum VertexAttrib {
     POSITIONS(3), TEX_COORDS(2), NORMALS(3), TANGENTS(3), BITANGENTS(3);

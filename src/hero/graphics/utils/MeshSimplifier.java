@@ -1,12 +1,12 @@
-package hero.graphics.models;
+package hero.graphics.utils;
 
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.loading.RawMeshBuilder;
+import hero.graphics.Mesh;
+import hero.graphics.loading.RawMeshBuilder;
 
-import static hero.graphics.restructure.VertexAttrib.POSITIONS;
-import static hero.graphics.restructure.VertexAttrib.TEX_COORDS;
+import static hero.graphics.VertexAttrib.POSITIONS;
+import static hero.graphics.VertexAttrib.TEX_COORDS;
 
 public class MeshSimplifier {
 

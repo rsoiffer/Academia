@@ -1,4 +1,4 @@
-package hero.graphics.restructure;
+package hero.graphics;
 
 import beige_engine.util.math.Transformation;
 
@@ -10,18 +10,18 @@ public class ModelNode {
 
     public boolean visible = true;
     public Transformation transform;
-    private final List<Strategy> strategies;
+    private final List<Renderable> strategies;
     private final List<ModelNode> children;
 
     public ModelNode() {
         this(Transformation.IDENTITY, Collections.emptyList(), Collections.emptyList());
     }
 
-    public ModelNode(Strategy strategy) {
-        this(Transformation.IDENTITY, Collections.singletonList(strategy), Collections.emptyList());
+    public ModelNode(Renderable renderable) {
+        this(Transformation.IDENTITY, Collections.singletonList(renderable), Collections.emptyList());
     }
 
-    public ModelNode(Transformation transform, List<Strategy> strategies, List<ModelNode> children) {
+    public ModelNode(Transformation transform, List<Renderable> strategies, List<ModelNode> children) {
         this.transform = transform;
         this.strategies = new ArrayList<>(strategies);
         this.children = new ArrayList<>(children);

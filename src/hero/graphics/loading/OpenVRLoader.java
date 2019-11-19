@@ -1,12 +1,12 @@
-package hero.graphics.restructure.loading;
+package hero.graphics.loading;
 
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.materials.DiffuseMaterial;
+import hero.graphics.ModelNode;
+import hero.graphics.materials.DiffuseMaterial;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.openvr.*;
 import org.lwjgl.system.MemoryStack;
@@ -76,7 +76,7 @@ public class OpenVRLoader {
         var diffuseMat = new DiffuseMaterial();
         diffuseMat.texture = diffuseTexture;
 
-        rootNode = new ModelNode(diffuseMat.buildStrategy(RMB.toRawMesh()));
+        rootNode = new ModelNode(diffuseMat.buildRenderable(RMB.toRawMesh()));
     }
 
     private static Vec3d toVec3d(HmdVector3 v) {

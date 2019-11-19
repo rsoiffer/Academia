@@ -1,4 +1,4 @@
-package hero.graphics;
+package hero.graphics.utils;
 
 import beige_engine.graphics.opengl.GLObject;
 import beige_engine.graphics.opengl.Texture;

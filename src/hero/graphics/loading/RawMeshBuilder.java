@@ -1,10 +1,10 @@
-package hero.graphics.restructure.loading;
+package hero.graphics.loading;
 
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.VertexAttrib;
+import hero.graphics.Mesh;
+import hero.graphics.VertexAttrib;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static hero.graphics.restructure.VertexAttrib.*;
+import static hero.graphics.VertexAttrib.*;
 
 public class RawMeshBuilder {
 

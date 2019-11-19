@@ -5,7 +5,7 @@ import beige_engine.engine.Input;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.SDF;
+import hero.graphics.utils.SDF;
 import hero.physics.shapes.AABB;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import static beige_engine.engine.Layer.PREUPDATE;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
 import static hero.game.controllers.IceCaster.iceModel;
-import static hero.graphics.SDF.*;
+import static hero.graphics.utils.SDF.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class FrozoneAI extends Behavior {

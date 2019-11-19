@@ -1,13 +1,16 @@
-package hero.graphics.restructure.loading;
+package hero.graphics.loading;
 
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.sprites.Sprite;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.*;
-import hero.graphics.restructure.materials.ColorMaterial;
-import hero.graphics.restructure.materials.DiffuseMaterial;
-import hero.graphics.restructure.materials.Material;
+import hero.graphics.Mesh;
+import hero.graphics.ModelNode;
+import hero.graphics.Renderable;
+import hero.graphics.VertexAttrib;
+import hero.graphics.materials.ColorMaterial;
+import hero.graphics.materials.DiffuseMaterial;
+import hero.graphics.materials.Material;
 import org.joml.Matrix4d;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -19,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static hero.graphics.restructure.VertexAttrib.*;
+import static hero.graphics.VertexAttrib.*;
 import static org.lwjgl.assimp.Assimp.*;
 
 public class AssimpLoader {
@@ -27,7 +30,7 @@ public class AssimpLoader {
     private static final Map<String, AssimpLoader> MODEL_CACHE = new HashMap();
     private final String texturesDir;
     private final List<Material> materials;
-    private final List<Strategy> strategies;
+    private final List<Renderable> strategies;
     public ModelNode rootNode;
 
     private AssimpLoader(String filename) {
@@ -148,7 +151,7 @@ public class AssimpLoader {
         }
     }
 
-    private Strategy toStrategy(AIMesh aiMesh) {
+    private Renderable toStrategy(AIMesh aiMesh) {
         var rawMesh = new Mesh(aiMesh.mNumFaces(), aiMesh.mNumVertices());
         rawMesh.setIndices(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
         possiblySetAttrib(rawMesh, POSITIONS, aiMesh.mVertices());
@@ -158,7 +161,7 @@ public class AssimpLoader {
         possiblySetAttrib(rawMesh, BITANGENTS, aiMesh.mBitangents());
 
         var material = materials.get(aiMesh.mMaterialIndex());
-        return material.buildStrategy(rawMesh);
+        return material.buildRenderable(rawMesh);
     }
 
     private ModelNode toModelNode(AINode aiNode) {

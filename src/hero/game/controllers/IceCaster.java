@@ -5,11 +5,11 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import hero.game.ModelNodeBehavior;
-import hero.graphics.PBRTexture;
-import hero.graphics.SDF;
-import hero.graphics.models.SurfaceNet;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.materials.PBRMaterial;
+import hero.graphics.utils.PBRTexture;
+import hero.graphics.utils.SDF;
+import hero.graphics.utils.SurfaceNet;
+import hero.graphics.ModelNode;
+import hero.graphics.materials.PBRMaterial;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
-import static hero.graphics.SDF.*;
+import static hero.graphics.utils.SDF.*;
 
 public class IceCaster extends Behavior {
 
@@ -30,7 +30,7 @@ public class IceCaster extends Behavior {
         var material = new PBRMaterial();
         material.tex = PBRTexture.loadFromFolder("ice2");
         var mnb = new ModelNodeBehavior();
-        mnb.node = new ModelNode(material.buildModularStrategy(iceModel::getMeshes));
+        mnb.node = new ModelNode(material.buildModularRenderable(iceModel::getMeshes));
         mnb.create();
     }
 

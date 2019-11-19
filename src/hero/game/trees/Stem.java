@@ -3,13 +3,10 @@ package hero.game.trees;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.PBRTexture;
-import hero.graphics.models.Model;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.Strategy;
-import hero.graphics.restructure.loading.RawMeshBuilder;
-import hero.graphics.restructure.materials.LODPBRMaterial;
-import hero.graphics.restructure.materials.PBRMaterial;
+import hero.graphics.utils.PBRTexture;
+import hero.graphics.Renderable;
+import hero.graphics.loading.RawMeshBuilder;
+import hero.graphics.materials.LODPBRMaterial;
 import hero.physics.shapes.CapsuleShape;
 import hero.physics.shapes.CollisionShape;
 
@@ -69,7 +66,7 @@ public class Stem {
     public List<Vec3d> leaves;
     public List<Quaternion> leafDirs;
 
-    public Strategy strategy, strategyLeaves;
+    public Renderable renderable, renderableLeaves;
 
     // Trunk-only data
     public double lengthBase;
@@ -349,23 +346,23 @@ public class Stem {
         );
     }
 
-    public Strategy getStrategy() {
-        if (strategy == null) {
+    public Renderable getRenderable() {
+        if (renderable == null) {
             var RMB = new RawMeshBuilder();
             addToModel(RMB, 4);
             var material = LODPBRMaterial.load("bark");
-            strategy = material.buildStrategy(RMB);
+            renderable = material.buildRenderable(RMB);
         }
-        return strategy;
+        return renderable;
     }
 
-    public Strategy getStrategyLeaves() {
-        if (strategyLeaves == null) {
+    public Renderable getRenderableLeaves() {
+        if (renderableLeaves == null) {
             var RMB = new RawMeshBuilder();
             addToModelLeaves(RMB, 1);
             var material = LODPBRMaterial.load("leaf_maple");
-            strategyLeaves = material.buildStrategy(RMB);
+            renderableLeaves = material.buildRenderable(RMB);
         }
-        return strategyLeaves;
+        return renderableLeaves;
     }
 }

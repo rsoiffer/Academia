@@ -10,10 +10,10 @@ import beige_engine.vr.Vive;
 import beige_engine.vr.ViveController;
 import hero.game.ModelNodeBehavior;
 import hero.game.Player;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.loading.OpenVRLoader;
-import hero.graphics.restructure.loading.RawMeshBuilder;
-import hero.graphics.restructure.materials.DiffuseMaterial;
+import hero.graphics.ModelNode;
+import hero.graphics.loading.OpenVRLoader;
+import hero.graphics.loading.RawMeshBuilder;
+import hero.graphics.materials.DiffuseMaterial;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ControllerBehavior extends Behavior {
         for (int i = 0; i < 6; i++) {
             var iconMat = DiffuseMaterial.load(textures[i]);
             iconMat.hasShadows = false;
-            var icon = new ModelNode(iconMat.buildStrategy(squareRM));
+            var icon = new ModelNode(iconMat.buildRenderable(squareRM));
             ovrNode.addChild(icon);
 
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25);
@@ -73,7 +73,7 @@ public class ControllerBehavior extends Behavior {
 
         var selectedMat = DiffuseMaterial.load("selected_icon.png");
         selectedMat.hasShadows = false;
-        var selected = new ModelNode(selectedMat.buildStrategy(squareRM));
+        var selected = new ModelNode(selectedMat.buildRenderable(squareRM));
         ovrNode.addChild(selected);
 
         modelNode.beforeRender = () -> {

@@ -5,7 +5,7 @@ import beige_engine.util.Noise;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.loading.AssimpLoader;
+import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 

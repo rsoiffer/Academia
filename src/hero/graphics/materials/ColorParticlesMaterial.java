@@ -1,11 +1,11 @@
-package hero.graphics.restructure.materials;
+package hero.graphics.materials;
 
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.Strategy;
-import hero.graphics.restructure.Strategy.BasicStrategy;
-import hero.graphics.restructure.VertexAttrib;
+import hero.graphics.Mesh;
+import hero.graphics.Renderable;
+import hero.graphics.Renderable.BasicRenderable;
+import hero.graphics.VertexAttrib;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -13,8 +13,8 @@ import java.util.List;
 
 import static hero.graphics.passes.GeometryPass.SHADER_COLOR;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import static hero.graphics.restructure.VertexAttrib.NORMALS;
-import static hero.graphics.restructure.VertexAttrib.POSITIONS;
+import static hero.graphics.VertexAttrib.NORMALS;
+import static hero.graphics.VertexAttrib.POSITIONS;
 
 public class ColorParticlesMaterial extends Material {
 
@@ -25,13 +25,13 @@ public class ColorParticlesMaterial extends Material {
 
     public List<Transformation> particles = new LinkedList<>();
 
-    public Strategy buildStrategy(Mesh mesh) {
-        return new ColorParticlesStrategy(mesh, this);
+    public Renderable buildRenderable(Mesh mesh) {
+        return new ColorParticlesRenderable(mesh, this);
     }
 
-    public class ColorParticlesStrategy extends BasicStrategy {
+    public class ColorParticlesRenderable extends BasicRenderable {
 
-        public ColorParticlesStrategy(Mesh mesh, Material material) {
+        public ColorParticlesRenderable(Mesh mesh, Material material) {
             super(mesh, material);
         }
 

@@ -6,9 +6,9 @@ import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.game.controllers.Thruster.Particle;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.loading.VoxelModelLoader;
-import hero.graphics.restructure.materials.ColorParticlesMaterial;
+import hero.graphics.ModelNode;
+import hero.graphics.loading.VoxelModelLoader;
+import hero.graphics.materials.ColorParticlesMaterial;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class Explosion extends Behavior {
         material = new ColorParticlesMaterial();
         material.color = new Vec3d(1, 0, 0);
         material.hasShadows = false;
-        var node = new ModelNode(material.buildStrategy(VoxelModelLoader.load("fireball.vox").mesh));
+        var node = new ModelNode(material.buildRenderable(VoxelModelLoader.load("fireball.vox").mesh));
         controller.modelNode.node.addChild(node);
     }
 

@@ -1,18 +1,17 @@
-package hero.graphics.restructure.materials;
+package hero.graphics.materials;
 
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.VertexAttrib;
-import hero.graphics.restructure.Strategy;
-import hero.graphics.restructure.Strategy.BasicStrategy;
+import hero.graphics.Mesh;
+import hero.graphics.VertexAttrib;
+import hero.graphics.Renderable;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static hero.graphics.passes.GeometryPass.SHADER_COLOR;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import static hero.graphics.restructure.VertexAttrib.NORMALS;
-import static hero.graphics.restructure.VertexAttrib.POSITIONS;
+import static hero.graphics.VertexAttrib.NORMALS;
+import static hero.graphics.VertexAttrib.POSITIONS;
 
 public class ColorMaterial extends Material {
 
@@ -20,13 +19,13 @@ public class ColorMaterial extends Material {
     public double metallic = 0;
     public double roughness = .5;
 
-    public Strategy buildStrategy(Mesh mesh) {
-        return new ColorStrategy(mesh, this);
+    public Renderable buildRenderable(Mesh mesh) {
+        return new ColorRenderable(mesh, this);
     }
 
-    public class ColorStrategy extends BasicStrategy {
+    public class ColorRenderable extends Renderable.BasicRenderable {
 
-        public ColorStrategy(Mesh mesh, Material material) {
+        public ColorRenderable(Mesh mesh, Material material) {
             super(mesh, material);
         }
 

@@ -1,9 +1,7 @@
-package hero.graphics.restructure;
+package hero.graphics;
 
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.VertexArrayObject;
-import beige_engine.util.Mutable;
-import hero.graphics.models.Model;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -30,7 +28,7 @@ public class Mesh {
         this.numVerts = numVerts;
     }
 
-    public Model buildModel(List<VertexAttrib> names) {
+    public Runnable buildModel(List<VertexAttrib> names) {
         var vao = VertexArrayObject.createVAO(() -> {
             new BufferObject(GL_ARRAY_BUFFER, getMergedAttribs(names));
             new BufferObject(GL_ELEMENT_ARRAY_BUFFER, getIndices());

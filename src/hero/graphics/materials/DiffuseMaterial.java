@@ -1,10 +1,10 @@
-package hero.graphics.restructure.materials;
+package hero.graphics.materials;
 
 import beige_engine.graphics.opengl.Texture;
-import hero.graphics.restructure.Mesh;
-import hero.graphics.restructure.Strategy;
-import hero.graphics.restructure.VertexAttrib;
-import hero.graphics.restructure.Strategy.BasicStrategy;
+import hero.graphics.Mesh;
+import hero.graphics.Renderable;
+import hero.graphics.VertexAttrib;
+import hero.graphics.Renderable.BasicRenderable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.passes.GeometryPass.SHADER_DIFFUSE;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import static hero.graphics.restructure.VertexAttrib.*;
+import static hero.graphics.VertexAttrib.*;
 
 public class DiffuseMaterial extends Material {
 
@@ -28,13 +28,13 @@ public class DiffuseMaterial extends Material {
     }
 
     @Override
-    public Strategy buildStrategy(Mesh mesh) {
-        return new DiffuseStrategy(mesh, this);
+    public Renderable buildRenderable(Mesh mesh) {
+        return new DiffuseRenderable(mesh, this);
     }
 
-    public class DiffuseStrategy extends BasicStrategy {
+    public class DiffuseRenderable extends BasicRenderable {
 
-        public DiffuseStrategy(Mesh mesh, Material material) {
+        public DiffuseRenderable(Mesh mesh, Material material) {
             super(mesh, material);
         }
 

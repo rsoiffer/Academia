@@ -1,28 +1,27 @@
-package hero.graphics.restructure;
+package hero.graphics;
 
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.models.MeshSimplifier;
-import hero.graphics.models.Model;
-import hero.graphics.restructure.materials.Material;
+import hero.graphics.utils.MeshSimplifier;
+import hero.graphics.materials.Material;
 
 import java.util.List;
 
 import static beige_engine.util.math.MathUtils.*;
 
-public interface Strategy {
+public interface Renderable {
 
     void render(Transformation t, int pass);
 
-    abstract class BasicStrategy implements Strategy {
+    abstract class BasicRenderable implements Renderable {
 
         protected final Material material;
-        private final Model model;
+        private final Runnable model;
         private Transformation t;
 
-        public BasicStrategy(Mesh mesh, Material material) {
+        public BasicRenderable(Mesh mesh, Material material) {
             this.material = material;
             this.model = mesh.buildModel(attribs());
         }
@@ -31,12 +30,12 @@ public interface Strategy {
 
         protected void drawModel() {
             GLState.getShaderProgram().setUniform("model", t.matrix());
-            model.render();
+            model.run();
         }
 
         protected void drawModelOffset(Transformation t2) {
             GLState.getShaderProgram().setUniform("model", t.mul(t2).matrix());
-            model.render();
+            model.run();
         }
 
         public void render(Transformation t, int pass) {
@@ -55,16 +54,16 @@ public interface Strategy {
         public abstract void renderShadow();
     }
 
-    abstract class LODStrategy implements Strategy {
+    abstract class LODRenderable implements Renderable {
 
         public static final int NUM_LOD = 6;
 
         private int numLod = NUM_LOD;
         protected final Material material;
-        private final Model[] models = new Model[NUM_LOD];
+        private final Runnable[] models = new Runnable[NUM_LOD];
         private Transformation current;
 
-        public LODStrategy(Mesh mesh, Material material) {
+        public LODRenderable(Mesh mesh, Material material) {
             this.material = material;
             for (int i = 0; i < NUM_LOD; i++) {
                 this.models[i] = mesh.buildModel(attribs());
@@ -85,10 +84,10 @@ public interface Strategy {
             if (lod < numLod) {
                 GLState.getShaderProgram().setUniform("lod", (float) lodFrac);
                 GLState.getShaderProgram().setUniform("model", t.matrix());
-                models[floor(lod)].render();
+                models[floor(lod)].run();
                 if (lodFrac > 0 && ceil(lod) < numLod) {
                     GLState.getShaderProgram().setUniform("lod", (float) lodFrac - 1);
-                    models[ceil(lod)].render();
+                    models[ceil(lod)].run();
                 }
             }
         }

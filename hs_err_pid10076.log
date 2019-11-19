@@ -33,12 +33,12 @@ C  [nvoglv64.dll+0x6392a0]
 
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 J 1904  org.lwjgl.opengl.GL11C.nglDrawElements(IIIJ)V (0 bytes) @ 0x000002aee0e7ba1e [0x000002aee0e7b9c0+0x000000000000005e]
-J 2016 c2 hero.graphics.restructure.Mesh$$Lambda$88.render()V (16 bytes) @ 0x000002aee0e94d38 [0x000002aee0e949c0+0x0000000000000378]
-J 2404 c2 hero.graphics.restructure.materials.PBRMaterial$PBRStrategy.renderGeom()V (37 bytes) @ 0x000002aee0ee2c64 [0x000002aee0ee27c0+0x00000000000004a4]
-J 2019 c2 hero.graphics.restructure.Strategy$BasicStrategy.render(Lbeige_engine/util/math/Transformation;I)V (44 bytes) @ 0x000002aee0e9458c [0x000002aee0e944a0+0x00000000000000ec]
-J 2240 c1 hero.graphics.restructure.materials.Material.lambda$buildModularStrategy$1(Ljava/util/function/Supplier;Lbeige_engine/util/Mutable;Lbeige_engine/util/math/Transformation;I)V (91 bytes) @ 0x000002aed9c26bec [0x000002aed9c25c80+0x0000000000000f6c]
-J 2239 c1 hero.graphics.restructure.materials.Material$$Lambda$76.render(Lbeige_engine/util/math/Transformation;I)V (18 bytes) @ 0x000002aed9c2577c [0x000002aed9c256c0+0x00000000000000bc]
-J 1966 c2 hero.graphics.restructure.ModelNode.render(Lbeige_engine/util/math/Transformation;I)V (99 bytes) @ 0x000002aee0e86108 [0x000002aee0e85dc0+0x0000000000000348]
+J 2016 c2 hero.graphics.Mesh$$Lambda$88.render()V (16 bytes) @ 0x000002aee0e94d38 [0x000002aee0e949c0+0x0000000000000378]
+J 2404 c2 hero.graphics.materials.PBRMaterial$PBRRenderable.renderGeom()V (37 bytes) @ 0x000002aee0ee2c64 [0x000002aee0ee27c0+0x00000000000004a4]
+J 2019 c2 hero.graphics.models.Strategy$BasicRenderablegy.render(Lbeige_engine/util/math/Transformation;I)V (44 bytes) @ 0x000002aee0e9458c [0x000002aee0e944a0+0x00000000000000ec]
+J 2240 c1 hero.graphics.materials.Material.lambda$buildModularStrategy$1(Ljava/util/function/Supplier;Lbeige_engine/util/Mutable;Lbeige_engine/util/math/Transformation;I)V (91 bytes) @ 0x000002aed9c26bec [0x000002aed9c25c80+0x0000000000000f6c]
+J 2239 c1 hero.graphics.materials.Material$$Lambda$76.render(Lbeige_engine/util/math/Transformation;I)V (18 bytes) @ 0x000002aed9c2577c [0x000002aed9c256c0+0x00000000000000bc]
+J 1966 c2 hero.graphics.ModelNode.render(Lbeige_engine/util/math/Transformation;I)V (99 bytes) @ 0x000002aee0e86108 [0x000002aee0e85dc0+0x0000000000000348]
 J 2296 c2 java.util.HashMap$KeySpliterator.forEachRemaining(Ljava/util/function/Consumer;)V java.base@11.0.4 (186 bytes) @ 0x000002aee0ecd5a0 [0x000002aee0ecd3a0+0x0000000000000200]
 J 2010 c2 java.util.stream.AbstractPipeline.wrapAndCopyInto(Ljava/util/stream/Sink;Ljava/util/Spliterator;)Ljava/util/stream/Sink; java.base@11.0.4 (18 bytes) @ 0x000002aee0e96548 [0x000002aee0e95c40+0x0000000000000908]
 J 2438 c2 java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(Ljava/util/stream/PipelineHelper;Ljava/util/Spliterator;)Ljava/lang/Object; java.base@11.0.4 (7 bytes) @ 0x000002aee0eedeb0 [0x000002aee0eede40+0x0000000000000070]
@@ -993,15 +993,15 @@ CodeHeap 'non-nmethods': size=5760Kb used=1573Kb max_used=1598Kb free=4186Kb
 
 Compilation events (10 events):
 Event: 18.447 Thread 0x000002aef538a800 2565       4       hero.physics.shapes.SurfaceNetShape::surfaceClosest (237 bytes)
-Event: 18.448 Thread 0x000002aef538b800 2566       3       hero.graphics.models.SurfaceNet$Subnet$Edge::<init> (56 bytes)
+Event: 18.448 Thread 0x000002aef538b800 2566       3       hero.graphics.utils.SurfaceNet$Subnet$Edge::<init> (56 bytes)
 Event: 18.448 Thread 0x000002aef538b800 nmethod 2566 0x000002aed9ce2f90 code [0x000002aed9ce3140, 0x000002aed9ce33b8]
-Event: 18.448 Thread 0x000002aef538b800 2568       3       hero.graphics.models.SurfaceNet$Subnet$Edge::hashCode (65 bytes)
+Event: 18.448 Thread 0x000002aef538b800 2568       3       hero.graphics.utils.SurfaceNet$Subnet$Edge::hashCode (65 bytes)
 Event: 18.448 Thread 0x000002aef538b800 nmethod 2568 0x000002aed9ce3490 code [0x000002aed9ce3640, 0x000002aed9ce3818]
 Event: 18.459 Thread 0x000002aef538a800 nmethod 2565 0x000002aee0f18990 code [0x000002aee0f18c00, 0x000002aee0f19828]
-Event: 18.459 Thread 0x000002aef538a800 2569       4       hero.graphics.SDF::lambda$intersectionSmooth$4 (62 bytes)
+Event: 18.459 Thread 0x000002aef538a800 2569       4       hero.graphics.utils.SDF::lambda$intersectionSmooth$4 (62 bytes)
 Event: 18.462 Thread 0x000002aef538a800 nmethod 2569 0x000002aee0f1a090 code [0x000002aee0f1a260, 0x000002aee0f1a558]
-Event: 18.462 Thread 0x000002aef538a800 2567       4       hero.graphics.models.SurfaceNet$Subnet::updateEdge (517 bytes)
-Event: 18.472 Thread 0x000002aef538b800 2571       3       hero.graphics.models.SurfaceNet$Subnet$Edge::addToModel (701 bytes)
+Event: 18.462 Thread 0x000002aef538a800 2567       4       hero.graphics.utils.SurfaceNet$Subnet::updateEdge (517 bytes)
+Event: 18.472 Thread 0x000002aef538b800 2571       3       hero.graphics.utils.SurfaceNet$Subnet$Edge::addToModel (701 bytes)
 
 GC Heap History (10 events):
 Event: 16.530 GC heap before
