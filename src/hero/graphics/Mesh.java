@@ -3,15 +3,15 @@ package hero.graphics;
 import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.VertexArrayObject;
+import beige_engine.util.math.Vec3d;
+import hero.physics.shapes.AABB;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static hero.graphics.VertexAttrib.POSITIONS;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class Mesh {
 
     public final int numFaces, numVerts;
+    public final AABB aabb;
     private final Map<VertexAttrib, float[]> data;
     private final int[] indices;
 
@@ -44,12 +45,28 @@ public class Mesh {
 
         numFaces = indices.length / 3;
         numVerts = data.get(attribs.get(0)).length / attribs.get(0).size;
+        if (attribs.contains(POSITIONS)) {
+            var points = new LinkedList<Vec3d>();
+            for (int i = 0; i < numVerts; i++) {
+                float[] f = data.get(POSITIONS);
+                points.add(new Vec3d(f[3*i], f[3*i+1], f[3*i+2]));
+            }
+            aabb = AABB.boundingBox(points);
+        } else {
+            aabb = null;
+        }
+
         this.data = data;
         this.indices = indices;
 
         for (var a : attribs) {
             if (data.get(a).length != numVerts * a.size) {
                 throw new IllegalArgumentException("data contains array of the wrong size");
+            }
+            for (float f : data.get(a)) {
+                if (!Float.isFinite(f)) {
+                    throw new IllegalArgumentException("Illegal data value: " + f);
+                }
             }
         }
         for (int i : indices) {

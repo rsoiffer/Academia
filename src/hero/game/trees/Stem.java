@@ -193,8 +193,8 @@ public class Stem {
         double texW = Math.max(1, floor(2 * Math.PI * radiusZ(0, 0) / 2));
         double texH = 0;
         for (int i = 0; i < tube.size() - 1; i++) {
-            double z0 = (double) i / (tube.size() - 1);
-            double z1 = (double) (i + 1) / (tube.size() - 1);
+            double z0 = (double) i / (tube.size() - .1);
+            double z1 = (double) (i + 1) / (tube.size() - .1);
             double dTexH = tube.get(i + 1).sub(tube.get(i)).length() / 4;
             for (int j = 0; j < detail; j++) {
                 double angle0 = j * 2 * Math.PI / detail, angle1 = (j + 1) * 2 * Math.PI / detail;
@@ -234,7 +234,7 @@ public class Stem {
                 dir = rotateZ(dir, bend * thetaBend);
                 double orientation = Math.acos(dir.applyTo(new Vec3d(0, 1, 0)).z);
                 normal = dir.applyTo(new Vec3d(1, 0, 0));
-                double phiBend = Math.atan2(Math.sqrt(normal.x * normal.x + normal.y + normal.y), normal.z);
+                double phiBend = Math.atan2(normal.z, Math.sqrt(normal.x * normal.x + normal.y * normal.y));
                 dir = rotateZ(dir, -orientation);
                 dir = rotateX(dir, bend * phiBend);
                 dir = rotateZ(dir, orientation);

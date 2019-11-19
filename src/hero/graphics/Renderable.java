@@ -53,13 +53,16 @@ public interface Renderable {
 
     abstract class LODRenderable implements Renderable {
 
-        public static final int NUM_LOD = 6;
+        private static final int NUM_LOD = 6;
 
         private int numLod = NUM_LOD;
+        private double distOffset;
         private final VAOWrapper[] models = new VAOWrapper[NUM_LOD];
         private Transformation current;
 
         public LODRenderable(Mesh mesh) {
+            distOffset = mesh.aabb.center().length() + mesh.aabb.size().length() / 2;
+            mesh = MeshSimplifier.simplify(mesh, .01);
             for (int i = 0; i < NUM_LOD; i++) {
                 this.models[i] = mesh.getVAOW(attribs());
                 mesh = MeshSimplifier.simplify(mesh, .1 * Math.pow(2, i));
@@ -67,7 +70,6 @@ public interface Renderable {
                     numLod = i + 1;
                     break;
                 }
-                System.out.println(mesh.numVerts);
             }
         }
 
@@ -96,8 +98,8 @@ public interface Renderable {
         }
 
         private double getLOD(Transformation t) {
-            double estimatedDist = t.apply(new Vec3d(0, 0, 0)).sub(Camera.camera3d.position).length();
-            var lod = Math.log(estimatedDist) / Math.log(2) - 5;
+            var estimatedDist = t.apply(new Vec3d(0, 0, 0)).sub(Camera.camera3d.position).length();
+            var lod = Math.log(Math.max(estimatedDist - distOffset, 0)) / Math.log(2) - 4;
             return Math.max(lod, 0);
         }
 

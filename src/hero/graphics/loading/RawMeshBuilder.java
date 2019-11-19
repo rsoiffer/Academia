@@ -113,6 +113,11 @@ public class RawMeshBuilder {
             if (f.size() != names[i].size) {
                 throw new IllegalArgumentException("Input data must match attribute size");
             }
+            for (var f2 : f) {
+                if (!Float.isFinite(f2)) {
+                    throw new IllegalArgumentException("Illegal data value: " + f2);
+                }
+            }
             attribs.get(names[i]).addAll(f);
         }
         numVerts += 1;

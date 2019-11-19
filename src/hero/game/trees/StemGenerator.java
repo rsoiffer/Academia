@@ -53,14 +53,14 @@ public class StemGenerator {
                 r.add(mn);
             }
         }
-        for (int i = 0; i < treeInstances.size(); i++) {
-            Stem s = treeInstances.get(i);
-            for (var v : treePlacements.get(i)) {
-                var mn = new ModelNode(s.getRenderableLeaves());
-                mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
-                r.add(mn);
-            }
-        }
+//        for (int i = 0; i < treeInstances.size(); i++) {
+//            Stem s = treeInstances.get(i);
+//            for (var v : treePlacements.get(i)) {
+//                var mn = new ModelNode(s.getRenderableLeaves());
+//                mn.transform = Transformation.create(v, Quaternion.IDENTITY, 1);
+//                r.add(mn);
+//            }
+//        }
         return r;
     }
 }
