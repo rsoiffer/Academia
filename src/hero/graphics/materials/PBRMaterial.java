@@ -29,7 +29,7 @@ public class PBRMaterial extends Material {
         return new PBRRenderable(mesh);
     }
 
-    public class PBRRenderable extends Renderable.BasicRenderable {
+    public class PBRRenderable extends BasicRenderable {
 
         public PBRRenderable(Mesh mesh) {
             super(mesh);

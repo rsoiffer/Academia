@@ -8,6 +8,7 @@ import beige_engine.engine.Settings;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.passes.RenderPipeline;
 
+import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
 import static hero.game.World.BLOCK_HEIGHT;
@@ -34,12 +35,14 @@ public class MainPC {
         f.player.physics.world = world;
         f.create();
 
-        for (int i = 0; i < 1; i++) {
-            Car c1 = new Car();
-            c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
-            c1.physics.world = world;
-            c1.create();
-        }
+        UPDATE.onStep(() -> {
+            if (Input.keyJustPressed(GLFW_KEY_F)) {
+                Drone d = new Drone();
+                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+                d.physics.world = world;
+                d.create();
+            }
+        });
 
         RenderPipeline rp = new RenderPipeline();
         rp.create();

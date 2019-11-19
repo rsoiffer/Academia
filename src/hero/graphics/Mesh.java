@@ -30,50 +30,13 @@ public class Mesh {
     private final BufferObject vbo, ebo;
 
     public Mesh(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, int[] indices) {
-        if (attribs.isEmpty()) {
-            throw new IllegalArgumentException("attribs cannot be empty");
-        }
-        if (attribs.size() != data.size()) {
-            throw new IllegalArgumentException("attribs and data must be the same size");
-        }
-        if (indices.length == 0) {
-            throw new IllegalArgumentException("indices cannot be empty");
-        }
-        if (indices.length % 3 != 0) {
-            throw new IllegalArgumentException("Number of indices must be a multiple of 3");
-        }
+        checkValid(attribs, data, indices);
 
         numFaces = indices.length / 3;
         numVerts = data.get(attribs.get(0)).length / attribs.get(0).size;
-        if (attribs.contains(POSITIONS)) {
-            var points = new LinkedList<Vec3d>();
-            for (int i = 0; i < numVerts; i++) {
-                float[] f = data.get(POSITIONS);
-                points.add(new Vec3d(f[3*i], f[3*i+1], f[3*i+2]));
-            }
-            aabb = AABB.boundingBox(points);
-        } else {
-            aabb = null;
-        }
-
+        aabb = createAABB(attribs, data, numVerts);
         this.data = data;
         this.indices = indices;
-
-        for (var a : attribs) {
-            if (data.get(a).length != numVerts * a.size) {
-                throw new IllegalArgumentException("data contains array of the wrong size");
-            }
-            for (float f : data.get(a)) {
-                if (!Float.isFinite(f)) {
-                    throw new IllegalArgumentException("Illegal data value: " + f);
-                }
-            }
-        }
-        for (int i : indices) {
-            if (i < 0 || i >= numVerts) {
-                throw new IllegalArgumentException("Index out of bounds");
-            }
-        }
 
         attribPositions = new EnumMap<>(VertexAttrib.class);
         int totalSize = attribs.stream().mapToInt(s -> data.get(s).length).sum();
@@ -91,6 +54,51 @@ public class Mesh {
         ebo = new BufferObject(GL_ELEMENT_ARRAY_BUFFER, indices);
         GLState.bindBuffer(null, GL_ARRAY_BUFFER);
         GLState.bindBuffer(null, GL_ELEMENT_ARRAY_BUFFER);
+    }
+
+    private static void checkValid(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, int[] indices) {
+        if (attribs.isEmpty()) {
+            throw new IllegalArgumentException("attribs cannot be empty");
+        }
+        if (attribs.size() != data.size()) {
+            throw new IllegalArgumentException("attribs and data must be the same size");
+        }
+        if (indices.length == 0) {
+            throw new IllegalArgumentException("indices cannot be empty");
+        }
+        if (indices.length % 3 != 0) {
+            throw new IllegalArgumentException("Number of indices must be a multiple of 3");
+        }
+
+        var numVerts = data.get(attribs.get(0)).length / attribs.get(0).size;
+        for (var a : attribs) {
+            if (data.get(a).length != numVerts * a.size) {
+                throw new IllegalArgumentException("data contains array of the wrong size");
+            }
+            for (float f : data.get(a)) {
+                if (!Float.isFinite(f)) {
+                    throw new IllegalArgumentException("Illegal data value: " + f);
+                }
+            }
+        }
+        for (int i : indices) {
+            if (i < 0 || i >= numVerts) {
+                throw new IllegalArgumentException("Index out of bounds");
+            }
+        }
+    }
+
+    private static AABB createAABB(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, int numVerts) {
+        if (attribs.contains(POSITIONS)) {
+            var points = new LinkedList<Vec3d>();
+            for (int i = 0; i < numVerts; i++) {
+                float[] f = data.get(POSITIONS);
+                points.add(new Vec3d(f[3 * i], f[3 * i + 1], f[3 * i + 2]));
+            }
+            return AABB.boundingBox(points);
+        } else {
+            return null;
+        }
     }
 
     public final int getIndex(int i) {

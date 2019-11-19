@@ -33,7 +33,7 @@ public class Explosion extends Behavior {
         material.color = new Vec3d(1, 0, 0);
         material.hasShadows = false;
         var node = new ModelNode(material.buildRenderable(VoxelModelLoader.load("fireball.vox").mesh));
-        controller.modelNode.node.addChild(node);
+        controller.model.node.addChild(node);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Hand extends Behavior {
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, 1, .4);
         armNode = new ModelNode(material.buildRenderable(VoxelModelLoader.load("singlevoxel.vox").mesh));
-        controller.modelNode.node.addChild(armNode);
+        controller.model.node.addChild(armNode);
     }
 
     @Override

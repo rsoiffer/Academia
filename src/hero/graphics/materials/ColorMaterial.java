@@ -23,7 +23,7 @@ public class ColorMaterial extends Material {
         return new ColorRenderable(mesh);
     }
 
-    public class ColorRenderable extends Renderable.BasicRenderable {
+    public class ColorRenderable extends BasicRenderable {
 
         public ColorRenderable(Mesh mesh) {
             super(mesh);

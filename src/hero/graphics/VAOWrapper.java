@@ -14,7 +14,7 @@ public class VAOWrapper {
         this.numFaces = numFaces;
     }
 
-    public void render() {
+    public void draw() {
         vao.bind();
         glDrawElements(GL_TRIANGLES, numFaces * 3, GL_UNSIGNED_INT, 0);
     }

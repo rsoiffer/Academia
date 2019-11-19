@@ -2,7 +2,6 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.util.Noise;
-import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.game.trees.StemGenerator;
@@ -16,7 +15,6 @@ import hero.physics.shapes.*;
 import java.util.*;
 
 import static beige_engine.util.math.MathUtils.floor;
-import static beige_engine.util.math.MathUtils.rotate;
 import static hero.game.controllers.IceCaster.iceModel;
 import static hero.graphics.loading.VoxelModelLoader.DIRS;
 
@@ -28,14 +26,15 @@ public class World extends Behavior {
     public static final double BLOCK_WIDTH = 2 * BUILDING_SIZE + STREET_WIDTH;
     public static final double BLOCK_HEIGHT = 8 * BUILDING_SIZE + STREET_WIDTH;
 
-    private static final int NUM_WALL_TYPES = 11;
-    private static final double[] WALL_SCALES = {2, 9, 3, 8, 4, 3, 3, 4, 12, 12, 10};
-    private static final double[] WALL_SCALES_X = {1, 1, 1, 1, 1, 1, 1, 1, 1, .5, 1};
+    private static final int NUM_WALL_TYPES = 13;
+    private static final double[] WALL_SCALES = {2, 9, 3, 8, 4, 3, 3, 4, 12, 12, 10, 12, 24};
+    private static final double[] WALL_SCALES_X = {1, 1, 1, 1, 1, 1, 1, 1, 1, .5, 1, 1, 1};
     private static final String[] WALL_TEXTURES = {"tower.png", "glass_0.png", "glass_1.png",
             "highrise_0.png", "highrise_1.png", "highrise_2.png", "highrise_3.png", "highrise_4.png"};
-    private static final String[] WALL_PBR_TEXTURES = {"highrise_facade_1", "highrise_facade_2", "highrise_facade_3"};
+    private static final String[] WALL_PBR_TEXTURES = {"highrise_facade_1", "highrise_facade_2", "highrise_facade_3",
+            "highrise_facade_4", "highrise_facade_5"};
 
-    public final ModelNodeBehavior modelNode = require(ModelNodeBehavior.class);
+    public final ModelBehavior modelNode = require(ModelBehavior.class);
     private final List<AABB> buildings = new ArrayList();
     private final List<AABB> intersections = new ArrayList();
     private final List<AABB> roads = new ArrayList();
@@ -48,7 +47,7 @@ public class World extends Behavior {
 
     @Override
     public void createInner() {
-        treeGenerator.generateInstances(32);
+        treeGenerator.generateInstances(4);
         Noise heightNoise = new Noise(new Random());
 
         for (int i = 0; i < 2000; i += BLOCK_WIDTH) {
@@ -64,7 +63,7 @@ public class World extends Behavior {
                     for (int k = 0; k < 15; k++) {
                         double x = i + Math.random() * 2 * BUILDING_SIZE;
                         double y = j + Math.random() * 8 * BUILDING_SIZE;
-                        treeGenerator.placeTree(new Vec3d(x, y, 0));
+//                        treeGenerator.placeTree(new Vec3d(x, y, 0));
                     }
                 } else {
                     sidewalks.add(new AABB(new Vec3d(i - buffer2, j - buffer2, -500), new Vec3d(i + 2 * BUILDING_SIZE + buffer2, j + 8 * BUILDING_SIZE + buffer2, .1)));
@@ -76,6 +75,13 @@ public class World extends Behavior {
                                 double dist2 = new Vec2d(x, y).sub(1000).lengthSquared();
                                 double height = floor(Math.random() * (50 * Math.exp(-dist2 / 160000) + 50 * heightNoise.noise2d(x, y, .005)) + 4) / 2 * 2 * FLOOR_HEIGHT;
                                 buildings.add(new AABB(new Vec3d(x, y, 0), new Vec3d(x + BUILDING_SIZE, y + BUILDING_SIZE, height)));
+
+                                if (Math.random() < .5) {
+                                    double height2 = height + height * .2 * (1 + Math.random());
+                                    double dist = 4;
+                                    buildings.add(new AABB(new Vec3d(x + dist, y + dist, height),
+                                            new Vec3d(x + BUILDING_SIZE - dist, y + BUILDING_SIZE - dist, height2)));
+                                }
 
 //                                for (int l = 0; l < 2; l++) {
 //                                    double xScale = 10 * Math.random() + 5;
@@ -183,24 +189,25 @@ public class World extends Behavior {
         }
         polesModel.smoothVertexNormals();
 
-        List<Renderable> meshes = new LinkedList<>();
-        meshes.add(PBRMaterial.load("road_empty").buildRenderable(intersectionsModel));
-        meshes.add(PBRMaterial.load("road").buildRenderable(roadsModel));
-        meshes.add(PBRMaterial.load("sidewalk").buildRenderable(sidewalksModel));
-        meshes.add(PBRMaterial.load("grass").buildRenderable(parksModel));
-        meshes.add(PBRMaterial.load("concrete_floor").buildRenderable(roofs));
-        // meshes.add(new Mesh(billboardsModel.toRawMesh(), PBRMaterial.load("concrete_pole")));
-        meshes.add(PBRMaterial.load("concrete_pole").buildRenderable(polesModel));
+        List<Renderable> renderables = new LinkedList<>();
+        renderables.add(PBRMaterial.load("city/road_empty").buildRenderable(intersectionsModel));
+        renderables.add(PBRMaterial.load("city/road").buildRenderable(roadsModel));
+        renderables.add(PBRMaterial.load("city/sidewalk").buildRenderable(sidewalksModel));
+        renderables.add(PBRMaterial.load("city/grass").buildRenderable(parksModel));
+        renderables.add(PBRMaterial.load("city/concrete_floor").buildRenderable(roofs));
+//        renderables.add(PBRMaterial.load("city/concrete_pole").buildRenderable(billboardsModel));
+        renderables.add(PBRMaterial.load("city/concrete_pole").buildRenderable(polesModel));
         for (int i = 0; i < NUM_WALL_TYPES; i++) {
             if (i < WALL_TEXTURES.length) {
-                meshes.add(DiffuseMaterial.load(WALL_TEXTURES[i]).buildRenderable(walls[i]));
+                var material = DiffuseMaterial.load("highrise/" + WALL_TEXTURES[i]);
+                renderables.add(material.buildRenderable(walls[i]));
             } else {
-                meshes.add(PBRMaterial.load(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length]).buildRenderable(walls[i]));
+                var material = PBRMaterial.load("highrise/" + WALL_PBR_TEXTURES[i - WALL_TEXTURES.length]);
+                renderables.add(material.buildRenderable(walls[i]));
             }
         }
-        var node = new ModelNode(Transformation.IDENTITY, meshes, Collections.emptyList());
-        treeGenerator.modelNodes().forEach(node::addChild);
-        return node;
+        renderables.addAll(treeGenerator.modelNodes());
+        return new ModelNode(renderables);
     }
 
     private void createWalls(AABB b, double scale, double scaleX, RawMeshBuilder m) {

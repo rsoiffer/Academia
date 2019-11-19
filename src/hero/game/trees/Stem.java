@@ -3,7 +3,6 @@ package hero.game.trees;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.utils.PBRTexture;
 import hero.graphics.Renderable;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.LODPBRMaterial;
@@ -21,9 +20,6 @@ import static java.lang.Double.NaN;
 public class Stem {
 
     public static final double QUALITY = 1;
-
-    private static final PBRTexture bark = PBRTexture.loadFromFolder("bark");
-    private static final PBRTexture leaf = PBRTexture.loadFromFolder("leaf_maple");
 
     private final int Shape = 4;
     private final double BaseSize = 0.2;
@@ -256,6 +252,8 @@ public class Stem {
         Vec3d edge2 = dir.applyTo(new Vec3d(0, 0, length));
         model.addRectangleUV(p, edge1, edge2, new Vec2d(150 / 512., (512 - 200) / 512.),
                 new Vec2d(120 / 512., 0), new Vec2d(0, 200 / 512.));
+//        model.addRectangleUV(p, edge1, edge2, new Vec2d(650, 0).div(2048),
+//                new Vec2d(2000 - 650, 0).div(2048), new Vec2d(0, 2048 - 1100).div(2048));
 
 //        Vec3d tip = pos.add(dir.applyTo(new Vec3d(0, 0, length)));
 //        Vec3d p = pos.add(dir.applyTo(new Vec3d(0, -0.5 * width, length * .25)));
@@ -350,7 +348,7 @@ public class Stem {
         if (renderable == null) {
             var RMB = new RawMeshBuilder();
             addToModel(RMB, 4);
-            var material = LODPBRMaterial.load("bark");
+            var material = LODPBRMaterial.load("tree/bark");
             renderable = material.buildRenderable(RMB);
         }
         return renderable;
@@ -360,7 +358,8 @@ public class Stem {
         if (renderableLeaves == null) {
             var RMB = new RawMeshBuilder();
             addToModelLeaves(RMB, 1);
-            var material = LODPBRMaterial.load("leaf_maple");
+            var material = LODPBRMaterial.load("tree/leaf_maple");
+            material.hasShadows = false;
             renderableLeaves = material.buildRenderable(RMB);
         }
         return renderableLeaves;

@@ -4,7 +4,6 @@ import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
-import hero.graphics.Renderable.BasicRenderable;
 import hero.graphics.VertexAttrib;
 
 import java.util.Arrays;

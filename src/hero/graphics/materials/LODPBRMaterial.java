@@ -3,7 +3,6 @@ package hero.graphics.materials;
 import hero.graphics.utils.PBRTexture;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
-import hero.graphics.Renderable.LODRenderable;
 import hero.graphics.VertexAttrib;
 
 import java.util.Arrays;
@@ -18,6 +17,7 @@ import static hero.graphics.VertexAttrib.*;
 public class LODPBRMaterial extends Material {
 
     public PBRTexture tex = null;
+    public boolean hasShadows = true;
 
     public static LODPBRMaterial load(String folder) {
         var m = new LODPBRMaterial();
@@ -44,19 +44,19 @@ public class LODPBRMaterial extends Material {
         @Override
         public void renderGeom() {
             bindAll(SHADER_PBR, tex);
-            SHADER_PBR.setUniform("lod", 0f);
             drawModel();
         }
 
         @Override
         public void renderShadow() {
-            if (tex.hasAlpha()) {
-                bindAll(SHADER_SHADOW_ALPHA, tex);
-                SHADER_SHADOW_ALPHA.setUniform("lod", 0f);
-            } else {
-                bindAll(SHADER_SHADOW);
+            if (hasShadows) {
+                if (tex.hasAlpha()) {
+                    bindAll(SHADER_SHADOW_ALPHA, tex);
+                } else {
+                    bindAll(SHADER_SHADOW);
+                }
+                drawModel();
             }
-            drawModel();
         }
     }
 }

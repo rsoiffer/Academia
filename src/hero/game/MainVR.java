@@ -7,14 +7,12 @@ import beige_engine.engine.Core;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.util.Mutable;
-import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.game.controllers.*;
 import hero.graphics.passes.RenderPipeline;
 
-import static beige_engine.engine.Core.dt;
 import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.util.math.MathUtils.floor;
 import static beige_engine.util.math.MathUtils.mod;
@@ -140,7 +138,7 @@ public class MainVR {
 //        }
 
         for (int i = 0; i < 10; i++) {
-            Car c1 = new Car();
+            Drone c1 = new Drone();
             c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
             c1.physics.world = world;
             c1.create();

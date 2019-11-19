@@ -8,7 +8,7 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import beige_engine.vr.ViveController;
-import hero.game.ModelNodeBehavior;
+import hero.game.ModelBehavior;
 import hero.game.Player;
 import hero.graphics.ModelNode;
 import hero.graphics.loading.OpenVRLoader;
@@ -24,7 +24,7 @@ public class ControllerBehavior extends Behavior {
 
     private static final Vec3d OFFSET = new Vec3d(0, 0, 1.2);
 
-    public final ModelNodeBehavior modelNode = require(ModelNodeBehavior.class);
+    public final ModelBehavior model = require(ModelBehavior.class);
 
     public ViveController controller;
     public Player player;
@@ -47,7 +47,7 @@ public class ControllerBehavior extends Behavior {
 
     @Override
     public void createInner() {
-        modelNode.node.addChild(ovrNode);
+        model.node.addChild(ovrNode);
         ovrNode.addChild(new OpenVRLoader(controller).rootNode);
 
         var squareRM = new RawMeshBuilder()
@@ -63,11 +63,10 @@ public class ControllerBehavior extends Behavior {
             var icon = new ModelNode(iconMat.buildRenderable(squareRM));
             ovrNode.addChild(icon);
 
-            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25);
-            if (controller == Vive.LEFT) {
-                offset = offset.mul(new Vec3d(1, -1, 1));
-            }
-            var trans = Transformation.create(offset.mul(.08), Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2)), .05);
+            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25)
+                    .mul(new Vec3d(1, controller == Vive.LEFT ? -1 : 1, 1));
+            var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
+            var trans = Transformation.create(offset.mul(.08), quat, .05);
             icon.transform = trans;
         }
 
@@ -76,15 +75,14 @@ public class ControllerBehavior extends Behavior {
         var selected = new ModelNode(selectedMat.buildRenderable(squareRM));
         ovrNode.addChild(selected);
 
-        modelNode.beforeRender = () -> {
+        model.beforeRender = () -> {
             ovrNode.transform = getTransform();
 
             var i = (7 - myNum) % 6;
-            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24);
-            if (controller == Vive.LEFT) {
-                offset = offset.mul(new Vec3d(1, -1, 1));
-            }
-            var trans = Transformation.create(offset.mul(.08), Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2)), .05);
+            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
+                    .mul(new Vec3d(1, controller == Vive.LEFT ? -1 : 1, 1));
+            var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
+            var trans = Transformation.create(offset.mul(.08), quat, .05);
             selected.transform = trans;
         };
     }

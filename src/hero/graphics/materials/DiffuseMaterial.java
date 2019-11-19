@@ -4,7 +4,6 @@ import beige_engine.graphics.opengl.Texture;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
-import hero.graphics.Renderable.BasicRenderable;
 
 import java.util.Arrays;
 import java.util.List;

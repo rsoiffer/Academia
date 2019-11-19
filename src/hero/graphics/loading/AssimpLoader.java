@@ -18,6 +18,7 @@ import org.lwjgl.assimp.AIVector3D;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static hero.graphics.VertexAttrib.*;
 import static hero.graphics.loading.ConversionUtils.*;
@@ -124,10 +125,12 @@ public class AssimpLoader {
 
     private ModelNode toModelNode(AINode aiNode) {
         var transform = new Transformation(toMatrix4d(aiNode.mTransformation()));
-        var nodeMeshes = aiNode.mNumMeshes() == 0 ? Collections.EMPTY_LIST :
-                streamBuf(aiNode.mMeshes()).map(renderables::get).collect(Collectors.toList());
-        var children = aiNode.mNumChildren() == 0 ? Collections.EMPTY_LIST :
-                streamBuf(aiNode.mChildren()).map(AINode::create).map(this::toModelNode).collect(Collectors.toList());
-        return new ModelNode(transform, nodeMeshes, children);
+        var children = Stream.concat(
+                aiNode.mNumMeshes() == 0 ? Stream.empty()
+                        : streamBuf(aiNode.mMeshes()).map(renderables::get),
+                aiNode.mNumChildren() == 0 ? Stream.empty()
+                        : streamBuf(aiNode.mChildren()).map(AINode::create).map(this::toModelNode)
+        ).collect(Collectors.toList());
+        return new ModelNode(transform, children);
     }
 }

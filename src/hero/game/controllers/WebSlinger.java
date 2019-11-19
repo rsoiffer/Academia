@@ -26,7 +26,7 @@ public class WebSlinger extends Behavior {
         var material = new ColorMaterial();
         material.color = new Vec3d(1, 1, 1);
         webNode = new ModelNode(material.buildRenderable(VoxelModelLoader.load("singlevoxel.vox").mesh));
-        controller.modelNode.node.addChild(webNode);
+        controller.model.node.addChild(webNode);
     }
 
     @Override

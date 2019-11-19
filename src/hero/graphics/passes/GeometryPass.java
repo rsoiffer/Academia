@@ -7,7 +7,7 @@ import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
-import hero.game.ModelNodeBehavior;
+import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 
 import static beige_engine.graphics.Color.BLACK;
@@ -83,7 +83,7 @@ public class GeometryPass implements RenderPass {
         GLState.disable(GL_BLEND);
         gBuffer.clear(BLACK);
         updateShaderUniforms();
-        ModelNodeBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 0));
+        ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 0));
         GLState.bindFramebuffer(null);
     }
 }
