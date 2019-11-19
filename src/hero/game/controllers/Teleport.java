@@ -5,7 +5,6 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
 import hero.graphics.restructure.loading.VoxelModelLoader;
 import hero.graphics.restructure.materials.ColorMaterial;
@@ -27,12 +26,12 @@ public class Teleport extends Behavior {
     public void createInner() {
         var material1 = new ColorMaterial();
         material1.color = new Vec3d(.6, .2, .8);
-        markerNode = new ModelNode(new Mesh(VoxelModelLoader.load("singlevoxel.vox").rawMesh, material1));
+        markerNode = new ModelNode(material1.buildStrategy(VoxelModelLoader.load("singlevoxel.vox").mesh));
         controller.ovrNode.addChild(markerNode);
 
         material2 = new ColorParticlesMaterial();
         material2.color = new Vec3d(.6, .2, .8);
-        arcNode = new ModelNode(new Mesh(VoxelModelLoader.load("singlevoxel.vox").rawMesh, material2));
+        arcNode = new ModelNode(material2.buildStrategy(VoxelModelLoader.load("singlevoxel.vox").mesh));
         controller.ovrNode.addChild(arcNode);
     }
 

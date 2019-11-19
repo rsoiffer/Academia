@@ -1,8 +1,7 @@
 package hero.graphics.restructure.materials;
 
 import beige_engine.graphics.opengl.Texture;
-import hero.graphics.renderables.DiffuseModel;
-import hero.graphics.restructure.RawMesh;
+import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.Strategy;
 import hero.graphics.restructure.VertexAttrib;
 import hero.graphics.restructure.Strategy.BasicStrategy;
@@ -29,14 +28,14 @@ public class DiffuseMaterial extends Material {
     }
 
     @Override
-    public Strategy buildStrategy(RawMesh rawMesh) {
-        return new DiffuseStrategy(rawMesh, this);
+    public Strategy buildStrategy(Mesh mesh) {
+        return new DiffuseStrategy(mesh, this);
     }
 
     public class DiffuseStrategy extends BasicStrategy {
 
-        public DiffuseStrategy(RawMesh rawMesh, Material material) {
-            super(rawMesh, material);
+        public DiffuseStrategy(Mesh mesh, Material material) {
+            super(mesh, material);
         }
 
         @Override

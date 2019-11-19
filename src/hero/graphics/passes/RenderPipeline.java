@@ -66,6 +66,16 @@ public class RenderPipeline extends Behavior {
         return RENDER3D;
     }
 
+    public void setSunDirection(Vec3d sunDirection) {
+        this.sunDirection = sunDirection;
+        for (var lp : lpList) {
+            lp.sunDirection = sunDirection;
+        }
+        for (var sp : spList) {
+            sp.sunDirection = sunDirection;
+        }
+    }
+
     @Override
     public void step() {
         if (isVR) {

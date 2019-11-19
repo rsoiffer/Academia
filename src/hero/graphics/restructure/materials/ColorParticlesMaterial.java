@@ -2,7 +2,7 @@ package hero.graphics.restructure.materials;
 
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.RawMesh;
+import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.Strategy;
 import hero.graphics.restructure.Strategy.BasicStrategy;
 import hero.graphics.restructure.VertexAttrib;
@@ -25,14 +25,14 @@ public class ColorParticlesMaterial extends Material {
 
     public List<Transformation> particles = new LinkedList<>();
 
-    public Strategy buildStrategy(RawMesh rawMesh) {
-        return new ColorParticlesStrategy(rawMesh, this);
+    public Strategy buildStrategy(Mesh mesh) {
+        return new ColorParticlesStrategy(mesh, this);
     }
 
     public class ColorParticlesStrategy extends BasicStrategy {
 
-        public ColorParticlesStrategy(RawMesh rawMesh, Material material) {
-            super(rawMesh, material);
+        public ColorParticlesStrategy(Mesh mesh, Material material) {
+            super(mesh, material);
         }
 
         @Override

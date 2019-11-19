@@ -7,8 +7,6 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.graphics.renderables.ColorModelParticles;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
 import hero.graphics.restructure.loading.VoxelModelLoader;
 import hero.graphics.restructure.materials.ColorParticlesMaterial;
@@ -33,7 +31,7 @@ public class Thruster extends Behavior {
         material = new ColorParticlesMaterial();
         material.color = new Vec3d(1, 0, 0);
         material.hasShadows = false;
-        var node = new ModelNode(new Mesh(VoxelModelLoader.load("fireball.vox").rawMesh, material));
+        var node = new ModelNode(material.buildStrategy(VoxelModelLoader.load("fireball.vox").mesh));
         controller.modelNode.node.addChild(node);
     }
 

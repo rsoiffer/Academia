@@ -5,7 +5,6 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
 import hero.graphics.restructure.materials.DiffuseMaterial;
 import org.lwjgl.PointerBuffer;
@@ -77,7 +76,7 @@ public class OpenVRLoader {
         var diffuseMat = new DiffuseMaterial();
         diffuseMat.texture = diffuseTexture;
 
-        rootNode = new ModelNode(new Mesh(RMB.toRawMesh(), diffuseMat));
+        rootNode = new ModelNode(diffuseMat.buildStrategy(RMB.toRawMesh()));
     }
 
     private static Vec3d toVec3d(HmdVector3 v) {

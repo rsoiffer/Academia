@@ -4,9 +4,12 @@ import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
+import hero.game.ModelNodeBehavior;
 import hero.graphics.PBRTexture;
 import hero.graphics.SDF;
 import hero.graphics.models.SurfaceNet;
+import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.materials.PBRMaterial;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
@@ -19,10 +22,17 @@ import static hero.graphics.SDF.*;
 
 public class IceCaster extends Behavior {
 
-    public static SurfaceNet iceModel = new SurfaceNet(.5);
-    private static PBRTexture iceTexture = PBRTexture.loadFromFolder("ice2");
+    public static final SurfaceNet iceModel = new SurfaceNet(.5);
 //    private static Renderable iceRenderable = new PBRModel(iceModel, iceTexture);
 //    private static RenderableBehavior iceRB = createRB(iceRenderable);
+
+    static {
+        var material = new PBRMaterial();
+        material.tex = PBRTexture.loadFromFolder("ice2");
+        var mnb = new ModelNodeBehavior();
+        mnb.node = new ModelNode(material.buildModularStrategy(iceModel::getMeshes));
+        mnb.create();
+    }
 
     public final ControllerBehavior controller = require(ControllerBehavior.class);
 

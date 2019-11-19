@@ -1,19 +1,13 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
-import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.Noise;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.game.trees.StemGenerator;
-import hero.graphics.PBRTexture;
-import hero.graphics.renderables.DiffuseModel;
-import hero.graphics.renderables.PBRModel;
-import hero.graphics.renderables.Renderable;
-import hero.graphics.renderables.RenderableList;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
+import hero.graphics.restructure.Strategy;
 import hero.graphics.restructure.loading.RawMeshBuilder;
 import hero.graphics.restructure.materials.DiffuseMaterial;
 import hero.graphics.restructure.materials.PBRMaterial;
@@ -188,19 +182,19 @@ public class World extends Behavior {
         }
         polesModel.smoothVertexNormals();
 
-        List<Mesh> meshes = new LinkedList<>();
-        meshes.add(new Mesh(intersectionsModel.toRawMesh(), PBRMaterial.load("road_empty")));
-        meshes.add(new Mesh(roadsModel.toRawMesh(), PBRMaterial.load("road")));
-        meshes.add(new Mesh(sidewalksModel.toRawMesh(), PBRMaterial.load("sidewalk")));
-        meshes.add(new Mesh(parksModel.toRawMesh(), PBRMaterial.load("grass")));
-        meshes.add(new Mesh(roofs.toRawMesh(), PBRMaterial.load("concrete_floor")));
+        List<Strategy> meshes = new LinkedList<>();
+        meshes.add(PBRMaterial.load("road_empty").buildStrategy(intersectionsModel));
+        meshes.add(PBRMaterial.load("road").buildStrategy(roadsModel));
+        meshes.add(PBRMaterial.load("sidewalk").buildStrategy(sidewalksModel));
+        meshes.add(PBRMaterial.load("grass").buildStrategy(parksModel));
+        meshes.add(PBRMaterial.load("concrete_floor").buildStrategy(roofs));
         // meshes.add(new Mesh(billboardsModel.toRawMesh(), PBRMaterial.load("concrete_pole")));
-        meshes.add(new Mesh(polesModel.toRawMesh(), PBRMaterial.load("concrete_pole")));
+        meshes.add(PBRMaterial.load("concrete_pole").buildStrategy(polesModel));
         for (int i = 0; i < NUM_WALL_TYPES; i++) {
             if (i < WALL_TEXTURES.length) {
-                meshes.add(new Mesh(walls[i].toRawMesh(), DiffuseMaterial.load(WALL_TEXTURES[i])));
+                meshes.add(DiffuseMaterial.load(WALL_TEXTURES[i]).buildStrategy(walls[i]));
             } else {
-                meshes.add(new Mesh(walls[i].toRawMesh(), PBRMaterial.load(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length])));
+                meshes.add(PBRMaterial.load(WALL_PBR_TEXTURES[i - WALL_TEXTURES.length]).buildStrategy(walls[i]));
             }
         }
         // meshes.addAll(treeGenerator.renderables());

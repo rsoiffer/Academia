@@ -6,7 +6,6 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
 import hero.graphics.restructure.loading.VoxelModelLoader;
 import hero.graphics.restructure.materials.ColorMaterial;
@@ -26,7 +25,7 @@ public class Wing extends Behavior {
     public void createInner() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.3, .5, .1);
-        wingNode = new ModelNode(new Mesh(VoxelModelLoader.load("singlevoxel.vox").rawMesh, material));
+        wingNode = new ModelNode(material.buildStrategy(VoxelModelLoader.load("singlevoxel.vox").mesh));
         controller.ovrNode.addChild(wingNode);
     }
 

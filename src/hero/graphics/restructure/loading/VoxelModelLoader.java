@@ -1,14 +1,9 @@
 package hero.graphics.restructure.loading;
 
-import beige_engine.graphics.opengl.BufferObject;
-import beige_engine.graphics.opengl.VertexArrayObject;
 import beige_engine.util.Resources;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.models.Model;
-import hero.graphics.models.Vertex;
 import hero.graphics.models.Vertex.VertexColor;
-import hero.graphics.restructure.ModelNode;
-import hero.graphics.restructure.RawMesh;
+import hero.graphics.restructure.Mesh;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -16,8 +11,6 @@ import java.util.Map.Entry;
 import static beige_engine.util.math.MathUtils.mod;
 import static hero.graphics.restructure.VertexAttrib.NORMALS;
 import static hero.graphics.restructure.VertexAttrib.POSITIONS;
-import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 
 public class VoxelModelLoader {
 
@@ -46,7 +39,7 @@ public class VoxelModelLoader {
     };
 
     public Vec3d originalSize;
-    public RawMesh rawMesh;
+    public Mesh mesh;
 
     private VoxelModelLoader(String fileName) {
         Map<Vec3d, Integer> colors = null;
@@ -90,7 +83,7 @@ public class VoxelModelLoader {
                 }
             }
         }
-        rawMesh = RMB.toRawMesh();
+        mesh = RMB.toRawMesh();
     }
 
     public static VoxelModelLoader load(String fileName) {

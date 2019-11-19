@@ -4,7 +4,6 @@ import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.sprites.Sprite;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.renderables.DiffuseModel;
 import hero.graphics.restructure.*;
 import hero.graphics.restructure.materials.ColorMaterial;
 import hero.graphics.restructure.materials.DiffuseMaterial;
@@ -28,7 +27,7 @@ public class AssimpLoader {
     private static final Map<String, AssimpLoader> MODEL_CACHE = new HashMap();
     private final String texturesDir;
     private final List<Material> materials;
-    private final List<Mesh> meshes;
+    private final List<Strategy> strategies;
     public ModelNode rootNode;
 
     private AssimpLoader(String filename) {
@@ -53,7 +52,7 @@ public class AssimpLoader {
         }
 
         materials = streamBuf(aiScene.mMaterials()).map(AIMaterial::create).map(this::toMaterial).collect(Collectors.toList());
-        meshes = streamBuf(aiScene.mMeshes()).map(AIMesh::create).map(this::toMesh).collect(Collectors.toList());
+        strategies = streamBuf(aiScene.mMeshes()).map(AIMesh::create).map(this::toStrategy).collect(Collectors.toList());
         rootNode = toModelNode(aiScene.mRootNode());
     }
 
@@ -143,14 +142,14 @@ public class AssimpLoader {
         }
     }
 
-    private void possiblySetAttrib(RawMesh myMesh, VertexAttrib name, AIVector3D.Buffer buf) {
+    private void possiblySetAttrib(Mesh myMesh, VertexAttrib name, AIVector3D.Buffer buf) {
         if (buf != null) {
             myMesh.setAttrib(name, streamBuf(buf).flatMap(AssimpLoader::streamVec));
         }
     }
 
-    private Mesh toMesh(AIMesh aiMesh) {
-        var rawMesh = new RawMesh(aiMesh.mNumFaces(), aiMesh.mNumVertices());
+    private Strategy toStrategy(AIMesh aiMesh) {
+        var rawMesh = new Mesh(aiMesh.mNumFaces(), aiMesh.mNumVertices());
         rawMesh.setIndices(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
         possiblySetAttrib(rawMesh, POSITIONS, aiMesh.mVertices());
         possiblySetAttrib(rawMesh, NORMALS, aiMesh.mNormals());
@@ -159,13 +158,13 @@ public class AssimpLoader {
         possiblySetAttrib(rawMesh, BITANGENTS, aiMesh.mBitangents());
 
         var material = materials.get(aiMesh.mMaterialIndex());
-        return new Mesh(rawMesh, material);
+        return material.buildStrategy(rawMesh);
     }
 
     private ModelNode toModelNode(AINode aiNode) {
         var transform = new Transformation(toMatrix4d(aiNode.mTransformation()));
         var nodeMeshes = aiNode.mNumMeshes() == 0 ? Collections.EMPTY_LIST :
-                streamBuf(aiNode.mMeshes()).map(meshes::get).collect(Collectors.toList());
+                streamBuf(aiNode.mMeshes()).map(strategies::get).collect(Collectors.toList());
         var children = aiNode.mNumChildren() == 0 ? Collections.EMPTY_LIST :
                 streamBuf(aiNode.mChildren()).map(AINode::create).map(this::toModelNode).collect(Collectors.toList());
         return new ModelNode(transform, nodeMeshes, children);

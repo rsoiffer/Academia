@@ -5,7 +5,6 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
-import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.ModelNode;
 import hero.graphics.restructure.loading.VoxelModelLoader;
 import hero.graphics.restructure.materials.ColorMaterial;
@@ -29,7 +28,7 @@ public class Hand extends Behavior {
     public void createInner() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, 1, .4);
-        armNode = new ModelNode(new Mesh(VoxelModelLoader.load("singlevoxel.vox").rawMesh, material));
+        armNode = new ModelNode(material.buildStrategy(VoxelModelLoader.load("singlevoxel.vox").mesh));
         controller.modelNode.node.addChild(armNode);
     }
 

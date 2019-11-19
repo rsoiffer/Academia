@@ -1,7 +1,7 @@
 package hero.graphics.restructure.materials;
 
 import beige_engine.util.math.Vec3d;
-import hero.graphics.restructure.RawMesh;
+import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.VertexAttrib;
 import hero.graphics.restructure.Strategy;
 import hero.graphics.restructure.Strategy.BasicStrategy;
@@ -20,14 +20,14 @@ public class ColorMaterial extends Material {
     public double metallic = 0;
     public double roughness = .5;
 
-    public Strategy buildStrategy(RawMesh rawMesh) {
-        return new ColorStrategy(rawMesh, this);
+    public Strategy buildStrategy(Mesh mesh) {
+        return new ColorStrategy(mesh, this);
     }
 
     public class ColorStrategy extends BasicStrategy {
 
-        public ColorStrategy(RawMesh rawMesh, Material material) {
-            super(rawMesh, material);
+        public ColorStrategy(Mesh mesh, Material material) {
+            super(mesh, material);
         }
 
         @Override

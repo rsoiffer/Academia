@@ -3,14 +3,17 @@ package hero.graphics.models;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.SDF;
+import hero.graphics.restructure.Mesh;
+import hero.graphics.restructure.loading.RawMeshBuilder;
 import hero.physics.shapes.AABB;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static beige_engine.util.math.MathUtils.*;
 
-public class SurfaceNet implements Model {
+public class SurfaceNet {
 
     private static final double MIN = -1, BOUNDARY = 0, MAX = 1;
     private static final int SUBNET_SIZE = 32;
@@ -60,6 +63,16 @@ public class SurfaceNet implements Model {
         return r;
     }
 
+    public Stream<Mesh> getMeshes() {
+        return subnets.values().stream().map(s -> {
+            if (s.changed) {
+                s.updateModel();
+                s.changed = false;
+            }
+            return s.mesh;
+        }).filter(Objects::nonNull);
+    }
+
     private Subnet getSubnet(Vec3d v) {
         v = v.div(SUBNET_SIZE).floor();
         if (!subnets.containsKey(v)) {
@@ -81,17 +94,6 @@ public class SurfaceNet implements Model {
                     }
                 }
             }
-        }
-    }
-
-    @Override
-    public void render() {
-        for (Subnet s : subnets.values()) {
-            if (s.changed) {
-                s.updateModel();
-                s.changed = false;
-            }
-            s.model.render();
         }
     }
 
@@ -137,7 +139,8 @@ public class SurfaceNet implements Model {
         private final Vec3d subnetPos;
         private final double[][][] data = new double[SUBNET_SIZE + 2][SUBNET_SIZE + 2][SUBNET_SIZE + 2];
         private final Set<Edge> surfaceEdges = new HashSet();
-        private final CustomModel model = new CustomModel();
+        // private final CustomModel model = new CustomModel();
+        private Mesh mesh = null;
         private final Vec3d[][][] points = new Vec3d[SUBNET_SIZE + 1][SUBNET_SIZE + 1][SUBNET_SIZE + 1];
         private final int[][][] pointCounts = new int[SUBNET_SIZE + 1][SUBNET_SIZE + 1][SUBNET_SIZE + 1];
         private boolean changed;
@@ -154,7 +157,6 @@ public class SurfaceNet implements Model {
                     }
                 }
             }
-            model.createVAO();
         }
 
         private void set(int x, int y, int z, double d) {
@@ -218,14 +220,14 @@ public class SurfaceNet implements Model {
         }
 
         private void updateModel() {
-            model.clear();
+            var RMB = new RawMeshBuilder();
             for (Edge e : surfaceEdges) {
                 if (e.x0 > 0 && e.x0 <= SUBNET_SIZE && e.y0 > 0 && e.y0 <= SUBNET_SIZE && e.z0 > 0 && e.z0 <= SUBNET_SIZE) {
-                    e.addToModel();
+                    e.addToModel(RMB);
                 }
             }
-            model.smoothVertexNormals();
-            model.updateVBO();
+            RMB.smoothVertexNormals();
+            mesh = RMB.toRawMesh();
         }
 
         private class Edge {
@@ -244,7 +246,7 @@ public class SurfaceNet implements Model {
                 this.d1 = d1;
             }
 
-            private void addToModel() {
+            private void addToModel(RawMeshBuilder RMB) {
                 List<Vec3d> p = new ArrayList(4);
                 for (int x = x1 - 1; x <= x0; x++) {
                     for (int y = y1 - 1; y <= y0; y++) {
@@ -255,19 +257,19 @@ public class SurfaceNet implements Model {
                 }
                 if (y0 == y1 != d0 > BOUNDARY) {
                     if (x0 == x1) {
-                        model.addTriangle(p.get(0), new Vec2d(0, 0), p.get(1), new Vec2d(1, 0), p.get(2), new Vec2d(0, 1));
-                        model.addTriangle(p.get(3), new Vec2d(1, 1), p.get(2), new Vec2d(0, 1), p.get(1), new Vec2d(1, 0));
+                        RMB.addTriangleUV(p.get(0), new Vec2d(0, 0), p.get(1), new Vec2d(1, 0), p.get(2), new Vec2d(0, 1));
+                        RMB.addTriangleUV(p.get(3), new Vec2d(1, 1), p.get(2), new Vec2d(0, 1), p.get(1), new Vec2d(1, 0));
                     } else {
-                        model.addTriangle(p.get(0), new Vec2d(0, 0), p.get(1), new Vec2d(0, 1), p.get(2), new Vec2d(1, 0));
-                        model.addTriangle(p.get(3), new Vec2d(1, 1), p.get(2), new Vec2d(1, 0), p.get(1), new Vec2d(0, 1));
+                        RMB.addTriangleUV(p.get(0), new Vec2d(0, 0), p.get(1), new Vec2d(0, 1), p.get(2), new Vec2d(1, 0));
+                        RMB.addTriangleUV(p.get(3), new Vec2d(1, 1), p.get(2), new Vec2d(1, 0), p.get(1), new Vec2d(0, 1));
                     }
                 } else {
                     if (x0 == x1) {
-                        model.addTriangle(p.get(0), new Vec2d(0, 0), p.get(2), new Vec2d(0, 1), p.get(1), new Vec2d(1, 0));
-                        model.addTriangle(p.get(3), new Vec2d(1, 1), p.get(1), new Vec2d(1, 0), p.get(2), new Vec2d(0, 1));
+                        RMB.addTriangleUV(p.get(0), new Vec2d(0, 0), p.get(2), new Vec2d(0, 1), p.get(1), new Vec2d(1, 0));
+                        RMB.addTriangleUV(p.get(3), new Vec2d(1, 1), p.get(1), new Vec2d(1, 0), p.get(2), new Vec2d(0, 1));
                     } else {
-                        model.addTriangle(p.get(0), new Vec2d(0, 0), p.get(2), new Vec2d(1, 0), p.get(1), new Vec2d(0, 1));
-                        model.addTriangle(p.get(3), new Vec2d(1, 1), p.get(1), new Vec2d(0, 1), p.get(2), new Vec2d(1, 0));
+                        RMB.addTriangleUV(p.get(0), new Vec2d(0, 0), p.get(2), new Vec2d(1, 0), p.get(1), new Vec2d(0, 1));
+                        RMB.addTriangleUV(p.get(3), new Vec2d(1, 1), p.get(1), new Vec2d(0, 1), p.get(2), new Vec2d(1, 0));
                     }
                 }
             }

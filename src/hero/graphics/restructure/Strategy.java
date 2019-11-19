@@ -17,9 +17,9 @@ public interface Strategy {
         private final Model model;
         private Transformation t;
 
-        public BasicStrategy(RawMesh rawMesh, Material material) {
+        public BasicStrategy(Mesh mesh, Material material) {
             this.material = material;
-            this.model = rawMesh.buildModel(attribs());
+            this.model = mesh.buildModel(attribs());
         }
 
         protected abstract List<VertexAttrib> attribs();

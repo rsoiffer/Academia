@@ -7,12 +7,14 @@ import beige_engine.engine.Core;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.util.Mutable;
+import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.game.controllers.*;
 import hero.graphics.passes.RenderPipeline;
 
+import static beige_engine.engine.Core.dt;
 import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.util.math.MathUtils.floor;
 import static beige_engine.util.math.MathUtils.mod;
@@ -147,6 +149,13 @@ public class MainVR {
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;
         rp.create();
+
+//        var timeOfDay = new Mutable<>(0.);
+//        UPDATE.onStep(() -> {
+//            timeOfDay.o += dt() * .6;
+//            Vec3d baseDir = new Vec3d(.3, -.15, 1).normalize();
+//            rp.setSunDirection(Quaternion.fromAngleAxis(new Vec3d(0, timeOfDay.o, 0)).applyTo(baseDir));
+//        });
 
         Core.run();
     }

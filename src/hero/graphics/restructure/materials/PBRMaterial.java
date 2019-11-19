@@ -1,7 +1,7 @@
 package hero.graphics.restructure.materials;
 
 import hero.graphics.PBRTexture;
-import hero.graphics.restructure.RawMesh;
+import hero.graphics.restructure.Mesh;
 import hero.graphics.restructure.Strategy;
 import hero.graphics.restructure.Strategy.BasicStrategy;
 import hero.graphics.restructure.VertexAttrib;
@@ -26,14 +26,14 @@ public class PBRMaterial extends Material {
     }
 
     @Override
-    public Strategy buildStrategy(RawMesh rawMesh) {
-        return new PBRStrategy(rawMesh, this);
+    public Strategy buildStrategy(Mesh mesh) {
+        return new PBRStrategy(mesh, this);
     }
 
     public class PBRStrategy extends BasicStrategy {
 
-        public PBRStrategy(RawMesh rawMesh, Material material) {
-            super(rawMesh, material);
+        public PBRStrategy(Mesh mesh, Material material) {
+            super(mesh, material);
         }
 
         @Override
