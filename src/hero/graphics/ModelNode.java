@@ -29,7 +29,7 @@ public class ModelNode implements Renderable {
         this.children = new ArrayList<>(children);
     }
 
-    public void addChild(ModelNode child) {
+    public void addChild(Renderable child) {
         children.add(child);
     }
 

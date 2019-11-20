@@ -34,6 +34,7 @@ public class PhysicsBehavior extends Behavior {
 
     public World world;
     public boolean onGround;
+    public Vec3d collisionVel = new Vec3d(0, 0, 0);
 
     public void applyForce(Vec3d force, Vec3d pos) {
         applyImpulse(force.mul(dt()), pos);
@@ -106,6 +107,7 @@ public class PhysicsBehavior extends Behavior {
             applyTorque(pose.rotation.applyTo(new Vec3d(0, 0, 1)).cross(new Vec3d(0, 0, 1)).setLength(reorientTorque));
         }
 
+        var oldVelocity = velocity;
         Vec3d newPos = pose.position.add(velocity.mul(dt()));
         if (!wouldCollideAt(newPos)) {
             pose.position = newPos;
@@ -118,6 +120,7 @@ public class PhysicsBehavior extends Behavior {
                 t2 *= 1 - t;
             }
         }
+        collisionVel = oldVelocity.sub(velocity);
     }
 
     public boolean wouldCollideAt(Vec3d pos) {

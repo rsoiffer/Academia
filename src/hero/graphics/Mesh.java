@@ -116,6 +116,8 @@ public class Mesh {
                 glEnableVertexAttribArray(i);
             }
             GLState.bindVertexArrayObject(null);
+            GLState.bindBuffer(null, GL_ARRAY_BUFFER);
+            GLState.bindBuffer(null, GL_ELEMENT_ARRAY_BUFFER);
         });
         return new VAOWrapper(vao, numFaces);
     }

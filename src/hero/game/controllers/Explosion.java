@@ -5,7 +5,7 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.game.controllers.Thruster.Particle;
+import hero.game.ParticleBurst.Particle;
 import hero.graphics.ModelNode;
 import hero.graphics.loading.VoxelModelLoader;
 import hero.graphics.materials.ColorParticlesMaterial;
