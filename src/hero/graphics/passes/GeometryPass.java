@@ -51,9 +51,9 @@ public class GeometryPass implements RenderPass {
         gBuffer.bind();
         gPosition = gBuffer.attachTexture(GL_RGB32F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
         gNormal = gBuffer.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT1);
-        gAlbedo = gBuffer.attachTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, GL_NEAREST, GL_COLOR_ATTACHMENT2);
-        gMRA = gBuffer.attachTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, GL_NEAREST, GL_COLOR_ATTACHMENT3);
-        gEmissive = gBuffer.attachTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, GL_NEAREST, GL_COLOR_ATTACHMENT4);
+        gAlbedo = gBuffer.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT2);
+        gMRA = gBuffer.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT3);
+        gEmissive = gBuffer.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT4);
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4});
         gBuffer.attachDepthRenderbuffer();
         GLState.bindFramebuffer(null);
@@ -84,6 +84,10 @@ public class GeometryPass implements RenderPass {
         gBuffer.clear(BLACK);
         updateShaderUniforms();
         ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 0));
+        GLState.enable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        ModelBehavior.allNodesAdditive().forEach(n -> n.render(Transformation.IDENTITY, 0));
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GLState.bindFramebuffer(null);
     }
 }

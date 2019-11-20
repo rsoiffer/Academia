@@ -1,27 +1,28 @@
 package hero.graphics.passes;
 
+import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.Framebuffer;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
+import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
+import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 
 import java.util.List;
 
 import static beige_engine.graphics.opengl.Framebuffer.FRAMEBUFFER_VAO;
 import static beige_engine.graphics.opengl.GLObject.bindAll;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.glBindTexture;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.*;
 
 public class LightingPass implements RenderPass {
 
@@ -43,7 +44,8 @@ public class LightingPass implements RenderPass {
 
     private final GeometryPass gp;
     private final List<ShadowPass> spList;
-    private final Framebuffer framebuffer;
+    private Framebuffer framebuffer, rawLight, preBloom, bloomBuf1, bloomBuf2;
+    private Texture tex1, tex2, rawLightTex;
     public Camera camera;
     public Color skyColor;
     public Vec3d sunColor, sunDirection;
@@ -51,24 +53,40 @@ public class LightingPass implements RenderPass {
     public LightingPass(Vec2d framebufferSize, GeometryPass gp, List<ShadowPass> spList) {
         this.gp = gp;
         this.spList = spList;
-
         if (framebufferSize == null) {
-            framebuffer = new Framebuffer();
-        } else {
-            framebuffer = new Framebuffer(framebufferSize);
+            framebufferSize = new Vec2d(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
         }
+
+        framebuffer = new Framebuffer(framebufferSize);
         framebuffer.attachColorBuffer();
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
         framebuffer.attachDepthRenderbuffer();
-        GLState.bindFramebuffer(null);
 
+        rawLight = new Framebuffer(framebufferSize);
+        rawLightTex = rawLight.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
+        rawLight.attachDepthRenderbuffer();
+
+        preBloom = new Framebuffer(framebufferSize);
+        tex1 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
+        tex2 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT1);
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
+        preBloom.attachDepthRenderbuffer();
+
+        bloomBuf1 = new Framebuffer(framebufferSize.div(8));
+        bloomBuf1.attachColorBuffer();
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
+        bloomBuf1.attachDepthRenderbuffer();
+
+        bloomBuf2 = new Framebuffer(framebufferSize.div(8));
+        bloomBuf2.attachColorBuffer();
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
+        bloomBuf2.attachDepthRenderbuffer();
+
+        GLState.bindFramebuffer(null);
         GLState.bindShader(null);
         for (int i = 0; i < spList.size(); i++) {
             spList.get(i).bindShadowMap(6 + i);
-        }
-
-        GLState.bindShader(null);
-        for (int i = 0; i < spList.size(); i++) {
             glActiveTexture(GL_TEXTURE0 + 6 + i);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
@@ -80,7 +98,8 @@ public class LightingPass implements RenderPass {
 
     @Override
     public void run() {
-        framebuffer.clear(skyColor);
+        rawLight.clear(skyColor);
+        glClearBufferfv(GL_COLOR, 1, new float[]{0, 0, 0, 0});
 
         GLState.bindShader(null);
         for (int i = 0; i < spList.size(); i++) {
@@ -102,7 +121,46 @@ public class LightingPass implements RenderPass {
         for (int i = 0; i < spList.size(); i++) {
             GLState.bindTexture(null, 6 + i);
         }
-
         GLState.bindFramebuffer(null);
+
+        // New code!
+
+//        GLState.enable(GL_BLEND);
+//        glBlendFunc(GL_ONE, GL_ONE);
+//        ModelBehavior.allNodesAdditive().forEach(n -> n.render(Transformation.IDENTITY, 3));
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        GLState.disable(GL_DEPTH_TEST);
+        var camera = new Camera.Camera2d();
+        camera.lowerLeft = new Vec2d(-1, -1);
+        Camera.current = camera;
+
+        var sprite = Shader.load("sprite");
+        sprite.setMVP(Transformation.IDENTITY);
+        sprite.setUniform("color", Color.WHITE);
+        var bloom = Shader.load("bloom");
+        bloom.setMVP(Transformation.IDENTITY);
+        var hdr = Shader.load("hdr");
+        hdr.setMVP(Transformation.IDENTITY);
+
+        preBloom.drawToSelf(rawLightTex, hdr);
+
+        bloom.setUniform("horizontal", false);
+        bloomBuf1.drawToSelf(tex2, bloom);
+        bloom.setUniform("horizontal", true);
+        bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, bloom);
+        for (int i = 0; i < 3; i++) {
+            bloom.setUniform("horizontal", false);
+            bloomBuf1.drawToSelf(bloomBuf2.colorBuffer, bloom);
+            bloom.setUniform("horizontal", true);
+            bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, bloom);
+        }
+
+        framebuffer.clear(Color.BLACK);
+        framebuffer.drawToSelf(tex1, sprite);
+
+        glBlendFunc(GL_ONE, GL_ONE);
+        framebuffer.drawToSelf(bloomBuf2.colorBuffer, sprite);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 }

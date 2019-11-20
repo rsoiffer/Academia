@@ -26,13 +26,13 @@ public class World extends Behavior {
     public static final double BLOCK_WIDTH = 2 * BUILDING_SIZE + STREET_WIDTH;
     public static final double BLOCK_HEIGHT = 8 * BUILDING_SIZE + STREET_WIDTH;
 
-    private static final int NUM_WALL_TYPES = 13;
-    private static final double[] WALL_SCALES = {2, 9, 3, 8, 4, 3, 3, 4, 12, 12, 10, 12, 24};
-    private static final double[] WALL_SCALES_X = {1, 1, 1, 1, 1, 1, 1, 1, 1, .5, 1, 1, 1};
+    private static final int NUM_WALL_TYPES = 15;
+    private static final double[] WALL_SCALES = {2, 9, 3, 8, 4, 3, 3, 4, 12, 12, 10, 12, 24, 15, 12};
+    private static final double[] WALL_SCALES_X = {1, 1, 1, 1, 1, 1, 1, 1, 1, .5, 1, 1, 1, 1, 1};
     private static final String[] WALL_TEXTURES = {"tower.png", "glass_0.png", "glass_1.png",
             "highrise_0.png", "highrise_1.png", "highrise_2.png", "highrise_3.png", "highrise_4.png"};
     private static final String[] WALL_PBR_TEXTURES = {"highrise_facade_1", "highrise_facade_2", "highrise_facade_3",
-            "highrise_facade_4", "highrise_facade_5"};
+            "highrise_facade_4", "highrise_facade_5", "highrise_facade_6", "highrise_facade_7"};
 
     public final ModelBehavior modelNode = require(ModelBehavior.class);
     private final List<AABB> buildings = new ArrayList();

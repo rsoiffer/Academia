@@ -17,7 +17,7 @@ public class DiffuseMaterial extends Material {
 
     public Texture texture = null;
     public double metallic = 0;
-    public double roughness = .5;
+    public double roughness = .8;
     public boolean hasShadows = true;
 
     public static DiffuseMaterial load(String name) {

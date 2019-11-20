@@ -3,6 +3,10 @@ package beige_engine.graphics.opengl;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Color;
 import beige_engine.util.math.Vec2d;
+import beige_engine.util.math.Vec3d;
+import hero.graphics.Mesh;
+import hero.graphics.VertexAttrib;
+import hero.graphics.loading.RawMeshBuilder;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -14,14 +18,14 @@ public class Framebuffer extends GLObject {
 
     public static final VertexArrayObject FRAMEBUFFER_VAO = VertexArrayObject.createVAO(() -> {
         BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER, new float[]{
-                -1, -1, 0, 0,
-                1, -1, 1, 0,
-                1, 1, 1, 1,
-                -1, 1, 0, 1
+                -1, -1, 0, 0, 0,
+                1, -1, 0, 1, 0,
+                1, 1, 0, 1, 1,
+                -1, 1, 0, 0, 1
         });
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 16, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 16, 8);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 20, 12);
         glEnableVertexAttribArray(1);
     });
 

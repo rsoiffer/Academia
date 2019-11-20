@@ -1,10 +1,11 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
+import beige_engine.graphics.Camera;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.loading.VoxelModelLoader;
+import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.ColorParticlesMaterial;
 
 import java.util.ArrayList;
@@ -12,26 +13,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static beige_engine.engine.Core.dt;
+import static hero.graphics.VertexAttrib.NORMALS;
+import static hero.graphics.VertexAttrib.POSITIONS;
 
-public class ParticleBurst extends Behavior {
+public class FireParticles extends Behavior {
 
     public final ModelBehavior model = require(ModelBehavior.class);
 
     public List<Particle> particles = new ArrayList<>();
+    public double startupTime = .1;
     public double fadeTime = .1;
     public ColorParticlesMaterial material;
 
     public void createInner() {
         material = new ColorParticlesMaterial();
-        material.color = new Vec3d(1, 0, 0);
+        material.additive = true;
+        material.color = new Vec3d(.1, 0, 0);
+        material.roughness = 0;
+        material.ao = 0;
+        material.emissive = new Vec3d(20, 2, 1);
         material.hasShadows = false;
-        var renderable = material.buildRenderable(VoxelModelLoader.load("fireball.vox").mesh);
-        model.node.addChild(renderable);
+        var square = new RawMeshBuilder(POSITIONS, NORMALS)
+                .addRectangle(new Vec3d(-.5, -.5, 0), new Vec3d(0, 1, 0), new Vec3d(0, 0, 1))
+                .toMesh();
+        model.nodeAdditive.addChild(material.buildRenderable(square));
     }
 
     public void step() {
+        startupTime -= dt();
         particles.forEach(p -> p.time += dt());
-        particles.removeIf(p -> Math.random() < dt() / fadeTime);
+        if (startupTime < 0) {
+            particles.removeIf(p -> Math.random() < dt() / fadeTime);
+        }
         material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
         if (particles.isEmpty()) {
             destroy();
@@ -49,8 +62,10 @@ public class ParticleBurst extends Behavior {
         }
 
         public Transformation transform() {
-            double scale = 1 / 32.;
-            return Transformation.create(position.add(velocity.mul(time)).sub(4 * scale), Quaternion.IDENTITY, scale);
+            var pos = position.add(velocity.mul(time));
+            var dir = Camera.camera3d.position.sub(pos);
+            var quat = Quaternion.fromXYAxes(dir, new Vec3d(0, 0, 1));
+            return Transformation.create(pos, quat, .25 / (1 + 4 * time));
         }
     }
 }

@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class MainPC {
 
     public static void main(String[] args) {
-        Settings.SHOW_OPENGL_DEBUG_INFO = false;
+//        Settings.SHOW_OPENGL_DEBUG_INFO = false;
         Settings.SHOW_CURSOR = false;
         Settings.ENABLE_VSYNC = false;
         Settings.ANTI_ALIASING = 4;

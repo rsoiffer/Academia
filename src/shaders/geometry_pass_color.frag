@@ -10,15 +10,18 @@ layout (location = 3) out vec3 gMRA;
 layout (location = 4) out vec3 gEmissive;
 
 // material parameters
+uniform float additive;
 uniform vec3 color;
 uniform float metallic;
 uniform float roughness;
+uniform float ao;
+uniform vec3 emissive;
 
 void main()
 {
-    gPosition = FragPos;
-    gNormal = normalize(Normal);
+    gPosition = FragPos * (1 - additive);
+    gNormal = normalize(Normal) * (1 - additive);
     gAlbedo = color;
-    gMRA = vec3(metallic, roughness, 1);
-    gEmissive = vec3(0, 0, 0);
+    gMRA = vec3(metallic, roughness, ao);
+    gEmissive = emissive;
 }

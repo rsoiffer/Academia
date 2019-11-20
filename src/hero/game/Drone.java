@@ -6,20 +6,15 @@ import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.game.ParticleBurst.Particle;
-import hero.graphics.ModelNode;
+import hero.game.FireParticles.Particle;
 import hero.graphics.loading.AssimpLoader;
-import hero.graphics.loading.VoxelModelLoader;
-import hero.graphics.materials.ColorParticlesMaterial;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import static beige_engine.engine.Core.dt;
 import static beige_engine.graphics.Camera.camera3d;
-import static beige_engine.util.math.MathUtils.floor;
 
 public class Drone extends Behavior {
 
@@ -44,14 +39,14 @@ public class Drone extends Behavior {
 
     @Override
     public void destroyInner() {
-        var pb = new ParticleBurst();
+        var p = new FireParticles();
         var r = new Random();
         for (int i = 0; i < 10000; i++) {
             var pos = pose.position;
             var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
-            pb.particles.add(new Particle(pos, vel));
+            p.particles.add(new Particle(pos, vel));
         }
-        pb.create();
+        p.create();
     }
 
     public void step() {
@@ -63,22 +58,23 @@ public class Drone extends Behavior {
         physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
 
         health = Math.min(maxHealth, health + dt());
-        health -= physics.collisionVel.lengthSquared() / 100;
+        health -= physics.collisionVel.div(1).lengthSquared();
         if (health <= 0) {
             destroy();
         }
 
-        int numParts = floor(physics.collisionVel.lengthSquared());
-        if (numParts > 0) {
-            var pb = new ParticleBurst();
-            var r = new Random();
-            for (int i = 0; i < numParts; i++) {
-                var pos = pose.position;
-                var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
-                pb.particles.add(new Particle(pos, vel));
-            }
-            pb.create();
-            pb.material.color = new Vec3d(.8, .8, .8);
-        }
+//        int numParts = floor(physics.collisionVel.lengthSquared());
+//        if (numParts > 0) {
+//            var pb = new ParticleBurst();
+//            var r = new Random();
+//            for (int i = 0; i < numParts; i++) {
+//                var pos = pose.position;
+//                var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
+//                pb.particles.add(new Particle(pos, vel));
+//            }
+//            pb.create();
+//            pb.material.color = new Vec3d(.8, .8, .8);
+//            pb.material.emissive = new Vec3d(0, 0, 0);
+//        }
     }
 }
