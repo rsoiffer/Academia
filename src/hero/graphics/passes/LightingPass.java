@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class LightingPass implements RenderPass {
 
     private static final Shader SHADER_LIGHTING = Shader.load("lighting_pass");
+    public static final Shader SHADER_EMISSIVE_FLAT = Shader.load("emissive_pass_flat");
     private static final Texture BRDF_LUT = Texture.load("brdf_lut.png");
 
     static {
@@ -65,7 +66,9 @@ public class LightingPass implements RenderPass {
         rawLight = new Framebuffer(framebufferSize);
         rawLightTex = rawLight.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
-        rawLight.attachDepthRenderbuffer();
+//        rawLight.attachDepthRenderbuffer();
+        glBindRenderbuffer(GL_RENDERBUFFER, gp.gBuffer.rboDepth);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gp.gBuffer.rboDepth);
 
         preBloom = new Framebuffer(framebufferSize);
         tex1 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
@@ -98,8 +101,8 @@ public class LightingPass implements RenderPass {
 
     @Override
     public void run() {
-        rawLight.clear(skyColor);
-        glClearBufferfv(GL_COLOR, 1, new float[]{0, 0, 0, 0});
+        rawLight.clearColor(skyColor);
+        GLState.disable(GL_DEPTH_TEST);
 
         GLState.bindShader(null);
         for (int i = 0; i < spList.size(); i++) {
@@ -121,14 +124,15 @@ public class LightingPass implements RenderPass {
         for (int i = 0; i < spList.size(); i++) {
             GLState.bindTexture(null, 6 + i);
         }
-        GLState.bindFramebuffer(null);
 
         // New code!
 
-//        GLState.enable(GL_BLEND);
-//        glBlendFunc(GL_ONE, GL_ONE);
-//        ModelBehavior.allNodesAdditive().forEach(n -> n.render(Transformation.IDENTITY, 3));
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GLState.enable(GL_BLEND, GL_DEPTH_TEST);
+        Camera.current = camera;
+        glBlendFunc(GL_ONE, GL_ONE);
+        SHADER_EMISSIVE_FLAT.setMVP(Transformation.IDENTITY);
+        ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 2));
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         GLState.disable(GL_DEPTH_TEST);
         var camera = new Camera.Camera2d();
@@ -143,7 +147,9 @@ public class LightingPass implements RenderPass {
         var hdr = Shader.load("hdr");
         hdr.setMVP(Transformation.IDENTITY);
 
+        preBloom.clear(Color.BLACK);
         preBloom.drawToSelf(rawLightTex, hdr);
+        rawLight.clear(skyColor);
 
         bloom.setUniform("horizontal", false);
         bloomBuf1.drawToSelf(tex2, bloom);
@@ -162,5 +168,7 @@ public class LightingPass implements RenderPass {
         glBlendFunc(GL_ONE, GL_ONE);
         framebuffer.drawToSelf(bloomBuf2.colorBuffer, sprite);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        GLState.bindFramebuffer(null);
     }
 }

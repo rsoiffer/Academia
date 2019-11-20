@@ -39,9 +39,13 @@ public abstract class BasicRenderable implements Renderable {
             case 1:
                 renderShadow();
                 break;
+            case 2:
+                renderEmissive();
+                break;
         }
     }
 
-    public abstract void renderGeom();
-    public abstract void renderShadow();
+    public void renderGeom() {}
+    public void renderShadow() {}
+    public void renderEmissive() {}
 }

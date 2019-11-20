@@ -14,16 +14,11 @@ public class ModelBehavior extends Behavior {
     public static final Collection<ModelBehavior> ALL = track(ModelBehavior.class);
 
     public ModelNode node = new ModelNode();
-    public ModelNode nodeAdditive = new ModelNode();
     public boolean visible = true;
     public Runnable beforeRender = null;
 
     public static Stream<ModelNode> allNodes() {
         return ALL.stream().filter(r -> r.visible).map(r -> r.node);
-    }
-
-    public static Stream<ModelNode> allNodesAdditive() {
-        return ALL.stream().filter(r -> r.visible).map(r -> r.nodeAdditive);
     }
 
     @Override

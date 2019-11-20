@@ -31,6 +31,7 @@ public class Framebuffer extends GLObject {
 
     public final int width, height;
     public Texture colorBuffer, depthStencilBuffer;
+    public int rboDepth;
 
     public Framebuffer(int width, int height) {
         super(glGenFramebuffers());
@@ -64,7 +65,7 @@ public class Framebuffer extends GLObject {
     }
 
     public void attachDepthRenderbuffer() {
-        int rboDepth = glGenRenderbuffers();
+        rboDepth = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
@@ -95,6 +96,11 @@ public class Framebuffer extends GLObject {
         bind();
         glClearColor((float) color.r, (float) color.g, (float) color.b, (float) color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
+
+    public void clearColor(Color color) {
+        bind();
+        glClearColor((float) color.r, (float) color.g, (float) color.b, (float) color.a);
     }
 
     @Override

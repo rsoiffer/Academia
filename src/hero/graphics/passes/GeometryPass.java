@@ -38,7 +38,7 @@ public class GeometryPass implements RenderPass {
         SHADER_PBR.setUniform("emissiveMap", 7);
     }
 
-    private final Framebuffer gBuffer;
+    final Framebuffer gBuffer;
     private final Texture gPosition, gNormal, gAlbedo, gMRA, gEmissive;
     public Camera camera;
 
@@ -84,10 +84,6 @@ public class GeometryPass implements RenderPass {
         gBuffer.clear(BLACK);
         updateShaderUniforms();
         ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 0));
-        GLState.enable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        ModelBehavior.allNodesAdditive().forEach(n -> n.render(Transformation.IDENTITY, 0));
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GLState.bindFramebuffer(null);
     }
 }

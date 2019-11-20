@@ -7,6 +7,8 @@ import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.ColorParticlesMaterial;
+import hero.graphics.materials.EmissiveMaterial;
+import hero.graphics.materials.EmissiveParticlesMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,20 +25,15 @@ public class FireParticles extends Behavior {
     public List<Particle> particles = new ArrayList<>();
     public double startupTime = .1;
     public double fadeTime = .1;
-    public ColorParticlesMaterial material;
+    public EmissiveParticlesMaterial material;
 
     public void createInner() {
-        material = new ColorParticlesMaterial();
-        material.additive = true;
-        material.color = new Vec3d(.1, 0, 0);
-        material.roughness = 0;
-        material.ao = 0;
-        material.emissive = new Vec3d(20, 2, 1);
-        material.hasShadows = false;
+        material = new EmissiveParticlesMaterial();
+        material.color = new Vec3d(2, .2, .1);
         var square = new RawMeshBuilder(POSITIONS, NORMALS)
                 .addRectangle(new Vec3d(-.5, -.5, 0), new Vec3d(0, 1, 0), new Vec3d(0, 0, 1))
                 .toMesh();
-        model.nodeAdditive.addChild(material.buildRenderable(square));
+        model.node.addChild(material.buildRenderable(square));
     }
 
     public void step() {
