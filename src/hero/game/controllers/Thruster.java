@@ -5,6 +5,7 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import hero.game.FireParticles;
 import hero.game.FireParticles.Particle;
 import hero.graphics.ModelNode;
 import hero.graphics.loading.VoxelModelLoader;
@@ -21,18 +22,7 @@ import static hero.game.Player.POSTPHYSICS;
 public class Thruster extends Behavior {
 
     public final ControllerBehavior controller = require(ControllerBehavior.class);
-
-    public List<Particle> particles = new LinkedList();
-    public ColorParticlesMaterial material;
-
-    @Override
-    public void createInner() {
-        material = new ColorParticlesMaterial();
-        material.color = new Vec3d(1, 0, 0);
-        material.hasShadows = false;
-        var node = new ModelNode(material.buildRenderable(VoxelModelLoader.load("fireball.vox").mesh));
-        controller.model.node.addChild(node);
-    }
+    public final FireParticles fireParticles = require(FireParticles.class);
 
     @Override
     public Layer layer() {
@@ -41,10 +31,6 @@ public class Thruster extends Behavior {
 
     @Override
     public void step() {
-        for (Particle p : particles) {
-            p.time += dt();
-        }
-
         double t = controller.controller.trigger();
         if (t > .1) {
             Vec3d pullDir = controller.sideways();
@@ -55,15 +41,15 @@ public class Thruster extends Behavior {
             controller.player.physics.applyForce(pullDir.mul(t * -1000), controller.pos());
 //            double pullStrength = Math.exp(.02 * pullDir.dot(controller.player.velocity.velocity));
 //            controller.player.velocity.velocity = controller.player.velocity.velocity.add(pullDir.mul(dt() * t * pullStrength * -10));
-            for (int i = 0; i < 1000 * t * dt(); i++) {
-                Vec3d vel = pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5);
-                particles.add(new Particle(
-                        controller.pos().add(vel.mul(.002 + dt() * Math.random())),
-                        controller.player.physics.velocity.add(vel)));
+            for (int i = 0; i < 10000 * t * dt(); i++) {
+                var timeInPast = Math.random() * dt();
+                var vel = pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5);
+                var p = new Particle(
+                        controller.pos().sub(controller.player.physics.velocity.mul(timeInPast)),
+                        controller.player.physics.velocity.add(vel));
+                p.time = timeInPast;
+                fireParticles.particles.add(p);
             }
         }
-
-        particles.removeIf(p -> p.time > .2);
-        material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
     }
 }

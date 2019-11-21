@@ -54,7 +54,7 @@ public class ControllerBehavior extends Behavior {
         String[] textures = {"iron_man_icon.png", "spiderman_icon.png", "teleport_icon.png",
                 "hulk_icon.png", "wings_icon.png", "frozone_icon.png"};
         for (int i = 0; i < 6; i++) {
-            var iconMat = DiffuseMaterial.load(textures[i]);
+            var iconMat = DiffuseMaterial.load("icons/" + textures[i]);
             iconMat.hasShadows = false;
             var icon = new ModelNode(iconMat.buildRenderable(Platonics.square));
             ovrNode.addChild(icon);
@@ -66,7 +66,7 @@ public class ControllerBehavior extends Behavior {
             icon.transform = trans;
         }
 
-        var selectedMat = DiffuseMaterial.load("selected_icon.png");
+        var selectedMat = DiffuseMaterial.load("icons/selected_icon.png");
         selectedMat.hasShadows = false;
         var selected = new ModelNode(selectedMat.buildRenderable(Platonics.square));
         ovrNode.addChild(selected);

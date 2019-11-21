@@ -10,7 +10,7 @@ public class Platonics {
 
     static {
         square = new RawMeshBuilder()
-                .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(0, 1, 0), new Vec3d(0, 0, 1),
+                .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
                         new Vec2d(0, 0), new Vec2d(1, 0), new Vec2d(0, 1))
                 .toMesh();
     }

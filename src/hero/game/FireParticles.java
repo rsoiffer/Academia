@@ -22,10 +22,12 @@ public class FireParticles extends Behavior {
     public double startupTime = .1;
     public double fadeTime = .1;
     public EmissiveParticlesMaterial material;
+    public boolean destroyOnEmpty = false;
 
     public void createInner() {
         material = new EmissiveParticlesMaterial();
         material.color = new Vec3d(5, .5, .2);
+        material.particles = () -> particles.stream().map(Particle::transform);
         model.node.addChild(material.buildRenderable(Platonics.square));
     }
 
@@ -35,8 +37,7 @@ public class FireParticles extends Behavior {
         if (startupTime < 0) {
             particles.removeIf(p -> Math.random() < dt() / fadeTime);
         }
-        material.particles = particles.stream().map(Particle::transform).collect(Collectors.toList());
-        if (particles.isEmpty()) {
+        if (destroyOnEmpty && particles.isEmpty()) {
             destroy();
         }
     }
@@ -44,6 +45,7 @@ public class FireParticles extends Behavior {
     public static class Particle {
 
         private final Vec3d position, velocity;
+        private final double angle = Math.random() * 2 * Math.PI;
         public double time = 0;
 
         public Particle(Vec3d position, Vec3d velocity) {
@@ -53,9 +55,11 @@ public class FireParticles extends Behavior {
 
         public Transformation transform() {
             var pos = position.add(velocity.mul(time));
-            var dir = Camera.camera3d.position.sub(pos);
-            var quat = Quaternion.fromXYAxes(dir, new Vec3d(0, 0, 1));
-            return Transformation.create(pos, quat, .25 / (1 + 4 * time));
+            var dir = Camera.current.getPos().sub(pos);
+            var up = new Vec3d(0, 0, 1);
+            var quat = Quaternion.fromXYAxes(up.cross(dir), dir.cross(up.cross(dir)));
+            quat = quat.mul(Quaternion.fromAngleAxis(new Vec3d(0, 0, angle)));
+            return Transformation.create(pos, quat, Math.min(10 * time, .25 / (1 + 4 * time)));
         }
     }
 }

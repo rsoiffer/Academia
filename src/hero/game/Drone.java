@@ -46,6 +46,7 @@ public class Drone extends Behavior {
             var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
             p.particles.add(new Particle(pos, vel));
         }
+        p.destroyOnEmpty = true;
         p.create();
     }
 

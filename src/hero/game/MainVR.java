@@ -4,6 +4,7 @@ import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
+import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.util.Mutable;
@@ -11,15 +12,16 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import hero.game.controllers.*;
+import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 
 import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.util.math.MathUtils.floor;
 import static beige_engine.util.math.MathUtils.mod;
-import static beige_engine.vr.Vive.MENU;
-import static beige_engine.vr.Vive.TRACKPAD;
+import static beige_engine.vr.Vive.*;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 
 public class MainVR {
 
@@ -35,7 +37,7 @@ public class MainVR {
 
         UPDATE.onStep(() -> {
             Vive.update();
-            if (Vive.LEFT.buttonDown(MENU) && Vive.RIGHT.buttonDown(MENU)) {
+            if (LEFT.buttonDown(MENU) && RIGHT.buttonDown(MENU)) {
                 Vive.resetRightLeft();
                 Vive.resetSeatedZeroPose();
             }
@@ -66,12 +68,12 @@ public class MainVR {
         Mutable<Behavior> right = new Mutable(null);
 
         UPDATE.onStep(() -> {
-            if (Vive.LEFT.buttonJustPressed(TRACKPAD)) {
+            if (LEFT.buttonJustPressed(TRACKPAD)) {
                 if (left.o != null) {
                     left.o.destroy();
                     left.o = null;
                 }
-                Vec2d v = Vive.LEFT.trackpad();
+                Vec2d v = LEFT.trackpad();
                 leftType.o = floor(mod(Math.atan2(v.y, v.x) / (2 * Math.PI), 1) * c.length);
             }
             if (left.o == null) {
@@ -80,17 +82,17 @@ public class MainVR {
                 } catch (InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
-                left.o.get(ControllerBehavior.class).controller = Vive.LEFT;
+                left.o.get(ControllerBehavior.class).controller = LEFT;
                 left.o.get(ControllerBehavior.class).player = p;
                 left.o.get(ControllerBehavior.class).myNum = leftType.o;
                 left.o.create();
             }
-            if (Vive.RIGHT.buttonJustPressed(TRACKPAD)) {
+            if (RIGHT.buttonJustPressed(TRACKPAD)) {
                 if (right.o != null) {
                     right.o.destroy();
                     right.o = null;
                 }
-                Vec2d v = Vive.RIGHT.trackpad();
+                Vec2d v = RIGHT.trackpad();
                 rightType.o = floor(mod(Math.atan2(v.y, -v.x) / (2 * Math.PI), 1) * c.length);
             }
             if (right.o == null) {
@@ -99,50 +101,22 @@ public class MainVR {
                 } catch (InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
-                right.o.get(ControllerBehavior.class).controller = Vive.RIGHT;
+                right.o.get(ControllerBehavior.class).controller = RIGHT;
                 right.o.get(ControllerBehavior.class).player = p;
                 right.o.get(ControllerBehavior.class).myNum = rightType.o;
                 right.o.create();
             }
         });
 
-//        var car = new ColorModel(AssimpModel.load("car_1.fbx"));
-//        car.color = new Vec3d(1, .2, .2);
-//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 1), Quaternion.IDENTITY, .0015);
-//        var carRB = RenderableBehavior.createRB(car);
-
-//        var car = new ColorModel(AssimpModel.load("SportCar20.fbx"));
-//        car.color = new Vec3d(1, .2, .2);
-//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, .001);
-//        var carRB = RenderableBehavior.createRB(car);
-
-//        var car = new ColorModel(AssimpModel.load("lamborghini/lamborghini-aventador-pbribl.obj"));
-//        car.color = new Vec3d(1, .2, .2);
-//        car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
-//        var carRB = RenderableBehavior.createRB(car);
-
-//        var carModel = AssimpFile.load("lamborghini/lamborghini-aventador-pbribl.obj");
-//        for (var m : carModel.meshes) {
-//            System.out.println(m);
-//            if (m == null || m.material == null) continue;
-//            if (m.material.texture == null) {
-//                var car = new ColorModel(m);
-//                car.color = new Vec3d(m.material.diffuse.r, m.material.diffuse.g, m.material.diffuse.b);
-//                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
-//                var carRB = RenderableBehavior.createRB(car);
-//            } else {
-//                var car = new DiffuseModel(m, m.material.texture.texture);
-//                car.t = Transformation.create(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, .5), Quaternion.IDENTITY, 1);
-//                var carRB = RenderableBehavior.createRB(car);
-//            }
-//        }
-
-        for (int i = 0; i < 10; i++) {
-            Drone c1 = new Drone();
-            c1.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
-            c1.physics.world = world;
-            c1.create();
-        }
+        UPDATE.onStep(() -> {
+            if (LEFT.buttonJustPressed(GRIP) || RIGHT.buttonJustPressed(GRIP) ) {
+                Drone d = new Drone();
+                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+                d.physics.world = world;
+                d.create();
+            }
+        });
+        AssimpLoader.load("drone model/05.fbx");
 
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;

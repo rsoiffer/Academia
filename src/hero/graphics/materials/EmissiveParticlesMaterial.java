@@ -9,6 +9,8 @@ import hero.graphics.VertexAttrib;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static hero.graphics.VertexAttrib.POSITIONS;
 import static hero.graphics.passes.LightingPass.SHADER_EMISSIVE_FLAT;
@@ -17,7 +19,7 @@ public class EmissiveParticlesMaterial extends Material {
 
     public Vec3d color = new Vec3d(1, 0, 1);
 
-    public List<Transformation> particles = new LinkedList<>();
+    public Supplier<Stream<Transformation>> particles = null;
 
     public Renderable buildRenderable(Mesh mesh) {
         return new EmissiveRenderable(mesh);
@@ -38,9 +40,7 @@ public class EmissiveParticlesMaterial extends Material {
         public void renderEmissive() {
             SHADER_EMISSIVE_FLAT.bind();
             SHADER_EMISSIVE_FLAT.setUniform("color", color);
-            for (var t2 : particles) {
-                drawModelOffset(t2);
-            }
+            particles.get().forEach(this::drawModelOffset);
         }
     }
 }
