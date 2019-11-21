@@ -13,6 +13,7 @@ public abstract class Behavior {
     private static Behavior currentRoot;
     private final Behavior root;
     private final Map<Class<? extends Behavior>, Behavior> subBehaviors;
+    private boolean isCreated;
 
     public Behavior() {
         if (currentRoot == null) {
@@ -44,8 +45,9 @@ public abstract class Behavior {
             return this;
         }
         if (!isRoot()) {
-            throw new RuntimeException("Can only create root beige_engine.behaviors");
+            throw new RuntimeException("Can only create root behaviors");
         }
+        isCreated = true;
         for (Behavior b : subBehaviors.values()) {
             b.createActual();
         }
@@ -66,8 +68,9 @@ public abstract class Behavior {
             return;
         }
         if (!isRoot()) {
-            throw new RuntimeException("Can only destroy root beige_engine.behaviors");
+            throw new RuntimeException("Can only destroy root behaviors");
         }
+        isCreated = false;
         for (Behavior b : subBehaviors.values()) {
             b.destroyActual();
         }
@@ -100,7 +103,7 @@ public abstract class Behavior {
 
     public final Set<Class<? extends Behavior>> getSubBehaviors() {
         if (!isRoot()) {
-            throw new RuntimeException("Can only get subbehaviors of root beige_engine.behaviors");
+            throw new RuntimeException("Can only get subbehaviors of root behaviors");
         }
         return subBehaviors.keySet();
     }
@@ -111,6 +114,10 @@ public abstract class Behavior {
 
     public final boolean isRoot() {
         return this == root;
+    }
+
+    public final boolean isCreated() {
+        return isCreated;
     }
 
     public final <T extends Behavior> T require(Class<T> c) {

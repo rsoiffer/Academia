@@ -10,19 +10,25 @@ import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 
+import java.util.Collection;
 import java.util.Random;
 
 import static beige_engine.engine.Core.dt;
 import static beige_engine.graphics.Camera.camera3d;
+import static beige_engine.util.math.MathUtils.floor;
 
 public class Drone extends Behavior {
+
+    public static final Collection<Drone> ALL = track(Drone.class);
 
     public final PoseBehavior pose = require(PoseBehavior.class);
     public final PhysicsBehavior physics = require(PhysicsBehavior.class);
     public final ModelBehavior model = require(ModelBehavior.class);
 
-    public double maxHealth = 100;
-    public double health = 10;
+    public double maxHealth = 500;
+    public double health = maxHealth;
+
+    public double missileTimer = 20;
 
     private Noise noise = new Noise(new Random());
     private double time = 0;
@@ -49,24 +55,27 @@ public class Drone extends Behavior {
 
         physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
 
-        health = Math.min(maxHealth, health + dt());
-        health -= physics.collisionVel.div(1).lengthSquared();
+        health = Math.min(maxHealth, health + .1 * maxHealth * dt());
+        health -= physics.collisionVel.lengthSquared();
         if (health <= 0) {
             destroy();
         }
 
-//        int numParts = floor(physics.collisionVel.lengthSquared());
-//        if (numParts > 0) {
-//            var pb = new ParticleBurst();
-//            var r = new Random();
-//            for (int i = 0; i < numParts; i++) {
-//                var pos = pose.position;
-//                var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
-//                pb.particles.add(new Particle(pos, vel));
-//            }
-//            pb.create();
-//            pb.material.color = new Vec3d(.8, .8, .8);
-//            pb.material.emissive = new Vec3d(0, 0, 0);
-//        }
+        int numParts = floor(physics.collisionVel.div(2).lengthSquared());
+        if (numParts > 0) {
+            ParticleTypes.explosion(pose.position, physics.velocity.div(2), numParts);
+        }
+
+        missileTimer -= dt();
+        if (missileTimer < 0) {
+            missileTimer = 5 + 10 * Math.random();
+
+            Missile m = new Missile();
+            m.pose.position = pose.position;
+            m.physics.velocity = physics.velocity;
+            m.physics.world = physics.world;
+            m.targetDir = () -> camera3d.position.sub(m.pose.position);
+            m.create();
+        }
     }
 }

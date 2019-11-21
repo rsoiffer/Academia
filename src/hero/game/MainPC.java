@@ -19,7 +19,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class MainPC {
 
     public static void main(String[] args) {
-//        Settings.SHOW_OPENGL_DEBUG_INFO = false;
+        Settings.SHOW_OPENGL_DEBUG_INFO = false;
         Settings.SHOW_CURSOR = false;
         Settings.ENABLE_VSYNC = false;
         Settings.ANTI_ALIASING = 4;
@@ -37,7 +37,7 @@ public class MainPC {
         f.create();
 
         UPDATE.onStep(() -> {
-            if (Input.keyJustPressed(GLFW_KEY_F)) {
+            if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
                 Drone d = new Drone();
                 d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
                 d.physics.world = world;

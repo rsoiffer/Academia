@@ -4,10 +4,10 @@ import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
-import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.util.Mutable;
+import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
@@ -15,13 +15,16 @@ import hero.game.controllers.*;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Random;
+
 import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.util.math.MathUtils.floor;
 import static beige_engine.util.math.MathUtils.mod;
 import static beige_engine.vr.Vive.*;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
 
 public class MainVR {
 
@@ -52,14 +55,6 @@ public class MainVR {
         p.cameraOffset = new Vec3d(0, 0, -1);
         p.create();
 
-//        Frozone f2 = new Frozone();
-//        f2.player.position.position = new Vec3d(7 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-//        f2.player.hero.physics.world = world;
-//        f2.player.cameraOffset = null;
-//        f2.isPlayer = false;
-//        f2.create();
-//        Class[] c = {WebSlinger.class, Thruster.class, Hookshot.class, IceCaster.class,
-//            Wing.class, Hand.class, Explosion.class, Teleport.class};
         Class[] c = {WebSlinger.class, Thruster.class, IceCaster.class,
                 Wing.class, Hand.class, Teleport.class};
         Mutable<Integer> leftType = new Mutable(1);
@@ -109,32 +104,43 @@ public class MainVR {
         });
 
         UPDATE.onStep(() -> {
-            if (LEFT.buttonJustPressed(GRIP) || RIGHT.buttonJustPressed(GRIP)) {
+            if (LEFT.buttonJustPressed(MENU) || RIGHT.buttonJustPressed(MENU)) {
                 Drone d = new Drone();
-                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+                d.pose.position = p.pose.position.add(new Vec3d(0, 0, 100))
+                        .add(MathUtils.randomInSphere(new Random()).mul(50));
                 d.physics.world = world;
                 d.create();
             }
-            if (LEFT.buttonJustPressed(GRIP)) {
-                Missile m = new Missile();
-                m.pose.position = LEFT.pose().position();
-                m.physics.velocity = p.physics.velocity;
-                m.physics.world = world;
-                var dir = LEFT.pose().applyRotation(new Vec3d(1, 0, 0));
-                m.targetDir = () -> dir;
-                m.create();
-            }
-            if (RIGHT.buttonJustPressed(GRIP)) {
-                Missile m = new Missile();
-                m.pose.position = RIGHT.pose().position();
-                m.physics.velocity = p.physics.velocity;
-                m.physics.world = world;
-                var dir = RIGHT.pose().applyRotation(new Vec3d(1, 0, 0));
-                m.targetDir = () -> dir;
-                m.create();
+            for (var controller : Arrays.asList(LEFT, RIGHT)) {
+                if (controller.buttonJustPressed(GRIP)) {
+                    var drone = Drone.ALL.stream().max(Comparator.comparingDouble(d -> {
+                        var delPos = d.pose.position.sub(controller.pose().position());
+                        var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
+                        return delPos.normalize().dot(dir);
+                    }));
+
+                    Missile m = new Missile();
+                    m.pose.position = controller.pose().position();
+                    m.physics.velocity = p.physics.velocity;
+                    m.physics.world = world;
+                    if (drone.isEmpty()) {
+                        var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
+                        m.targetDir = () -> dir;
+                    } else {
+                        m.targetDir = () -> {
+                            if (drone.get().isCreated()) {
+                                return drone.get().pose.position.sub(m.pose.position);
+                            } else {
+                                return null;
+                            }
+                        };
+                    }
+                    m.create();
+                }
             }
         });
         AssimpLoader.load("drone model/optimized.fbx");
+        AssimpLoader.load("bomb/mk83.obj");
 
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;
