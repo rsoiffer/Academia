@@ -101,6 +101,7 @@ public class Framebuffer extends GLObject {
     public void clearColor(Color color) {
         bind();
         glClearColor((float) color.r, (float) color.g, (float) color.b, (float) color.a);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     @Override

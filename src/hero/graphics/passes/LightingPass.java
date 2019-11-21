@@ -26,8 +26,12 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class LightingPass implements RenderPass {
 
-    private static final Shader SHADER_LIGHTING = Shader.load("lighting_pass");
     public static final Shader SHADER_EMISSIVE_FLAT = Shader.load("emissive_pass_flat");
+
+    private static final Shader SHADER_LIGHTING = Shader.load("lighting_pass");
+    private static final Shader SHADER_HDR = Shader.load("hdr");
+    private static final Shader SHADER_BLOOM = Shader.load("bloom");
+    private static final Shader SHADER_SPRITE = Shader.load("sprite");
     private static final Texture BRDF_LUT = Texture.load("brdf_lut.png");
 
     static {
@@ -40,6 +44,7 @@ public class LightingPass implements RenderPass {
         for (int i = 0; i < 5; i++) {
             SHADER_LIGHTING.setUniform("shadowMap[" + i + "]", 6 + i);
         }
+        SHADER_SPRITE.setUniform("color", Color.WHITE);
         BRDF_LUT.num = 5;
     }
 
@@ -66,7 +71,7 @@ public class LightingPass implements RenderPass {
         rawLight = new Framebuffer(framebufferSize);
         rawLightTex = rawLight.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
-//        rawLight.attachDepthRenderbuffer();
+        // Reuse the depth buffer of the g-buffer
         glBindRenderbuffer(GL_RENDERBUFFER, gp.gBuffer.rboDepth);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gp.gBuffer.rboDepth);
 
@@ -127,6 +132,7 @@ public class LightingPass implements RenderPass {
 
         // New code!
 
+        // Emissive pass
         GLState.enable(GL_BLEND, GL_DEPTH_TEST);
         Camera.current = camera;
         glBlendFunc(GL_ONE, GL_ONE);
@@ -134,39 +140,40 @@ public class LightingPass implements RenderPass {
         ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 2));
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        // Setup 2d rendering
         GLState.disable(GL_DEPTH_TEST);
         var camera = new Camera.Camera2d();
         camera.lowerLeft = new Vec2d(-1, -1);
         Camera.current = camera;
 
-        var sprite = Shader.load("sprite");
-        sprite.setMVP(Transformation.IDENTITY);
-        sprite.setUniform("color", Color.WHITE);
-        var bloom = Shader.load("bloom");
-        bloom.setMVP(Transformation.IDENTITY);
-        var hdr = Shader.load("hdr");
-        hdr.setMVP(Transformation.IDENTITY);
+        // Update shader uniforms
+        SHADER_HDR.setMVP(Transformation.IDENTITY);
+        SHADER_BLOOM.setMVP(Transformation.IDENTITY);
+        SHADER_SPRITE.setMVP(Transformation.IDENTITY);
 
+        // Separate normal light and bloom
         preBloom.clear(Color.BLACK);
-        preBloom.drawToSelf(rawLightTex, hdr);
-        rawLight.clear(skyColor);
+        preBloom.drawToSelf(rawLightTex, SHADER_HDR);
 
-        bloom.setUniform("horizontal", false);
-        bloomBuf1.drawToSelf(tex2, bloom);
-        bloom.setUniform("horizontal", true);
-        bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, bloom);
+        // Bloom
+        SHADER_BLOOM.setUniform("horizontal", false);
+        bloomBuf1.drawToSelf(tex2, SHADER_BLOOM);
+        SHADER_BLOOM.setUniform("horizontal", true);
+        bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, SHADER_BLOOM);
         for (int i = 0; i < 3; i++) {
-            bloom.setUniform("horizontal", false);
-            bloomBuf1.drawToSelf(bloomBuf2.colorBuffer, bloom);
-            bloom.setUniform("horizontal", true);
-            bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, bloom);
+            SHADER_BLOOM.setUniform("horizontal", false);
+            bloomBuf1.drawToSelf(bloomBuf2.colorBuffer, SHADER_BLOOM);
+            SHADER_BLOOM.setUniform("horizontal", true);
+            bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, SHADER_BLOOM);
         }
 
+        // Render normal light
         framebuffer.clear(Color.BLACK);
-        framebuffer.drawToSelf(tex1, sprite);
+        framebuffer.drawToSelf(tex1, SHADER_SPRITE);
 
+        // Render bloom
         glBlendFunc(GL_ONE, GL_ONE);
-        framebuffer.drawToSelf(bloomBuf2.colorBuffer, sprite);
+        framebuffer.drawToSelf(bloomBuf2.colorBuffer, SHADER_SPRITE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         GLState.bindFramebuffer(null);

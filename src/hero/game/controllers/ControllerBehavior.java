@@ -11,6 +11,7 @@ import beige_engine.vr.ViveController;
 import hero.game.ModelBehavior;
 import hero.game.Player;
 import hero.graphics.ModelNode;
+import hero.graphics.Platonics;
 import hero.graphics.loading.OpenVRLoader;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.DiffuseMaterial;
@@ -50,17 +51,12 @@ public class ControllerBehavior extends Behavior {
         model.node.addChild(ovrNode);
         ovrNode.addChild(new OpenVRLoader(controller).rootNode);
 
-        var squareRM = new RawMeshBuilder()
-                .addRectangleUV(new Vec3d(-.5, -.5, 0), new Vec3d(1, 0, 0), new Vec3d(0, 1, 0),
-                        new Vec2d(0, 0), new Vec2d(1, 0), new Vec2d(0, 1))
-                .toMesh();
-
         String[] textures = {"iron_man_icon.png", "spiderman_icon.png", "teleport_icon.png",
                 "hulk_icon.png", "wings_icon.png", "frozone_icon.png"};
         for (int i = 0; i < 6; i++) {
             var iconMat = DiffuseMaterial.load(textures[i]);
             iconMat.hasShadows = false;
-            var icon = new ModelNode(iconMat.buildRenderable(squareRM));
+            var icon = new ModelNode(iconMat.buildRenderable(Platonics.square));
             ovrNode.addChild(icon);
 
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25)
@@ -72,7 +68,7 @@ public class ControllerBehavior extends Behavior {
 
         var selectedMat = DiffuseMaterial.load("selected_icon.png");
         selectedMat.hasShadows = false;
-        var selected = new ModelNode(selectedMat.buildRenderable(squareRM));
+        var selected = new ModelNode(selectedMat.buildRenderable(Platonics.square));
         ovrNode.addChild(selected);
 
         model.beforeRender = () -> {

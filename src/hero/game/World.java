@@ -128,13 +128,13 @@ public class World extends Behavior {
     }
 
     public ModelNode createModelNode() {
-        RawMeshBuilder intersectionsModel = new RawMeshBuilder();
+        var intersectionsModel = new RawMeshBuilder();
         for (AABB b : intersections) {
             intersectionsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(.5, .5), new Vec2d(b.size().x / 6, 0), new Vec2d(0, b.size().y / 3));
         }
 
-        RawMeshBuilder roadsModel = new RawMeshBuilder();
+        var roadsModel = new RawMeshBuilder();
         for (AABB b : roads) {
             if (b.size().x >= b.size().y) {
                 roadsModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
@@ -145,27 +145,27 @@ public class World extends Behavior {
             }
         }
 
-        RawMeshBuilder sidewalksModel = new RawMeshBuilder();
+        var sidewalksModel = new RawMeshBuilder();
         for (AABB b : sidewalks) {
             sidewalksModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, sidewalksModel);
         }
 
-        RawMeshBuilder parksModel = new RawMeshBuilder();
+        var parksModel = new RawMeshBuilder();
         for (AABB b : parks) {
             parksModel.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 2, 0), new Vec2d(0, b.size().y / 2));
             createWalls(new AABB(b.lower.setZ(0), b.upper), 2, 1, parksModel);
         }
 
-        RawMeshBuilder roofs = new RawMeshBuilder();
+        var roofs = new RawMeshBuilder();
         for (AABB b : buildings) {
             roofs.addRectangleUV(b.lower.setZ(b.upper.z), b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
         }
 
-        RawMeshBuilder[] walls = new RawMeshBuilder[NUM_WALL_TYPES];
+        var walls = new RawMeshBuilder[NUM_WALL_TYPES];
         for (int i = 0; i < NUM_WALL_TYPES; i++) {
             walls[i] = new RawMeshBuilder();
         }
@@ -174,7 +174,7 @@ public class World extends Behavior {
             createWalls(b, FLOOR_HEIGHT * WALL_SCALES[i], WALL_SCALES_X[i], walls[i]);
         }
 
-        RawMeshBuilder billboardsModel = new RawMeshBuilder();
+        var billboardsModel = new RawMeshBuilder();
         for (AABB b : billboards) {
             billboardsModel.addRectangleUV(b.lower, b.size().setY(0).setZ(0), b.size().setX(0).setZ(0),
                     new Vec2d(0, 0), new Vec2d(b.size().x / 4, 0), new Vec2d(0, b.size().y / 4));
@@ -183,13 +183,13 @@ public class World extends Behavior {
             createWalls(b, 4, 1, billboardsModel);
         }
 
-        RawMeshBuilder polesModel = new RawMeshBuilder();
+        var polesModel = new RawMeshBuilder();
         for (CapsuleShape c : poles) {
             polesModel.addCylinderUV(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
         }
         polesModel.smoothVertexNormals();
 
-        List<Renderable> renderables = new LinkedList<>();
+        var renderables = new LinkedList<Renderable>();
         renderables.add(PBRMaterial.load("city/road_empty").buildRenderable(intersectionsModel));
         renderables.add(PBRMaterial.load("city/road").buildRenderable(roadsModel));
         renderables.add(PBRMaterial.load("city/sidewalk").buildRenderable(sidewalksModel));

@@ -6,6 +6,7 @@ import beige_engine.engine.Core;
 import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 
 import static beige_engine.engine.Layer.UPDATE;
@@ -43,6 +44,7 @@ public class MainPC {
                 d.create();
             }
         });
+        AssimpLoader.load("drone model/05.fbx");
 
         RenderPipeline rp = new RenderPipeline();
         rp.create();
