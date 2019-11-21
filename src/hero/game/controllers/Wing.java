@@ -28,6 +28,10 @@ public class Wing extends Behavior {
         material.color = new Vec3d(.3, .5, .1);
         wingNode = new ModelNode(material.buildRenderable(Platonics.cube));
         controller.ovrNode.addChild(wingNode);
+
+        var size = new Vec3d(.8, 1.6, .05);
+        var offset = new Vec3d(-.3, controller.controller == Vive.LEFT ? 1 : -1, 0);
+        wingNode.transform = Transformation.create(offset.sub(size.div(2)), Quaternion.IDENTITY, size);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class Wing extends Behavior {
         if (controller.controller != Vive.LEFT) {
             sideways = sideways.mul(-1);
         }
-        Vec3d pos = controller.pos(5).add(sideways.mul(1.5));
+        Vec3d pos = controller.pos(5).add(sideways.mul(1.5)).sub(controller.forwards().mul(.3));
 //        Vec3d pos = controller.pos().add(sideways.mul(.5));
 
         if (prevPos != null) {
@@ -66,9 +70,5 @@ public class Wing extends Behavior {
             double thrustStrength = 200;
             controller.player.physics.applyForce(controller.forwards().mul(thrustStrength), pos);
         }
-
-        var size = new Vec3d(.8, 1.6, .05);
-        var offset = new Vec3d(0, controller.controller == Vive.LEFT ? 1 : -1, 0);
-        wingNode.transform = Transformation.create(offset.sub(size.div(2)), Quaternion.IDENTITY, size);
     }
 }

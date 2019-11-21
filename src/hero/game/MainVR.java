@@ -109,14 +109,32 @@ public class MainVR {
         });
 
         UPDATE.onStep(() -> {
-            if (LEFT.buttonJustPressed(GRIP) || RIGHT.buttonJustPressed(GRIP) ) {
+            if (LEFT.buttonJustPressed(GRIP) || RIGHT.buttonJustPressed(GRIP)) {
                 Drone d = new Drone();
                 d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
                 d.physics.world = world;
                 d.create();
             }
+            if (LEFT.buttonJustPressed(GRIP)) {
+                Missile m = new Missile();
+                m.pose.position = LEFT.pose().position();
+                m.physics.velocity = p.physics.velocity;
+                m.physics.world = world;
+                var dir = LEFT.pose().applyRotation(new Vec3d(1, 0, 0));
+                m.targetDir = () -> dir;
+                m.create();
+            }
+            if (RIGHT.buttonJustPressed(GRIP)) {
+                Missile m = new Missile();
+                m.pose.position = RIGHT.pose().position();
+                m.physics.velocity = p.physics.velocity;
+                m.physics.world = world;
+                var dir = RIGHT.pose().applyRotation(new Vec3d(1, 0, 0));
+                m.targetDir = () -> dir;
+                m.create();
+            }
         });
-        AssimpLoader.load("drone model/05.fbx");
+        AssimpLoader.load("drone model/optimized.fbx");
 
         RenderPipeline rp = new RenderPipeline();
         rp.isVR = true;

@@ -43,14 +43,15 @@ public class AssimpLoader {
                 | aiProcess_Triangulate
                 | aiProcess_FixInfacingNormals
                 | aiProcess_CalcTangentSpace
-//                | aiProcess_GenNormals
+                | aiProcess_GenNormals
 //                | aiProcess_RemoveRedundantMaterials
 //                | aiProcess_OptimizeGraph
 //                | aiProcess_OptimizeMeshes
                 ;
         var aiScene = aiImportFile("models/" + filename, flags);
         if (aiScene == null) {
-            throw new RuntimeException("Error loading model: " + filename);
+            throw new RuntimeException("Error loading model " + filename + ": " + aiGetErrorString());
+
         }
 
         materials = streamBuf(aiScene.mMaterials()).map(AIMaterial::create).map(this::toMaterial).collect(Collectors.toList());
@@ -104,7 +105,14 @@ public class AssimpLoader {
     private void possiblySetAttrib(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, VertexAttrib a, AIVector3D.Buffer buf) {
         if (buf != null) {
             attribs.add(a);
-            data.put(a, toFloatArray(streamBuf(buf).flatMap(ConversionUtils::streamVec)));
+            data.put(a, toFloatArray(streamBuf(buf).flatMap(ConversionUtils::streamVec3d)));
+        }
+    }
+
+    private void possiblySetAttrib2d(List<VertexAttrib> attribs, Map<VertexAttrib, float[]> data, VertexAttrib a, AIVector3D.Buffer buf) {
+        if (buf != null) {
+            attribs.add(a);
+            data.put(a, toFloatArray(streamBuf(buf).flatMap(ConversionUtils::streamVec2d)));
         }
     }
 
@@ -113,8 +121,8 @@ public class AssimpLoader {
         var data = new EnumMap<VertexAttrib, float[]>(VertexAttrib.class);
         var indices = toIntArray(streamBuf(aiMesh.mFaces()).flatMap(aiFace -> streamBuf(aiFace.mIndices())));
         possiblySetAttrib(attribs, data, POSITIONS, aiMesh.mVertices());
+        possiblySetAttrib2d(attribs, data, TEX_COORDS, aiMesh.mTextureCoords(0));
         possiblySetAttrib(attribs, data, NORMALS, aiMesh.mNormals());
-        possiblySetAttrib(attribs, data, TEX_COORDS, aiMesh.mTextureCoords(0));
         possiblySetAttrib(attribs, data, TANGENTS, aiMesh.mTangents());
         possiblySetAttrib(attribs, data, BITANGENTS, aiMesh.mBitangents());
 

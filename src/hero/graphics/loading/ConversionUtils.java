@@ -93,7 +93,11 @@ public abstract class ConversionUtils {
         return Stream.generate(buf::get).limit(buf.remaining());
     }
 
-    public static Stream<Float> streamVec(AIVector3D v) {
+    public static Stream<Float> streamVec2d(AIVector3D v) {
+        return Stream.of(v.x(), v.y());
+    }
+
+    public static Stream<Float> streamVec3d(AIVector3D v) {
         return Stream.of(v.x(), v.y(), v.z());
     }
 

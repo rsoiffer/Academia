@@ -105,6 +105,11 @@ public class Mesh implements DrawableSupplier {
     }
 
     public Drawable getDrawable(List<VertexAttrib> attribs) {
+        for (var a : attribs) {
+            if (!attribPositions.containsKey(a)) {
+                throw new IllegalArgumentException("Mesh doesn't have attrib " + a);
+            }
+        }
         var vao = VertexArrayObject.createVAO(() -> {
             vbo.bind();
             ebo.bind();

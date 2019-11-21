@@ -19,7 +19,7 @@ public class Drone extends Behavior {
 
     public final PoseBehavior pose = require(PoseBehavior.class);
     public final PhysicsBehavior physics = require(PhysicsBehavior.class);
-    public final ModelBehavior modelNode = require(ModelBehavior.class);
+    public final ModelBehavior model = require(ModelBehavior.class);
 
     public double maxHealth = 100;
     public double health = 10;
@@ -30,15 +30,15 @@ public class Drone extends Behavior {
     @Override
     public void createInner() {
         physics.acceleration = new Vec3d(0, 0, 2);
-        modelNode.node.addChild(AssimpLoader.load("drone model/05.fbx").rootNode);
+        model.node.addChild(AssimpLoader.load("drone model/optimized.fbx").rootNode);
         var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .01);
-        modelNode.beforeRender = () -> modelNode.node.transform = pose.getTransform().mul(trans);
+        model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
     }
 
     @Override
     public void destroyInner() {
-        ParticleTypes.explosion(pose.position, physics.velocity, 1000);
+        ParticleTypes.explosion(pose.position, physics.velocity.div(2), 1000);
     }
 
     public void step() {

@@ -44,7 +44,7 @@ public class MainPC {
                 d.create();
             }
         });
-        AssimpLoader.load("drone model/05.fbx");
+        AssimpLoader.load("drone model/optimized.fbx");
 
         RenderPipeline rp = new RenderPipeline();
         rp.create();
