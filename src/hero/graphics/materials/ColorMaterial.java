@@ -14,7 +14,7 @@ import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
 import static hero.graphics.VertexAttrib.NORMALS;
 import static hero.graphics.VertexAttrib.POSITIONS;
 
-public class ColorMaterial extends Material {
+public class ColorMaterial extends Material<DrawableSupplier> {
 
     public Vec3d color = new Vec3d(1, 0, 1);
     public double metallic = 0;

@@ -2,11 +2,10 @@ package hero.game;
 
 import beige_engine.engine.Behavior;
 import beige_engine.util.Noise;
-import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.game.FireParticles.Particle;
+import hero.game.particles.ParticleTypes;
 import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
@@ -39,15 +38,7 @@ public class Drone extends Behavior {
 
     @Override
     public void destroyInner() {
-        var p = new FireParticles();
-        var r = new Random();
-        for (int i = 0; i < 1000; i++) {
-            var pos = pose.position;
-            var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
-            p.particles.add(new Particle(pos, vel));
-        }
-        p.destroyOnEmpty = true;
-        p.create();
+        ParticleTypes.explosion(pose.position, physics.velocity, 1000);
     }
 
     public void step() {
