@@ -5,7 +5,7 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.ModelNode;
-import hero.graphics.loading.VoxelModelLoader;
+import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 
 import java.util.OptionalDouble;
@@ -25,7 +25,7 @@ public class WebSlinger extends Behavior {
     public void createInner() {
         var material = new ColorMaterial();
         material.color = new Vec3d(1, 1, 1);
-        webNode = new ModelNode(material.buildRenderable(VoxelModelLoader.load("singlevoxel.vox").mesh));
+        webNode = new ModelNode(material.buildRenderable(Platonics.cube));
         controller.model.node.addChild(webNode);
     }
 

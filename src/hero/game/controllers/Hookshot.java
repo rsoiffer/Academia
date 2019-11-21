@@ -5,6 +5,7 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.ModelNode;
+import hero.graphics.Platonics;
 import hero.graphics.loading.VoxelModelLoader;
 import hero.graphics.materials.ColorMaterial;
 
@@ -24,7 +25,7 @@ public class Hookshot extends Behavior {
     public void createInner() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, .5, .5);
-        lineNode = new ModelNode(material.buildRenderable(VoxelModelLoader.load("singlevoxel.vox").mesh));
+        lineNode = new ModelNode(material.buildRenderable(Platonics.cube));
         controller.model.node.addChild(lineNode);
     }
 

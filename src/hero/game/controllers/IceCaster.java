@@ -2,21 +2,24 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
+import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import hero.game.ModelBehavior;
-import hero.graphics.utils.SDF;
-import hero.graphics.utils.SurfaceNet;
 import hero.graphics.ModelNode;
 import hero.graphics.materials.PBRMaterial;
+import hero.graphics.utils.SDF;
+import hero.graphics.utils.SurfaceNet;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
+import static hero.game.particles.ParticleTypes.ICE;
 import static hero.graphics.utils.SDF.*;
 
 public class IceCaster extends Behavior {
@@ -34,7 +37,7 @@ public class IceCaster extends Behavior {
     public double timer;
     public double timer2;
 
-    private void createIce(Vec3d pos1, Vec3d pos2, Vec3d up) {
+    public static void createIce(Vec3d pos1, Vec3d pos2, Vec3d up) {
         double radius = 2, thickness = 1.5, negRadius = 1.5;
         Vec3d dir = pos2.sub(pos1);
 
@@ -58,6 +61,15 @@ public class IceCaster extends Behavior {
                 halfSpace(pos2, dir.mul(-1)));
         AABB bounds = AABB.boundingBox(Arrays.asList(pos1.sub(radius), pos1.add(radius), pos2.sub(radius), pos2.add(radius)));
         iceModel.unionSDF(shape, bounds);
+
+        for (int i = 0; i < 500 * dt() * dir.length(); i++) {
+            var sideAmt = Math.random() - .5;
+            var p = ICE.addParticle();
+            p.position = pos1.lerp(pos2, Math.random()).add(side.mul(sideAmt * 4));
+            var randVel = side.mul(sideAmt * 10).add(normal.mul(-1))
+                    .add(MathUtils.randomInSphere(new Random()).mul(2));
+            p.velocity = dir.mul(1 / .3).add(randVel);
+        }
     }
 
     @Override

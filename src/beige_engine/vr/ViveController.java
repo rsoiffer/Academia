@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static beige_engine.vr.OpenVRUtils.read4x3Matrix;
-import static beige_engine.vr.Vive.vrCoords;
+import static beige_engine.vr.Vive.*;
 
 public class ViveController {
 
@@ -49,11 +49,11 @@ public class ViveController {
     }
 
     public Transformation pose() {
-        return vrCoords().mul(poseRaw);
+        return footTransform.get().mul(new Transformation(COORD_CHANGE)).mul(poseRaw);
     }
 
     public Transformation poseRaw() {
-        return poseRaw;
+        return new Transformation(COORD_CHANGE).mul(poseRaw);
     }
 
     @Override

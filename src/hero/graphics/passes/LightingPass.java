@@ -135,12 +135,14 @@ public class LightingPass implements RenderPass {
 
         // Emissive pass
         GLState.enable(GL_BLEND, GL_DEPTH_TEST);
+        glDepthMask(false);
         Camera.current = camera;
         glBlendFunc(GL_ONE, GL_ONE);
         SHADER_EMISSIVE_FLAT.setMVP(Transformation.IDENTITY);
         SHADER_EMISSIVE_TEX.setMVP(Transformation.IDENTITY);
         ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 2));
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(true);
 
         // Setup 2d rendering
         GLState.disable(GL_DEPTH_TEST);

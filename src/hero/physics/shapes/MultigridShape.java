@@ -100,7 +100,7 @@ public class MultigridShape extends CollisionShape {
         }
 
         double t = 0;
-        for (int j = 0; j < 50; j++) {
+        for (int j = 0; j < 500; j++) {
             Vec3d pos = start.add(dir.mul(t));
             boolean end = false;
             for (int i = 0; i < layers.length; i++) {

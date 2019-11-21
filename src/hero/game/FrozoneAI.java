@@ -15,6 +15,7 @@ import static beige_engine.engine.Core.dt;
 import static beige_engine.engine.Layer.PREUPDATE;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
+import static hero.game.controllers.IceCaster.createIce;
 import static hero.game.controllers.IceCaster.iceModel;
 import static hero.graphics.utils.SDF.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -28,33 +29,6 @@ public class FrozoneAI extends Behavior {
     public double timer2;
 
     public boolean isPlayer = true;
-
-    private void createIce(Vec3d pos1, Vec3d pos2, Vec3d up) {
-        double radius = 2, thickness = 1.5, negRadius = 1.5;
-        Vec3d dir = pos2.sub(pos1);
-
-        SDF shape2 = intersectionSmooth(3,
-                cylinder(pos1, dir, negRadius),
-                halfSpace(pos1, dir),
-                halfSpace(pos2, dir.mul(-1))).invert();
-        AABB bounds2 = AABB.boundingBox(Arrays.asList(pos1.sub(negRadius), pos1.add(negRadius), pos2.sub(negRadius), pos2.add(negRadius)));
-        iceModel.intersectionSDF(shape2, bounds2);
-
-        Vec3d side = dir.cross(up).normalize();
-        // side = dir.cross(up.add(side.mul(.1 * Math.sin(5 * timer)))).normalize();
-        Vec3d normal = dir.cross(side).normalize();
-        pos1 = pos1.add(normal);
-        pos2 = pos2.add(normal);
-
-        SDF shape = intersectionSmooth(3,
-                cylinder(pos1, dir, radius),
-                halfSpace(pos1, normal),
-                halfSpace(pos1.add(normal.mul(thickness)), normal.mul(-1)),
-                halfSpace(pos1, dir),
-                halfSpace(pos2, dir.mul(-1)));
-        AABB bounds = AABB.boundingBox(Arrays.asList(pos1.sub(radius), pos1.add(radius), pos2.sub(radius), pos2.add(radius)));
-        iceModel.unionSDF(shape, bounds);
-    }
 
     @Override
     public Layer layer() {

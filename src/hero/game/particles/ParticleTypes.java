@@ -1,10 +1,13 @@
 package hero.game.particles;
 
+import beige_engine.graphics.Color;
+import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.materials.ColorMaterial;
 import hero.graphics.materials.EmissiveMaterial;
+import hero.graphics.materials.EmissiveTexMaterial;
 
 import java.util.Random;
 
@@ -12,7 +15,7 @@ public abstract class ParticleTypes {
 
     private static final Random random = new Random();
 
-    public static final ParticleEmitter FIRE, SMOKE;
+    public static final ParticleEmitter FIRE, SMOKE, ICE;
 
     static {
         FIRE = new ParticleEmitter();
@@ -36,6 +39,21 @@ public abstract class ParticleTypes {
             p.fadeTime = .5;
         };
         SMOKE.create();
+
+        ICE = new ParticleEmitter();
+        var iceMaterial = new EmissiveTexMaterial();
+        iceMaterial.tex = Texture.load("ball.png");
+        iceMaterial.color = new Color(.4, .6, 1).multRGB(.005);
+        ICE.material = iceMaterial;
+        ICE.archetype = p -> {
+            p.rotation = Quaternion.fromAngleAxis(new Vec3d(0, 0, Math.random() * 2 * Math.PI));
+//            p.rotation = Quaternion.fromXYAxes(MathUtils.randomInSphere(random), MathUtils.randomInSphere(random));
+            p.scale = () -> new Vec3d(1, 1, 1).mul(1 / (1 + 4 * p.time));
+//            p.billboard = false;
+            p.acceleration = new Vec3d(0, 0, -5);
+            p.fadeTime = .2;
+        };
+        ICE.create();
     }
 
     public static void explosion(Vec3d position, Vec3d velocity, int numParticles) {

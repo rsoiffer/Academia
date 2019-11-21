@@ -4,7 +4,6 @@ import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
 import beige_engine.vr.ViveController;
@@ -13,13 +12,10 @@ import hero.game.Player;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.loading.OpenVRLoader;
-import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.DiffuseMaterial;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import static beige_engine.engine.Layer.POSTUPDATE;
+import static beige_engine.vr.Vive.footTransform;
 
 public class ControllerBehavior extends Behavior {
 
@@ -30,8 +26,6 @@ public class ControllerBehavior extends Behavior {
     public ViveController controller;
     public Player player;
     public int myNum;
-    public Transformation postTransform = Transformation.IDENTITY;
-    public List<Behavior> children = new LinkedList();
     public ModelNode ovrNode = new ModelNode();
 
     public Transformation controllerPose() {
@@ -39,10 +33,10 @@ public class ControllerBehavior extends Behavior {
     }
 
     public Transformation controllerPose(double exaggeration) {
-        return vrCoords()
-                .translate(OFFSET.mul(-1))
-                .scale(exaggeration)
+        return footTransform.get()
                 .translate(OFFSET)
+                .scale(exaggeration)
+                .translate(OFFSET.mul(-1))
                 .mul(controller.poseRaw());
     }
 
@@ -72,7 +66,7 @@ public class ControllerBehavior extends Behavior {
         ovrNode.addChild(selected);
 
         model.beforeRender = () -> {
-            ovrNode.transform = getTransform();
+            ovrNode.transform = controllerPose();
 
             var i = (7 - myNum) % 6;
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
@@ -83,17 +77,8 @@ public class ControllerBehavior extends Behavior {
         };
     }
 
-    @Override
-    public void destroyInner() {
-        children.forEach(Behavior::destroy);
-    }
-
     public Vec3d forwards() {
         return controllerPose().applyRotation(new Vec3d(1, 0, 0));
-    }
-
-    public Transformation getTransform() {
-        return postTransform.mul(controllerPose());
     }
 
     @Override
