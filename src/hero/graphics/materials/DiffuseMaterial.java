@@ -4,6 +4,7 @@ import beige_engine.graphics.opengl.Texture;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
+import hero.graphics.drawables.DrawableSupplier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +28,13 @@ public class DiffuseMaterial extends Material {
     }
 
     @Override
-    public Renderable buildRenderable(Mesh mesh) {
+    public Renderable buildRenderable(DrawableSupplier mesh) {
         return new DiffuseRenderable(mesh);
     }
 
     public class DiffuseRenderable extends BasicRenderable {
 
-        public DiffuseRenderable(Mesh mesh) {
+        public DiffuseRenderable(DrawableSupplier mesh) {
             super(mesh);
         }
 

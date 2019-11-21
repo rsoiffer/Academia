@@ -41,7 +41,7 @@ public class Drone extends Behavior {
     public void destroyInner() {
         var p = new FireParticles();
         var r = new Random();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             var pos = pose.position;
             var vel = physics.velocity.add(MathUtils.randomInSphere(r).mul(10 + Math.random() * 10));
             p.particles.add(new Particle(pos, vel));

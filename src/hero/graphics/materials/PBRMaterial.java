@@ -1,5 +1,6 @@
 package hero.graphics.materials;
 
+import hero.graphics.drawables.DrawableSupplier;
 import hero.graphics.utils.PBRTexture;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
@@ -25,13 +26,13 @@ public class PBRMaterial extends Material {
     }
 
     @Override
-    public Renderable buildRenderable(Mesh mesh) {
+    public Renderable buildRenderable(DrawableSupplier mesh) {
         return new PBRRenderable(mesh);
     }
 
     public class PBRRenderable extends BasicRenderable {
 
-        public PBRRenderable(Mesh mesh) {
+        public PBRRenderable(DrawableSupplier mesh) {
             super(mesh);
         }
 

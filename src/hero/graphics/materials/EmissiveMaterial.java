@@ -4,6 +4,7 @@ import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
+import hero.graphics.drawables.DrawableSupplier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,13 +17,13 @@ public class EmissiveMaterial extends Material {
 
     public Vec3d color = new Vec3d(1, 0, 1);
 
-    public Renderable buildRenderable(Mesh mesh) {
+    public Renderable buildRenderable(DrawableSupplier mesh) {
         return new EmissiveRenderable(mesh);
     }
 
     public class EmissiveRenderable extends BasicRenderable {
 
-        public EmissiveRenderable(Mesh mesh) {
+        public EmissiveRenderable(DrawableSupplier mesh) {
             super(mesh);
         }
 

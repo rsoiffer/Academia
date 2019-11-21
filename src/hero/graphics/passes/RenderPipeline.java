@@ -27,7 +27,7 @@ public class RenderPipeline extends Behavior {
     private final List<ShadowPass> spList = new ArrayList();
     private final List<LightingPass> lpList = new ArrayList();
     public Color skyColor = new Color(.4, .7, 1, 1);
-    public Vec3d sunColor = new Vec3d(10, 9, 8).mul(.35);
+    public Vec3d sunColor = new Vec3d(10, 9, 8).mul(.25);
     public Vec3d sunDirection = new Vec3d(.3, -.15, 1);
     public boolean isVR;
     private List<Camera> cameras;

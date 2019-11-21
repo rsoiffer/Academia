@@ -6,11 +6,11 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Platonics;
-import hero.graphics.materials.EmissiveParticlesMaterial;
+import hero.graphics.drawables.ParticlesDS;
+import hero.graphics.materials.EmissiveMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static beige_engine.engine.Core.dt;
 
@@ -21,14 +21,13 @@ public class FireParticles extends Behavior {
     public List<Particle> particles = new ArrayList<>();
     public double startupTime = .1;
     public double fadeTime = .1;
-    public EmissiveParticlesMaterial material;
     public boolean destroyOnEmpty = false;
 
     public void createInner() {
-        material = new EmissiveParticlesMaterial();
+        var material = new EmissiveMaterial();
         material.color = new Vec3d(5, .5, .2);
-        material.particles = () -> particles.stream().map(Particle::transform);
-        model.node.addChild(material.buildRenderable(Platonics.square));
+        var pds = new ParticlesDS(Platonics.square, () -> particles.stream().map(Particle::transform));
+        model.node.addChild(material.buildRenderable(pds));
     }
 
     public void step() {

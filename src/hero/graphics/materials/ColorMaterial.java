@@ -4,6 +4,7 @@ import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.VertexAttrib;
 import hero.graphics.Renderable;
+import hero.graphics.drawables.DrawableSupplier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +23,13 @@ public class ColorMaterial extends Material {
     public Vec3d emissive = new Vec3d(0, 0, 0);
     public boolean hasShadows = true;
 
-    public Renderable buildRenderable(Mesh mesh) {
+    public Renderable buildRenderable(DrawableSupplier mesh) {
         return new ColorRenderable(mesh);
     }
 
     public class ColorRenderable extends BasicRenderable {
 
-        public ColorRenderable(Mesh mesh) {
+        public ColorRenderable(DrawableSupplier mesh) {
             super(mesh);
         }
 

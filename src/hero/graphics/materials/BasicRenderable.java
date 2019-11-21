@@ -1,33 +1,27 @@
 package hero.graphics.materials;
 
-import beige_engine.graphics.opengl.GLState;
 import beige_engine.util.math.Transformation;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
-import hero.graphics.VAOWrapper;
+import hero.graphics.drawables.Drawable;
 import hero.graphics.VertexAttrib;
+import hero.graphics.drawables.DrawableSupplier;
 
 import java.util.List;
 
 public abstract class BasicRenderable implements Renderable {
 
-    private final VAOWrapper model;
+    private final Drawable d;
     private Transformation t;
 
-    public BasicRenderable(Mesh mesh) {
-        this.model = mesh.getVAOW(attribs());
+    public BasicRenderable(DrawableSupplier ds) {
+        d = ds.getDrawable(attribs());
     }
 
     protected abstract List<VertexAttrib> attribs();
 
-    protected void drawModel() {
-        GLState.getShaderProgram().setUniform("model", t.matrix());
-        model.draw();
-    }
-
-    protected void drawModelOffset(Transformation t2) {
-        GLState.getShaderProgram().setUniform("model", t.mul(t2).matrix());
-        model.draw();
+    public void drawModel() {
+        d.draw(t);
     }
 
     public void render(Transformation t, int pass) {

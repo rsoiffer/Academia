@@ -4,12 +4,11 @@ import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.VertexArrayObject;
 import beige_engine.util.math.Vec3d;
+import hero.graphics.drawables.Drawable;
+import hero.graphics.drawables.DrawableSupplier;
 import hero.physics.shapes.AABB;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static hero.graphics.VertexAttrib.POSITIONS;
 import static org.lwjgl.opengl.GL11.*;
@@ -19,7 +18,7 @@ import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-public class Mesh {
+public class Mesh implements DrawableSupplier {
 
     public final int numFaces, numVerts;
     public final AABB aabb;
@@ -105,7 +104,7 @@ public class Mesh {
         return indices[i];
     }
 
-    public VAOWrapper getVAOW(List<VertexAttrib> attribs) {
+    public Drawable getDrawable(List<VertexAttrib> attribs) {
         var vao = VertexArrayObject.createVAO(() -> {
             vbo.bind();
             ebo.bind();
@@ -119,7 +118,11 @@ public class Mesh {
             GLState.bindBuffer(null, GL_ARRAY_BUFFER);
             GLState.bindBuffer(null, GL_ELEMENT_ARRAY_BUFFER);
         });
-        return new VAOWrapper(vao, numFaces);
+        return t -> {
+            GLState.getShaderProgram().setUniform("model", t.matrix());
+            vao.bind();
+            glDrawElements(GL_TRIANGLES, numFaces * 3, GL_UNSIGNED_INT, 0);
+        };
     }
 
     public Map<VertexAttrib, float[]> getVertex(int i) {

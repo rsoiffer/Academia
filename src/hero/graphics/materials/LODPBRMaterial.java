@@ -1,20 +1,21 @@
 package hero.graphics.materials;
 
-import hero.graphics.utils.PBRTexture;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
+import hero.graphics.drawables.DrawableSupplier;
+import hero.graphics.utils.PBRTexture;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static hero.graphics.VertexAttrib.*;
 import static hero.graphics.passes.GeometryPass.SHADER_PBR;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW_ALPHA;
-import static hero.graphics.VertexAttrib.*;
 
-public class LODPBRMaterial extends Material {
+public class LODPBRMaterial extends Material<Mesh> {
 
     public PBRTexture tex = null;
     public boolean hasShadows = true;

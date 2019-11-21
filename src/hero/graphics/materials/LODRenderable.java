@@ -6,8 +6,9 @@ import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
-import hero.graphics.VAOWrapper;
+import hero.graphics.drawables.Drawable;
 import hero.graphics.VertexAttrib;
+import hero.graphics.drawables.DrawableSupplier;
 import hero.graphics.utils.MeshSimplifier;
 
 import java.util.List;
@@ -21,14 +22,14 @@ public abstract class LODRenderable implements Renderable {
 
     private int numLod = NUM_LOD;
     private double distOffset;
-    private final VAOWrapper[] models = new VAOWrapper[NUM_LOD];
+    private final Drawable[] drawables = new Drawable[NUM_LOD];
     private Transformation current;
 
     public LODRenderable(Mesh mesh) {
         distOffset = mesh.aabb.center().length() + mesh.aabb.size().length() / 2;
         mesh = MeshSimplifier.simplify(mesh, .01);
         for (int i = 0; i < NUM_LOD; i++) {
-            this.models[i] = mesh.getVAOW(attribs());
+            this.drawables[i] = mesh.getDrawable(attribs());
             mesh = MeshSimplifier.simplify(mesh, .1 * Math.pow(2, i));
             if (mesh == null) {
                 numLod = i + 1;
@@ -44,11 +45,10 @@ public abstract class LODRenderable implements Renderable {
         double lodFrac = Math.max((lod - floor(lod)) * 10 - 9, 0);
         if (lod < numLod) {
             GLState.getShaderProgram().setUniform("lod", (float) lodFrac);
-            GLState.getShaderProgram().setUniform("model", t.matrix());
-            models[floor(lod)].draw();
+            drawables[floor(lod)].draw(t);
             if (lodFrac > 0 && ceil(lod) < numLod) {
                 GLState.getShaderProgram().setUniform("lod", (float) lodFrac - 1);
-                models[ceil(lod)].draw();
+                drawables[ceil(lod)].draw(t);
             }
         }
     }

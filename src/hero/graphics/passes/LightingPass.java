@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class LightingPass implements RenderPass {
 
     public static final Shader SHADER_EMISSIVE_FLAT = Shader.load("emissive_pass_flat");
+    public static final Shader SHADER_EMISSIVE_TEX = Shader.load("emissive_pass_tex");
 
     private static final Shader SHADER_LIGHTING = Shader.load("lighting_pass");
     private static final Shader SHADER_HDR = Shader.load("hdr");
@@ -137,6 +138,7 @@ public class LightingPass implements RenderPass {
         Camera.current = camera;
         glBlendFunc(GL_ONE, GL_ONE);
         SHADER_EMISSIVE_FLAT.setMVP(Transformation.IDENTITY);
+        SHADER_EMISSIVE_TEX.setMVP(Transformation.IDENTITY);
         ModelBehavior.allNodes().forEach(n -> n.render(Transformation.IDENTITY, 2));
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
