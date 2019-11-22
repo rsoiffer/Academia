@@ -5,13 +5,19 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import hero.graphics.utils.SDF;
+import hero.physics.shapes.AABB;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
+import static hero.game.controllers.IceCaster.iceModel;
 import static hero.game.particles.ParticleTypes.FIRE;
 import static hero.game.particles.ParticleTypes.SMOKE;
+import static hero.graphics.utils.SDF.*;
+import static hero.graphics.utils.SDF.halfSpace;
 
 public class Thruster extends Behavior {
 
@@ -50,6 +56,13 @@ public class Thruster extends Behavior {
                 p.velocity = controller.player.physics.velocity.add(pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5));
                 p.update(timeInPast);
             }
+
+            SDF shape2 = intersectionSmooth(3,
+                    cylinder(controller.pos(), pullDir, .5),
+                    halfSpace(controller.pos().add(pullDir.mul(5)), pullDir.mul(-1)),
+                    halfSpace(controller.pos(), pullDir));
+            AABB bounds2 = AABB.boundingBox(Arrays.asList(controller.pos().sub(10), controller.pos().add(10)));
+            iceModel.intersectionSDF(shape2.invert(), bounds2);
         }
     }
 }

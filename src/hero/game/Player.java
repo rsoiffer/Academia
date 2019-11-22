@@ -9,9 +9,13 @@ import beige_engine.vr.Vive;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 
+import java.util.Collection;
+
 import static beige_engine.engine.Core.dt;
 
 public class Player extends Behavior {
+
+    public static final Collection<Player> ALL = track(Player.class);
 
     public static final Layer POSTPHYSICS = new Layer(6);
 

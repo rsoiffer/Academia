@@ -25,20 +25,20 @@ public class Drone extends Behavior {
     public final PhysicsBehavior physics = require(PhysicsBehavior.class);
     public final ModelBehavior model = require(ModelBehavior.class);
 
-    public double maxHealth = 500;
+    public double maxHealth = 100000;
     public double health = maxHealth;
 
-    public double missileTimer = 20;
+    public double missileTimer = 4;
 
     private Noise noise = new Noise(new Random());
     private double time = 0;
 
     @Override
     public void createInner() {
-        physics.acceleration = new Vec3d(0, 0, 2);
+        physics.acceleration = new Vec3d(0, 0, 0);
         model.node.addChild(AssimpLoader.load("drone model/optimized.fbx").rootNode);
         var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
-        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .01);
+        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
         model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
     }
 
@@ -50,7 +50,7 @@ public class Drone extends Behavior {
     public void step() {
         time += dt();
         var dir = camera3d.position.sub(pose.position);
-        physics.applyForce(dir.setLength(1000 * (noise.noise2d(time, 0, 1) + 1)), physics.centerOfMass.get());
+        physics.applyForce(dir.setLength(00 * (noise.noise2d(time, 0, 1) + 1)), physics.centerOfMass.get());
         pose.rotation = Quaternion.fromXYAxes(dir, new Vec3d(0, 0, 1).cross(dir));
 
         physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
@@ -61,14 +61,14 @@ public class Drone extends Behavior {
             destroy();
         }
 
-        int numParts = floor(physics.collisionVel.div(2).lengthSquared());
+        int numParts = floor(physics.collisionVel.div(4).lengthSquared());
         if (numParts > 0) {
             ParticleTypes.explosion(pose.position, physics.velocity.div(2), numParts);
         }
 
         missileTimer -= dt();
         if (missileTimer < 0) {
-            missileTimer = 5 + 10 * Math.random();
+            missileTimer = 1 + 2 * Math.random();
 
             Missile m = new Missile();
             m.pose.position = pose.position;

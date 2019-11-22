@@ -1,6 +1,7 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
+import beige_engine.engine.Input;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
@@ -12,6 +13,7 @@ import java.util.OptionalDouble;
 
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 
 public class WebSlinger extends Behavior {
 
@@ -20,6 +22,8 @@ public class WebSlinger extends Behavior {
     public Vec3d web;
     public double prefLength;
     public ModelNode webNode;
+
+    public static boolean godMode;
 
     @Override
     public void createInner() {
@@ -38,7 +42,7 @@ public class WebSlinger extends Behavior {
     public void step() {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
-            Vec3d dir = controller.forwards();
+            Vec3d dir = controller.controllerPose().applyRotation(new Vec3d(1, 0, -.2)).normalize();
             OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
             if (t.isPresent()) {
                 web = start.add(dir.mul(t.getAsDouble()));
@@ -54,7 +58,7 @@ public class WebSlinger extends Behavior {
             double exag = 10;
             prefLength = Math.min(prefLength, web.sub(controller.pos(exag)).length() - controller.controller.trigger());
             Vec3d pullDir = web.sub(controller.pos(exag)).normalize();
-            double strength = 1000 * Math.max(controller.pos(exag).sub(web).length() - prefLength, 0);
+            double strength = (godMode ? 10000 : 1000) * Math.max(controller.pos(exag).sub(web).length() - prefLength, 0);
             controller.player.physics.applyForce(pullDir.mul(strength), controller.pos());
 
             double thrustStrength = 200;

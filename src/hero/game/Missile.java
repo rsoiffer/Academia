@@ -27,6 +27,8 @@ public class Missile extends Behavior {
 
     public Vec3d pointing;
     public Supplier<Vec3d> targetDir;
+    public double time;
+    public boolean isFriendly;
 
     @Override
     public void createInner() {
@@ -38,7 +40,7 @@ public class Missile extends Behavior {
         var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
         model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
-        lifetime.lifetime = 20;
+        lifetime.lifetime = 30;
     }
 
     @Override
@@ -47,6 +49,7 @@ public class Missile extends Behavior {
     }
 
     public void step() {
+        time += dt();
         var force = 200;
         if (targetDir.get() != null) {
             var dir = targetDir.get().normalize().lerp(physics.velocity.normalize(), -1).normalize();
@@ -62,10 +65,29 @@ public class Missile extends Behavior {
         physics.applyForce(pointing.mul(force), physics.centerOfMass.get());
         pose.rotation = Quaternion.fromXYAxes(pointing, new Vec3d(0, 0, 1).cross(pointing));
 
-        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
+//        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
 
         if (physics.collisionVel.length() > .1) {
             destroy();
+        }
+
+        if (time > .05) {
+            if (isFriendly) {
+                for (var d : Drone.ALL) {
+                    if (d.pose.position.sub(pose.position).length() < 5) {
+                        d.destroy();
+                        destroy();
+                        break;
+                    }
+                }
+            } else {
+                for (var p : Player.ALL) {
+                    if (p.pose.position.sub(pose.position).length() < 5) {
+                        destroy();
+                        break;
+                    }
+                }
+            }
         }
 
         for (int i = 0; i < dt() * force - Math.random(); i++) {

@@ -8,8 +8,15 @@ import beige_engine.util.math.Vec3d;
 import hero.graphics.materials.ColorMaterial;
 import hero.graphics.materials.EmissiveMaterial;
 import hero.graphics.materials.EmissiveTexMaterial;
+import hero.graphics.utils.SDF;
+import hero.physics.shapes.AABB;
 
+import java.util.Arrays;
 import java.util.Random;
+
+import static hero.game.controllers.IceCaster.iceModel;
+import static hero.graphics.utils.SDF.*;
+import static hero.graphics.utils.SDF.halfSpace;
 
 public abstract class ParticleTypes {
 
@@ -68,6 +75,12 @@ public abstract class ParticleTypes {
             p.position = position;
             p.velocity = velocity.add(MathUtils.randomInSphere(random).mul(10 + Math.random() * 10));
             p.startupTime = .1;
+        }
+
+        if (numParticles >= 10) {
+            SDF shape2 = sphere(position, 4);
+            AABB bounds2 = AABB.boundingBox(Arrays.asList(position.sub(5), position.add(5)));
+            iceModel.intersectionSDF(shape2.invert(), bounds2);
         }
     }
 }

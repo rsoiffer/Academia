@@ -19,7 +19,7 @@ import static java.lang.Double.NaN;
 
 public class Stem {
 
-    public static final double QUALITY = 1;
+    public static final double QUALITY = 1 * .1;
 
     private final int Shape = 4;
     private final double BaseSize = 0.2;
@@ -347,7 +347,7 @@ public class Stem {
     public Renderable getRenderable() {
         if (renderable == null) {
             var RMB = new RawMeshBuilder();
-            addToModel(RMB, 4);
+            addToModel(RMB, 3);
             var material = LODPBRMaterial.load("tree/bark");
             renderable = material.buildRenderable(RMB);
         }

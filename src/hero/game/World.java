@@ -63,7 +63,7 @@ public class World extends Behavior {
                     for (int k = 0; k < 15; k++) {
                         double x = i + Math.random() * 2 * BUILDING_SIZE;
                         double y = j + Math.random() * 8 * BUILDING_SIZE;
-//                        treeGenerator.placeTree(new Vec3d(x, y, 0));
+                        treeGenerator.placeTree(new Vec3d(x, y, 0));
                     }
                 } else {
                     sidewalks.add(new AABB(new Vec3d(i - buffer2, j - buffer2, -500), new Vec3d(i + 2 * BUILDING_SIZE + buffer2, j + 8 * BUILDING_SIZE + buffer2, .1)));
