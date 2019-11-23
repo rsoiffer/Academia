@@ -13,23 +13,21 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static hero.graphics.VertexAttrib.*;
-import static hero.graphics.loading.ConversionUtils.toFloatArray;
-import static hero.graphics.loading.ConversionUtils.toIntArray;
+import static hero.graphics.loading.ConversionUtils.*;
 
 public class RawMeshBuilder {
 
     private final Vec3d randomDir = MathUtils.randomInSphere(new Random());
 
-    private static Stream<Float> toFloats(Object o) {
+    private static List<Float> toFloats(Object o) {
         if (o instanceof Vec3d) {
             var v = (Vec3d) o;
-            return DoubleStream.of(v.x, v.y, v.z).mapToObj(x -> (float) x);
+            return Arrays.asList((float) v.x, (float) v.y, (float) v.z);
         } else if (o instanceof Vec2d) {
             var v = (Vec2d) o;
-            return DoubleStream.of(v.x, v.y).mapToObj(x -> (float) x);
+            return Arrays.asList((float) v.x, (float) v.y);
         } else if (o instanceof float[]) {
-            var f = (float[]) o;
-            return IntStream.range(0, f.length).mapToObj(i -> f[i]);
+            return toFloatList((float[]) o);
         }
         throw new IllegalArgumentException("Cannot parse object of type " + o.getClass());
     }
@@ -109,7 +107,7 @@ public class RawMeshBuilder {
             throw new IllegalArgumentException("data.length must equal names.length");
         }
         for (int i = 0; i < data.length; i++) {
-            var f = toFloats(data[i]).collect(Collectors.toList());
+            var f = toFloats(data[i]);
             if (f.size() != names[i].size) {
                 throw new IllegalArgumentException("Input data must match attribute size");
             }

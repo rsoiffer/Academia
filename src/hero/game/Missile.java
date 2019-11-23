@@ -38,7 +38,7 @@ public class Missile extends Behavior {
         physics.mass = 5;
         model.node.addChild(AssimpLoader.load("bomb/mk83.obj").rootNode);
         var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
-        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
+        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .05);
         model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
         lifetime.lifetime = 30;
     }
@@ -59,7 +59,7 @@ public class Missile extends Behavior {
                 var quat = Quaternion.fromAngleAxis(Math.min(angle, 2 * dt()), pointing.cross(dir));
                 pointing = quat.applyTo(pointing).normalize();
             }
-            force *= Math.max(0, pointing.dot(dir));
+            force *= .5 + Math.max(0, pointing.dot(dir));
         }
 
         physics.applyForce(pointing.mul(force), physics.centerOfMass.get());
@@ -82,7 +82,7 @@ public class Missile extends Behavior {
                 }
             } else {
                 for (var p : Player.ALL) {
-                    if (p.pose.position.sub(pose.position).length() < 5) {
+                    if (p.pose.position.sub(pose.position).length() < 2) {
                         destroy();
                         break;
                     }

@@ -11,9 +11,7 @@ import org.lwjgl.system.Struct;
 import org.lwjgl.system.StructBuffer;
 
 import java.nio.IntBuffer;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -111,6 +109,14 @@ public abstract class ConversionUtils {
     }
     public static float[] toFloatArray(Stream<Float> s) {
         return toFloatArray(s.collect(Collectors.toList()));
+    }
+
+    public static List<Float> toFloatList(float[] a) {
+        var r = new ArrayList<Float>(a.length);
+        for (var f : a) {
+            r.add(f);
+        }
+        return r;
     }
 
     public static int[] toIntArray(Collection<Integer> c) {

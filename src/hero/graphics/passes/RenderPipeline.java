@@ -66,6 +66,13 @@ public class RenderPipeline extends Behavior {
         return RENDER3D;
     }
 
+    public void setSunColor(Vec3d sunColor) {
+        this.sunColor = sunColor;
+        for (var lp : lpList) {
+            lp.sunColor = sunColor;
+        }
+    }
+
     public void setSunDirection(Vec3d sunDirection) {
         this.sunDirection = sunDirection;
         for (var lp : lpList) {
@@ -73,6 +80,13 @@ public class RenderPipeline extends Behavior {
         }
         for (var sp : spList) {
             sp.sunDirection = sunDirection;
+        }
+    }
+
+    public void setSkyColor(Color skyColor) {
+        this.skyColor = skyColor;
+        for (var lp : lpList) {
+            lp.skyColor = skyColor;
         }
     }
 

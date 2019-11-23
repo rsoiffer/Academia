@@ -50,7 +50,7 @@ public class Drone extends Behavior {
     public void step() {
         time += dt();
         var dir = camera3d.position.sub(pose.position);
-        physics.applyForce(dir.setLength(00 * (noise.noise2d(time, 0, 1) + 1)), physics.centerOfMass.get());
+        physics.applyForce(dir.setLength(100 * (noise.noise2d(time, 0, 1) + 1)), physics.centerOfMass.get());
         pose.rotation = Quaternion.fromXYAxes(dir, new Vec3d(0, 0, 1).cross(dir));
 
         physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));

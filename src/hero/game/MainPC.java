@@ -5,15 +5,22 @@ import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
 import beige_engine.engine.Settings;
+import beige_engine.graphics.Camera;
+import beige_engine.graphics.Color;
+import beige_engine.util.Mutable;
+import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 
+import static beige_engine.engine.Core.dt;
 import static beige_engine.engine.Layer.UPDATE;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
+import static beige_engine.util.math.MathUtils.round;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
+import static hero.game.particles.ParticleTypes.explosion;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainPC {
@@ -43,11 +50,27 @@ public class MainPC {
                 d.physics.world = world;
                 d.create();
             }
+            if (Input.mouseDown(0)) {
+                var v = world.collisionShape.raycast(camera3d.position, camera3d.facing());
+                v.ifPresent(t -> {
+                    explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
+                });
+            }
         });
         AssimpLoader.load("drone model/optimized.fbx");
 
         RenderPipeline rp = new RenderPipeline();
         rp.create();
+
+//        var timeOfDay = new Mutable<>(0.);
+//        UPDATE.onStep(() -> {
+//            timeOfDay.o += dt() * .6;
+//            Vec3d baseDir = new Vec3d(0, -.15, 1).normalize();
+//            rp.setSunDirection(Quaternion.fromAngleAxis(new Vec3d(0, timeOfDay.o, 0)).applyTo(baseDir));
+//            var color = new Vec3d(10, 5 + 4 * Math.cos(timeOfDay.o), 4 + 4 * Math.cos(timeOfDay.o)).mul(.25);
+//            rp.setSunColor(color);
+//            rp.setSkyColor( new Color(.4, .7, 1, 1).multRGB(Math.pow(.51 + .49 * Math.cos(timeOfDay.o), 2)));
+//        });
 
         Core.run();
     }
