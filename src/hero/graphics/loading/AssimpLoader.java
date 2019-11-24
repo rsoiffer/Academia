@@ -8,20 +8,18 @@ import hero.graphics.Mesh;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
+import static hero.graphics.VertexAttrib.*;
+import static hero.graphics.loading.ConversionUtils.*;
 import hero.graphics.materials.ColorMaterial;
 import hero.graphics.materials.DiffuseMaterial;
 import hero.graphics.materials.Material;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AINode;
 import org.lwjgl.assimp.AIVector3D;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static hero.graphics.VertexAttrib.*;
-import static hero.graphics.loading.ConversionUtils.*;
 import static org.lwjgl.assimp.Assimp.*;
 
 public class AssimpLoader {
@@ -43,10 +41,9 @@ public class AssimpLoader {
                 | aiProcess_Triangulate
                 | aiProcess_FixInfacingNormals
                 | aiProcess_CalcTangentSpace
-                | aiProcess_GenNormals
-//                | aiProcess_RemoveRedundantMaterials
-//                | aiProcess_OptimizeGraph
-//                | aiProcess_OptimizeMeshes
+                | aiProcess_GenNormals //                | aiProcess_RemoveRedundantMaterials
+                //                | aiProcess_OptimizeGraph
+                //                | aiProcess_OptimizeMeshes
                 ;
         var aiScene = aiImportFile("models/" + filename, flags);
         if (aiScene == null) {
@@ -85,7 +82,9 @@ public class AssimpLoader {
         var metallic = specular.length() / Math.sqrt(3);
         var roughness = Math.pow(2 / (shininess + 2), .25);
 
-        if (opacity != 1) return null;
+        if (opacity != 1) {
+            return null;
+        }
 
         if (texture == null) {
             var m = new ColorMaterial();
@@ -135,9 +134,9 @@ public class AssimpLoader {
         var transform = new Transformation(toMatrix4d(aiNode.mTransformation()));
         var children = Stream.concat(
                 aiNode.mNumMeshes() == 0 ? Stream.empty()
-                        : streamBuf(aiNode.mMeshes()).map(renderables::get),
+                : streamBuf(aiNode.mMeshes()).map(renderables::get),
                 aiNode.mNumChildren() == 0 ? Stream.empty()
-                        : streamBuf(aiNode.mChildren()).map(AINode::create).map(this::toModelNode)
+                : streamBuf(aiNode.mChildren()).map(AINode::create).map(this::toModelNode)
         ).collect(Collectors.toList());
         return new ModelNode(transform, children);
     }

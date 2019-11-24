@@ -5,27 +5,25 @@ import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
 import beige_engine.engine.Input;
+import static beige_engine.engine.Layer.UPDATE;
 import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.util.Mutable;
 import beige_engine.util.math.MathUtils;
+import static beige_engine.util.math.MathUtils.floor;
+import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.game.controllers.*;
-import hero.graphics.loading.AssimpLoader;
-import hero.graphics.passes.RenderPipeline;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
-
-import static beige_engine.engine.Layer.UPDATE;
-import static beige_engine.util.math.MathUtils.floor;
-import static beige_engine.util.math.MathUtils.mod;
 import static beige_engine.vr.Vive.*;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
+import hero.game.controllers.*;
+import hero.graphics.loading.AssimpLoader;
+import hero.graphics.passes.RenderPipeline;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Random;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainVR {
@@ -58,7 +56,7 @@ public class MainVR {
         p.create();
 
         Class[] c = {WebSlinger.class, Thruster.class, IceCaster.class,
-                Wing.class, Hand.class, Teleport.class};
+            Wing.class, Hand.class, Teleport.class};
         Mutable<Integer> leftType = new Mutable(1);
         Mutable<Behavior> left = new Mutable(null);
         Mutable<Integer> rightType = new Mutable(1);
@@ -168,7 +166,6 @@ public class MainVR {
 //            Vec3d baseDir = new Vec3d(.3, -.15, 1).normalize();
 //            rp.setSunDirection(Quaternion.fromAngleAxis(new Vec3d(0, timeOfDay.o, 0)).applyTo(baseDir));
 //        });
-
         Core.run();
     }
 }

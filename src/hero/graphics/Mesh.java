@@ -4,13 +4,14 @@ import beige_engine.graphics.opengl.BufferObject;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.VertexArrayObject;
 import beige_engine.util.math.Vec3d;
+import static hero.graphics.VertexAttrib.POSITIONS;
 import hero.graphics.drawables.Drawable;
 import hero.graphics.drawables.DrawableSupplier;
 import hero.physics.shapes.AABB;
-
-import java.util.*;
-
-import static hero.graphics.VertexAttrib.POSITIONS;
+import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;

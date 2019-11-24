@@ -7,16 +7,14 @@ package beige_engine.graphics.sprites;
 
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.BufferObject;
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
 import beige_engine.graphics.opengl.VertexArrayObject;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -31,10 +29,10 @@ public class SpriteSheet {
     public static final Shader SPRITE_SHEET_SHADER = Shader.load("sprite_sheet");
     public static final VertexArrayObject SPRITE_SHEET_VAO = VertexArrayObject.createVAO(() -> {
         BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER, new float[]{
-                0.5f, 0.5f, 0, 1, 1,
-                0.5f, -0.5f, 0, 1, 0,
-                -0.5f, -0.5f, 0, 0, 0,
-                -0.5f, 0.5f, 0, 0, 1
+            0.5f, 0.5f, 0, 1, 1,
+            0.5f, -0.5f, 0, 1, 0,
+            -0.5f, -0.5f, 0, 0, 0,
+            -0.5f, 0.5f, 0, 0, 1
         });
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
         glEnableVertexAttribArray(0);

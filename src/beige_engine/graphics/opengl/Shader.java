@@ -7,10 +7,9 @@ import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.util.math.Vec4d;
-import org.joml.Matrix4d;
-
 import java.util.HashMap;
-
+import org.joml.Matrix4d;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
@@ -130,9 +129,9 @@ public class Shader extends GLObject {
         bind();
         int uniform = getUniformLocation(name);
         glUniformMatrix4fv(uniform, false, new float[]{
-                (float) mat.m00(), (float) mat.m01(), (float) mat.m02(), (float) mat.m03(),
-                (float) mat.m10(), (float) mat.m11(), (float) mat.m12(), (float) mat.m13(),
-                (float) mat.m20(), (float) mat.m21(), (float) mat.m22(), (float) mat.m23(),
-                (float) mat.m30(), (float) mat.m31(), (float) mat.m32(), (float) mat.m33()});
+            (float) mat.m00(), (float) mat.m01(), (float) mat.m02(), (float) mat.m03(),
+            (float) mat.m10(), (float) mat.m11(), (float) mat.m12(), (float) mat.m13(),
+            (float) mat.m20(), (float) mat.m21(), (float) mat.m22(), (float) mat.m23(),
+            (float) mat.m30(), (float) mat.m31(), (float) mat.m32(), (float) mat.m33()});
     }
 }

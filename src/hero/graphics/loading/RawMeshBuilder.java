@@ -5,15 +5,9 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.VertexAttrib;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import static hero.graphics.VertexAttrib.*;
 import static hero.graphics.loading.ConversionUtils.*;
+import java.util.*;
 
 public class RawMeshBuilder {
 

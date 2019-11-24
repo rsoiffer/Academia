@@ -2,19 +2,16 @@ package hero.graphics.materials;
 
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.opengl.GLState;
+import static beige_engine.util.math.MathUtils.ceil;
+import static beige_engine.util.math.MathUtils.floor;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
-import hero.graphics.drawables.Drawable;
 import hero.graphics.VertexAttrib;
-import hero.graphics.drawables.DrawableSupplier;
+import hero.graphics.drawables.Drawable;
 import hero.graphics.utils.MeshSimplifier;
-
 import java.util.List;
-
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.floor;
 
 public abstract class LODRenderable implements Renderable {
 
@@ -80,5 +77,6 @@ public abstract class LODRenderable implements Renderable {
     }
 
     public abstract void renderGeom();
+
     public abstract void renderShadow();
 }

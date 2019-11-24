@@ -1,7 +1,10 @@
 package hero.game;
 
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
+import static beige_engine.graphics.Camera.camera3d;
 import beige_engine.util.Noise;
+import static beige_engine.util.math.MathUtils.floor;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
@@ -9,13 +12,8 @@ import hero.game.particles.ParticleTypes;
 import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
-
 import java.util.Collection;
 import java.util.Random;
-
-import static beige_engine.engine.Core.dt;
-import static beige_engine.graphics.Camera.camera3d;
-import static beige_engine.util.math.MathUtils.floor;
 
 public class Drone extends Behavior {
 
@@ -47,6 +45,7 @@ public class Drone extends Behavior {
         ParticleTypes.explosion(pose.position, physics.velocity.div(2), 1000);
     }
 
+    @Override
     public void step() {
         time += dt();
         var dir = camera3d.position.sub(pose.position);

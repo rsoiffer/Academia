@@ -3,10 +3,9 @@ package hero.graphics.utils;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
-import hero.graphics.loading.RawMeshBuilder;
-
 import static hero.graphics.VertexAttrib.POSITIONS;
 import static hero.graphics.VertexAttrib.TEX_COORDS;
+import hero.graphics.loading.RawMeshBuilder;
 
 public class MeshSimplifier {
 

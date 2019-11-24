@@ -112,7 +112,7 @@ public class Color {
     /**
      * Linearly interpolates between two colors.
      *
-     * @param c   The second color to mix with.
+     * @param c The second color to mix with.
      * @param amt The amount of the second color.
      * @return The interpolated color.
      */

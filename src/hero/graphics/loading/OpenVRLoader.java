@@ -6,9 +6,8 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
 import hero.graphics.ModelNode;
-import hero.graphics.materials.DiffuseMaterial;
-
 import static hero.graphics.loading.ConversionUtils.*;
+import hero.graphics.materials.DiffuseMaterial;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
 

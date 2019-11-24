@@ -3,24 +3,19 @@ package hero.game;
 import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
 import beige_engine.engine.Core;
-import beige_engine.engine.Input;
-import beige_engine.engine.Settings;
-import beige_engine.graphics.Camera;
-import beige_engine.graphics.Color;
-import beige_engine.util.Mutable;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Vec3d;
-import hero.graphics.loading.AssimpLoader;
-import hero.graphics.passes.RenderPipeline;
-
 import static beige_engine.engine.Core.dt;
+import beige_engine.engine.Input;
 import static beige_engine.engine.Layer.UPDATE;
+import beige_engine.engine.Settings;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
 import static beige_engine.util.math.MathUtils.round;
+import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.particles.ParticleTypes.explosion;
+import hero.graphics.loading.AssimpLoader;
+import hero.graphics.passes.RenderPipeline;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainPC {
@@ -71,7 +66,6 @@ public class MainPC {
 //            rp.setSunColor(color);
 //            rp.setSkyColor( new Color(.4, .7, 1, 1).multRGB(Math.pow(.51 + .49 * Math.cos(timeOfDay.o), 2)));
 //        });
-
         Core.run();
     }
 

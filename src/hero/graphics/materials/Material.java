@@ -1,11 +1,9 @@
 package hero.graphics.materials;
 
 import beige_engine.util.Mutable;
-import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.drawables.DrawableSupplier;
 import hero.graphics.loading.RawMeshBuilder;
-
 import java.util.HashMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;

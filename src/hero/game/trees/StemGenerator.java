@@ -1,16 +1,14 @@
 package hero.game.trees;
 
+import static beige_engine.util.math.MathUtils.floor;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.ModelNode;
 import hero.physics.shapes.CollisionShape;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import static beige_engine.util.math.MathUtils.floor;
 
 public class StemGenerator {
 

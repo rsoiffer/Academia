@@ -2,15 +2,14 @@ package hero.graphics.utils;
 
 import beige_engine.graphics.opengl.GLObject;
 import beige_engine.graphics.opengl.Texture;
-
 import java.io.File;
 
 public class PBRTexture extends GLObject {
 
     public static final int NUM_COMPONENTS = 8;
     private static final String[] NAMES = {
-            "albedo", "normal", "metallic", "roughness",
-            "ao", "height", "alpha", "emissive"};
+        "albedo", "normal", "metallic", "roughness",
+        "ao", "height", "alpha", "emissive"};
     private static final PBRTexture DEFAULT = loadFromFolder("default");
 
     private final Texture[] textures;

@@ -1,23 +1,20 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
-import hero.graphics.utils.SDF;
-import hero.physics.shapes.AABB;
-
-import java.util.Arrays;
-import java.util.Random;
-
-import static beige_engine.engine.Core.dt;
 import static hero.game.Player.POSTPHYSICS;
 import static hero.game.controllers.IceCaster.iceModel;
 import static hero.game.particles.ParticleTypes.FIRE;
 import static hero.game.particles.ParticleTypes.SMOKE;
+import hero.graphics.utils.SDF;
 import static hero.graphics.utils.SDF.*;
-import static hero.graphics.utils.SDF.halfSpace;
+import hero.physics.shapes.AABB;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Thruster extends Behavior {
 

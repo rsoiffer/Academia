@@ -1,26 +1,24 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import hero.game.ModelBehavior;
+import static hero.game.Player.POSTPHYSICS;
+import static hero.game.particles.ParticleTypes.ICE;
 import hero.graphics.ModelNode;
 import hero.graphics.materials.PBRMaterial;
 import hero.graphics.utils.SDF;
+import static hero.graphics.utils.SDF.*;
 import hero.graphics.utils.SurfaceNet;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
-
 import java.util.Arrays;
 import java.util.Random;
-
-import static beige_engine.engine.Core.dt;
-import static hero.game.Player.POSTPHYSICS;
-import static hero.game.particles.ParticleTypes.ICE;
-import static hero.graphics.utils.SDF.*;
 
 public class IceCaster extends Behavior {
 

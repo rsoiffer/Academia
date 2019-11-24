@@ -4,6 +4,8 @@ import beige_engine.engine.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.Framebuffer;
+import static beige_engine.graphics.opengl.Framebuffer.FRAMEBUFFER_VAO;
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.GLState;
 import beige_engine.graphics.opengl.Shader;
 import beige_engine.graphics.opengl.Texture;
@@ -12,11 +14,7 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
-
 import java.util.List;
-
-import static beige_engine.graphics.opengl.Framebuffer.FRAMEBUFFER_VAO;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -132,7 +130,6 @@ public class LightingPass implements RenderPass {
         }
 
         // New code!
-
         // Emissive pass
         GLState.enable(GL_BLEND, GL_DEPTH_TEST);
         glDepthMask(false);

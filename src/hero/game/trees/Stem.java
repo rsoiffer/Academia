@@ -1,5 +1,6 @@
 package hero.game.trees;
 
+import static beige_engine.util.math.MathUtils.*;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
@@ -8,14 +9,11 @@ import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.LODPBRMaterial;
 import hero.physics.shapes.CapsuleShape;
 import hero.physics.shapes.CollisionShape;
-
+import static java.lang.Double.NaN;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static beige_engine.util.math.MathUtils.*;
-import static java.lang.Double.NaN;
 
 public class Stem {
 
@@ -339,7 +337,7 @@ public class Stem {
         }
         return Stream.concat(
                 IntStream.range(0, numSegments).mapToObj(i -> new CapsuleShape(pos.add(tube.get(i)),
-                        tube.get(i + 1).sub(tube.get(i)), radiusZ((i + .5) / numSegments, 0))),
+                tube.get(i + 1).sub(tube.get(i)), radiusZ((i + .5) / numSegments, 0))),
                 children.stream().flatMap(c -> c.getCollisionShapes(pos))
         );
     }

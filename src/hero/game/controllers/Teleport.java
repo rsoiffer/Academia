@@ -1,23 +1,18 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
-import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import static beige_engine.vr.Vive.TRIGGER;
+import static hero.game.Player.POSTPHYSICS;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.drawables.ParticlesDS;
-import hero.graphics.loading.VoxelModelLoader;
 import hero.graphics.materials.ColorMaterial;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import static beige_engine.engine.Core.dt;
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
 
 public class Teleport extends Behavior {
 
@@ -85,7 +80,6 @@ public class Teleport extends Behavior {
 //                // controller.player.velocity.velocity = new Vec3d(0, 0, 0);
 //            }
 //        }
-
 //        Vec3d newPos = findPos();
 //        markerNode.visible = newPos != null;
 //        if (markerNode.visible) {

@@ -1,7 +1,6 @@
 package beige_engine.graphics.sprites;
 
 import beige_engine.util.Resources;
-
 import java.util.*;
 
 public class Animation {
@@ -11,6 +10,7 @@ public class Animation {
     public double speed;
     public List<String> modes = Arrays.asList("");
     private Map<String, List<Sprite>> sprites;
+
     private Animation(String fileName) {
         try {
             String[] animSettings = Resources.loadFileAsString("sprites/" + fileName + "/anim_settings.txt").split("\n");

@@ -2,21 +2,19 @@ package hero.game;
 
 import beige_engine.behaviors.LifetimeBehavior;
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.game.particles.ParticleTypes;
+import static hero.game.particles.ParticleTypes.FIRE;
+import static hero.game.particles.ParticleTypes.SMOKE;
 import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
-
 import java.util.Random;
 import java.util.function.Supplier;
-
-import static beige_engine.engine.Core.dt;
-import static hero.game.particles.ParticleTypes.FIRE;
-import static hero.game.particles.ParticleTypes.SMOKE;
 
 public class Missile extends Behavior {
 
@@ -66,7 +64,6 @@ public class Missile extends Behavior {
         pose.rotation = Quaternion.fromXYAxes(pointing, new Vec3d(0, 0, 1).cross(pointing));
 
 //        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
-
         if (physics.collisionVel.length() > .1) {
             destroy();
         }

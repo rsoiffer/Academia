@@ -2,6 +2,7 @@ package hero.graphics.passes;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
+import static beige_engine.engine.Layer.RENDER3D;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.GLState;
@@ -11,12 +12,9 @@ import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.EyeCamera;
 import beige_engine.vr.Vive;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static beige_engine.engine.Layer.RENDER3D;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glFlush;
 

@@ -2,10 +2,12 @@ package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
 import beige_engine.engine.Layer;
+import static beige_engine.engine.Layer.POSTUPDATE;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.Vive;
+import static beige_engine.vr.Vive.footTransform;
 import beige_engine.vr.ViveController;
 import hero.game.ModelBehavior;
 import hero.game.Player;
@@ -13,9 +15,6 @@ import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.loading.OpenVRLoader;
 import hero.graphics.materials.DiffuseMaterial;
-
-import static beige_engine.engine.Layer.POSTUPDATE;
-import static beige_engine.vr.Vive.footTransform;
 
 public class ControllerBehavior extends Behavior {
 
@@ -46,7 +45,7 @@ public class ControllerBehavior extends Behavior {
         ovrNode.addChild(new OpenVRLoader(controller).rootNode);
 
         String[] textures = {"iron_man_icon.png", "spiderman_icon.png", "teleport_icon.png",
-                "hulk_icon.png", "wings_icon.png", "frozone_icon.png"};
+            "hulk_icon.png", "wings_icon.png", "frozone_icon.png"};
         for (int i = 0; i < 6; i++) {
             var iconMat = DiffuseMaterial.load("icons/" + textures[i]);
             iconMat.hasShadows = false;

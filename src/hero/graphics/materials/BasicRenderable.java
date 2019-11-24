@@ -1,7 +1,6 @@
 package hero.graphics.materials;
 
 import beige_engine.util.math.Transformation;
-import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.drawables.Drawable;
 import hero.graphics.VertexAttrib;
@@ -39,7 +38,12 @@ public abstract class BasicRenderable implements Renderable {
         }
     }
 
-    public void renderGeom() {}
-    public void renderShadow() {}
-    public void renderEmissive() {}
+    public void renderGeom() {
+    }
+
+    public void renderShadow() {
+    }
+
+    public void renderEmissive() {
+    }
 }

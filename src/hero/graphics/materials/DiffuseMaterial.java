@@ -1,18 +1,15 @@
 package hero.graphics.materials;
 
+import static beige_engine.graphics.opengl.GLObject.bindAll;
 import beige_engine.graphics.opengl.Texture;
-import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
+import static hero.graphics.VertexAttrib.*;
 import hero.graphics.drawables.DrawableSupplier;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.passes.GeometryPass.SHADER_DIFFUSE;
 import static hero.graphics.passes.ShadowPass.SHADER_SHADOW;
-import static hero.graphics.VertexAttrib.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class DiffuseMaterial extends Material {
 

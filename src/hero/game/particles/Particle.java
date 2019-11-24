@@ -4,7 +4,6 @@ import beige_engine.graphics.Camera;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-
 import java.util.function.Supplier;
 
 public class Particle {

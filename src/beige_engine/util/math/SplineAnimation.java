@@ -28,7 +28,7 @@ public class SplineAnimation {
     }
 
     public void clearKeyframesAfter(double t) {
-        for (int i = 0; i < keyframeTimes.size(); ) {
+        for (int i = 0; i < keyframeTimes.size();) {
             if (keyframeTimes.get(i) <= t) {
                 i++;
             } else {

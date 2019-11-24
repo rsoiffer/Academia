@@ -1,19 +1,15 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
-import beige_engine.engine.Input;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+import static beige_engine.vr.Vive.TRIGGER;
+import static hero.game.Player.POSTPHYSICS;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
-
 import java.util.OptionalDouble;
-
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_G;
 
 public class WebSlinger extends Behavior {
 

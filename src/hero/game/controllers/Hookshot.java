@@ -1,17 +1,15 @@
 package hero.game.controllers;
 
 import beige_engine.engine.Behavior;
+import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import hero.graphics.ModelNode;
-import hero.graphics.Platonics;
-import hero.graphics.loading.VoxelModelLoader;
-import hero.graphics.materials.ColorMaterial;
-
-import static beige_engine.engine.Core.dt;
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
+import hero.graphics.ModelNode;
+import hero.graphics.Platonics;
+import hero.graphics.materials.ColorMaterial;
 
 public class Hookshot extends Behavior {
 

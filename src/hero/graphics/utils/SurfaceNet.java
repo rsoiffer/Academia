@@ -1,15 +1,13 @@
 package hero.graphics.utils;
 
+import static beige_engine.util.math.MathUtils.*;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.physics.shapes.AABB;
-
 import java.util.*;
 import java.util.stream.Stream;
-
-import static beige_engine.util.math.MathUtils.*;
 
 public class SurfaceNet {
 

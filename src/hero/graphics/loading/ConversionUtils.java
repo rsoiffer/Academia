@@ -2,23 +2,24 @@ package hero.graphics.loading;
 
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.ViveController;
-import org.joml.Matrix4d;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.assimp.*;
-import org.lwjgl.openvr.*;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.Struct;
-import org.lwjgl.system.StructBuffer;
-
 import java.nio.IntBuffer;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import org.joml.Matrix4d;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.assimp.*;
 import static org.lwjgl.assimp.Assimp.*;
+import org.lwjgl.openvr.HmdVector3;
+import org.lwjgl.openvr.RenderModel;
+import org.lwjgl.openvr.RenderModelTextureMap;
+import org.lwjgl.openvr.VR;
 import static org.lwjgl.openvr.VRRenderModels.*;
+import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import org.lwjgl.system.Struct;
+import org.lwjgl.system.StructBuffer;
 
 public abstract class ConversionUtils {
 
@@ -107,6 +108,7 @@ public abstract class ConversionUtils {
         }
         return r;
     }
+
     public static float[] toFloatArray(Stream<Float> s) {
         return toFloatArray(s.collect(Collectors.toList()));
     }
