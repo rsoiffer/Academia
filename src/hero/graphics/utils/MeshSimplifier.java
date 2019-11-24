@@ -24,7 +24,7 @@ public class MeshSimplifier {
     }
 
     public static Mesh simplify(Mesh originalMesh, double mod) {
-        RawMeshBuilder RMB = new RawMeshBuilder();
+        RawMeshBuilder rmb = new RawMeshBuilder();
         for (int i = 0; i < originalMesh.numFaces; i++) {
             var v1 = originalMesh.getVertex(originalMesh.getIndex(3 * i));
             var v2 = originalMesh.getVertex(originalMesh.getIndex(3 * i + 1));
@@ -35,14 +35,11 @@ public class MeshSimplifier {
             if (newP3.sub(newP1).cross(newP2.sub(newP1)).lengthSquared() < 1e-6) {
                 continue;
             }
-            RMB.addTriangleUV(
+            rmb.addTriangleUV(
                     newP1, asVec2d(v1.get(TEX_COORDS)),
                     newP2, asVec2d(v2.get(TEX_COORDS)),
                     newP3, asVec2d(v3.get(TEX_COORDS)));
         }
-        var newMesh = RMB.toMesh();
-        System.out.println("Went from " + originalMesh.numFaces + " to "
-                + (newMesh == null ? 0 : newMesh.numFaces) + " triangles");
-        return newMesh;
+        return rmb.toMesh();
     }
 }
