@@ -80,12 +80,12 @@ public class LightingPass implements RenderPass {
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
         preBloom.attachDepthRenderbuffer();
 
-        bloomBuf1 = new Framebuffer(framebufferSize.div(8));
+        bloomBuf1 = new Framebuffer(framebufferSize.div(4));
         bloomBuf1.attachColorBuffer();
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
         bloomBuf1.attachDepthRenderbuffer();
 
-        bloomBuf2 = new Framebuffer(framebufferSize.div(8));
+        bloomBuf2 = new Framebuffer(framebufferSize.div(4));
         bloomBuf2.attachColorBuffer();
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
         bloomBuf2.attachDepthRenderbuffer();

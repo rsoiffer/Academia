@@ -34,6 +34,7 @@ public abstract class ParticleTypes {
         SMOKE = new ParticleEmitter();
         var smokeMaterial = new ColorMaterial();
         smokeMaterial.color = new Vec3d(.4, .4, .4);
+        smokeMaterial.hasShadows = false;
         SMOKE.material = smokeMaterial;
         SMOKE.archetype = p -> {
             p.rotation = Quaternion.fromAngleAxis(new Vec3d(0, 0, Math.random() * 2 * Math.PI));
