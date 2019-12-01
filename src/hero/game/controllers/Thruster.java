@@ -33,6 +33,7 @@ public class Thruster extends Behavior {
             if (controller.controller == Vive.LEFT) {
                 pullDir = pullDir.mul(-1);
             }
+            pullDir = pullDir.lerp(controller.forwards().mul(-1), 1).normalize();
 //            controller.player.applyForce(pullDir.mul(t * -10), .03);
             controller.player.physics.applyForce(pullDir.mul(t * -1000), controller.pos());
 //            double pullStrength = Math.exp(.02 * pullDir.dot(controller.player.velocity.velocity));

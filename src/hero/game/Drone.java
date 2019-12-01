@@ -41,13 +41,6 @@ public class Drone extends Behavior {
         var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
         model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
-
-        var bladeMat = new ColorMaterial();
-        bladeMat.color = new Vec3d(0, 0, 0);
-        bladeMat.emissive = new Vec3d(1, 4, 2).mul(6);
-        var blade = new ModelNode(bladeMat.buildRenderable(Platonics.cube));
-        blade.transform = Transformation.create(new Vec3d(0, 0, 0), Quaternion.IDENTITY, new Vec3d(10, 500, 10));
-        model.node.addChild(blade);
     }
 
     @Override

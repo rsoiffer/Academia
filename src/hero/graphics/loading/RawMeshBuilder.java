@@ -42,7 +42,19 @@ public class RawMeshBuilder {
         }
     }
 
-    public void addCylinderUV(Vec3d p, Vec3d dir, double radius, int detail, double texW, double texH0, double texH1) {
+    public RawMeshBuilder addCylinder(Vec3d p, Vec3d dir, double radius, int detail) {
+        Vec3d dir1 = dir.cross(randomDir).normalize();
+        Vec3d dir2 = dir.cross(dir1).normalize();
+        for (int i = 0; i < detail; i++) {
+            double angle0 = i * 2 * Math.PI / detail, angle1 = (i + 1) * 2 * Math.PI / detail;
+            Vec3d v0 = p.add(dir1.mul(Math.cos(angle0) * radius)).add(dir2.mul(Math.sin(angle0) * radius));
+            Vec3d v1 = p.add(dir1.mul(Math.cos(angle1) * radius)).add(dir2.mul(Math.sin(angle1) * radius));
+            addRectangle(v0, v1.sub(v0), dir);
+        }
+        return this;
+    }
+
+    public RawMeshBuilder addCylinderUV(Vec3d p, Vec3d dir, double radius, int detail, double texW, double texH0, double texH1) {
         Vec3d dir1 = dir.cross(randomDir).normalize();
         Vec3d dir2 = dir.cross(dir1).normalize();
         for (int i = 0; i < detail; i++) {
@@ -51,6 +63,7 @@ public class RawMeshBuilder {
             Vec3d v1 = p.add(dir1.mul(Math.cos(angle1) * radius)).add(dir2.mul(Math.sin(angle1) * radius));
             addRectangleUV(v0, v1.sub(v0), dir, new Vec2d(texW * i / detail, texH0), new Vec2d(texW / detail, 0), new Vec2d(0, texH1 - texH0));
         }
+        return this;
     }
 
     public RawMeshBuilder addIndices(int... vals) {

@@ -75,8 +75,8 @@ public class LightingPass implements RenderPass {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gp.gBuffer.rboDepth);
 
         preBloom = new Framebuffer(framebufferSize);
-        tex1 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT0);
-        tex2 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_NEAREST, GL_COLOR_ATTACHMENT1);
+        tex1 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_LINEAR, GL_COLOR_ATTACHMENT0);
+        tex2 = preBloom.attachTexture(GL_RGB16F, GL_RGB, GL_FLOAT, GL_LINEAR, GL_COLOR_ATTACHMENT1);
         glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
         preBloom.attachDepthRenderbuffer();
 
@@ -161,7 +161,7 @@ public class LightingPass implements RenderPass {
         bloomBuf1.drawToSelf(tex2, SHADER_BLOOM);
         SHADER_BLOOM.setUniform("horizontal", true);
         bloomBuf2.drawToSelf(bloomBuf1.colorBuffer, SHADER_BLOOM);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 6; i++) {
             SHADER_BLOOM.setUniform("horizontal", false);
             bloomBuf1.drawToSelf(bloomBuf2.colorBuffer, SHADER_BLOOM);
             SHADER_BLOOM.setUniform("horizontal", true);

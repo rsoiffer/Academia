@@ -3,13 +3,23 @@ package hero.game.controllers;
 import beige_engine.engine.Behavior;
 import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
+import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
+
+import static beige_engine.graphics.Camera.camera3d;
+import static beige_engine.util.math.MathUtils.round;
 import static beige_engine.vr.Vive.TRIGGER;
 import static hero.game.Player.POSTPHYSICS;
+import static hero.game.particles.ParticleTypes.explosion;
+import static hero.graphics.VertexAttrib.NORMALS;
+import static hero.graphics.VertexAttrib.POSITIONS;
+
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
+import hero.graphics.VertexAttrib;
 import hero.graphics.drawables.ParticlesDS;
+import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.ColorMaterial;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +40,14 @@ public class Teleport extends Behavior {
         controller.model.node.addChild(markerNode);
         arcNode = new ModelNode(material.buildRenderable(new ParticlesDS(Platonics.cube, particles::stream)));
         controller.model.node.addChild(arcNode);
+
+        var bladeMat = new ColorMaterial();
+        bladeMat.color = new Vec3d(0, 0, 0);
+        bladeMat.emissive = new Vec3d(1, 4, 2).mul(12);
+        var mesh = new RawMeshBuilder(POSITIONS, NORMALS)
+                .addCylinder(new Vec3d(.05, 0, -.05), new Vec3d(1, 0, 0), .015, 12);
+        var blade = new ModelNode(bladeMat.buildRenderable(mesh));
+        controller.ovrNode.addChild(blade);
     }
 
     public Vec3d findPos() {
@@ -72,6 +90,13 @@ public class Teleport extends Behavior {
                 controller.player.physics.velocity = controller.player.physics.velocity.mul(.01);
             }
         }
+
+        var startPos = controller.pos().add(controller.upwards().mul(-.05));
+        var v = controller.player.physics.world.collisionShape.raycast(startPos, controller.forwards());
+        v.ifPresent(t -> {
+            if (t < 1)
+            explosion(startPos.add(controller.forwards().mul(t)), new Vec3d(0, 0, 0), round(1000 * dt()), .02);
+        });
 
 //        if (controller.controller.buttonJustPressed(TRIGGER)) {
 //            Vec3d newPos = findPos();

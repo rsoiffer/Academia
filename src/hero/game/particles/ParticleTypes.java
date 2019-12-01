@@ -62,21 +62,29 @@ public abstract class ParticleTypes {
     }
 
     public static void explosion(Vec3d position, Vec3d velocity, int numParticles) {
+        explosion(position, velocity, numParticles, 1);
+    }
+
+    public static void explosion(Vec3d position, Vec3d velocity, int numParticles, double scale) {
         for (int i = 0; i < numParticles; i++) {
             var p = FIRE.addParticle();
             p.position = position;
-            p.velocity = velocity.add(MathUtils.randomInSphere(random).mul(10 + Math.random() * 10));
+            var origScale = p.scale;
+            p.scale = () -> origScale.get().mul(scale);
+            p.velocity = velocity.add(MathUtils.randomInSphere(random).mul(10 + Math.random() * 10).mul(scale));
             p.startupTime = .1;
         }
         for (int i = 0; i < numParticles / 4; i++) {
             var p = SMOKE.addParticle();
             p.position = position;
-            p.velocity = velocity.add(MathUtils.randomInSphere(random).mul(10 + Math.random() * 10));
+            var origScale = p.scale;
+            p.scale = () -> origScale.get().mul(scale);
+            p.velocity = velocity.add(MathUtils.randomInSphere(random).mul(10 + Math.random() * 10).mul(scale));
             p.startupTime = .1;
         }
 
         if (numParticles >= 10) {
-            SDF shape2 = sphere(position, 4);
+            SDF shape2 = sphere(position, 4 * scale);
             AABB bounds2 = AABB.boundingBox(Arrays.asList(position.sub(5), position.add(5)));
             iceModel.intersectionSDF(shape2.invert(), bounds2);
         }
