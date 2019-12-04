@@ -74,6 +74,10 @@ public class PhysicsBehavior extends Behavior {
         return PHYSICS;
     }
 
+    public Vec3d momentum() {
+        return velocity.mul(mass);
+    }
+
     private void projectVelocityAgainst(List<Vec3d> l) {
         Vec3d sum = l.stream().reduce(new Vec3d(0, 0, 0), Vec3d::add);
         if (velocity.dot(sum) < 0) {

@@ -100,7 +100,7 @@ public class MultigridShape extends CollisionShape {
         }
 
         double t = 0;
-        for (int j = 0; j < 5000; j++) {
+        for (int j = 0; j < 50; j++) {
             Vec3d pos = start.add(dir.mul(t));
             boolean end = false;
             for (int i = 0; i < layers.length; i++) {
@@ -116,7 +116,7 @@ public class MultigridShape extends CollisionShape {
                 }
             }
             if (end) {
-                break;
+//                break;
             }
             AABB bounds = new AABB(pos.div(SIZES[0]).floor().mul(SIZES[0]), pos.div(SIZES[0]).floor().add(1).mul(SIZES[0]));
             OptionalDouble t2 = bounds.raycast(pos, dir);
