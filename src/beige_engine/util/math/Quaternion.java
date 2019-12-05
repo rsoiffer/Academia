@@ -11,7 +11,7 @@ public class Quaternion {
 
     public final double a, b, c, d;
 
-    private Quaternion(double a, double b, double c, double d) {
+    public Quaternion(double a, double b, double c, double d) {
         this.a = a;
         this.b = b;
         this.c = c;

@@ -10,12 +10,17 @@ import beige_engine.engine.Settings;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
 import static beige_engine.util.math.MathUtils.round;
+
+import beige_engine.graphics.Camera;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
+import hero.ode_physics.OdeBox;
+import hero.ode_physics.OdePhysicsManager;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainPC {
@@ -38,6 +43,8 @@ public class MainPC {
         f.player.physics.world = world;
         f.create();
 
+        var manager = new OdePhysicsManager();
+        manager.create();
         UPDATE.onStep(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
                 Drone d = new Drone();
@@ -50,6 +57,12 @@ public class MainPC {
                 v.ifPresent(t -> {
                     explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
                 });
+            }
+            if (Input.keyJustPressed(GLFW_KEY_B)) {
+                var b = new OdeBox();
+                b.pose.position = camera3d.position;
+                b.manager = manager;
+                b.create();
             }
         });
         AssimpLoader.load("drone model/optimized.fbx");
