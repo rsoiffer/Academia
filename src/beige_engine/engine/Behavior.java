@@ -1,10 +1,9 @@
 package beige_engine.engine;
 
-import java.util.*;
-
 import static beige_engine.engine.Core.MAIN_THREAD;
 import static beige_engine.engine.Core.onMainThread;
 import static beige_engine.engine.Layer.UPDATE;
+import java.util.*;
 
 public abstract class Behavior {
 
@@ -19,7 +18,7 @@ public abstract class Behavior {
         if (currentRoot == null) {
             // This is a root behavior
             root = this;
-            subBehaviors = new HashMap();
+            subBehaviors = new LinkedHashMap();
             subBehaviors.put(getClass(), this);
         } else {
             // This is not a root behavior
@@ -48,7 +47,9 @@ public abstract class Behavior {
             throw new RuntimeException("Can only create root behaviors");
         }
         isCreated = true;
-        for (Behavior b : subBehaviors.values()) {
+        var allSubs = new ArrayList<>(subBehaviors.values());
+        Collections.reverse(allSubs);
+        for (Behavior b : allSubs) {
             b.createActual();
         }
         return this;

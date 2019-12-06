@@ -1,131 +1,88 @@
 package hero.physics;
 
 import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Layer;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec3d;
-import hero.game.World;
-import hero.physics.shapes.SphereShape;
-import java.util.List;
-import java.util.function.Supplier;
+import static hero.physics.OdeUtils.*;
+import java.util.Collection;
+import org.ode4j.ode.internal.DxBody;
+import static org.ode4j.ode.internal.DxBody.dBodyCreate;
+import org.ode4j.ode.internal.DxGeom;
+import org.ode4j.ode.internal.DxMass;
+import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class PhysicsBehavior extends Behavior {
 
-    private static final Layer PHYSICS = new Layer(5);
+    public static Collection<PhysicsBehavior> ALL = track(PhysicsBehavior.class);
+    public static final Layer POST_PHYSICS = new Layer(6);
 
     public final PoseBehavior pose = require(PoseBehavior.class);
 
-    public Vec3d velocity = new Vec3d(0, 0, 0);
-    public Vec3d acceleration = new Vec3d(0, 0, 0);
-    public Vec3d rotationalVelocity = new Vec3d(0, 0, 0);
+    public PhysicsManager manager;
+    public DxBody body;
+    public DxMass mass;
+    public DxGeom geom;
 
-    public boolean allowRotation;
-    public Supplier<Vec3d> centerOfMass = () -> pose.position;
-
-    public double radius = 1;
-    public double mass = 100;
-    public double rotationalInertia = 500;
-    public double drag = .1; // Terminal velocity of 100 m/s
-    public double rotationalDrag = 2000;
-    public double reorient = 1000;
-
-    public World world;
-    public boolean onGround;
+    public double drag = .1;
+    public Vec3d prevVel;
     public Vec3d collisionVel = new Vec3d(0, 0, 0);
+    public boolean onGround = false;
+    public boolean allowRotation = true;
 
-    public void applyForce(Vec3d force, Vec3d pos) {
-        applyImpulse(force.mul(dt()), pos);
+    private Vec3d totalForce = new Vec3d(0, 0, 0);
+
+    public void applyForce(Vec3d force) {
+        totalForce = totalForce.add(force);
     }
 
-    public void applyImpulse(Vec3d impulse, Vec3d pos) {
-        velocity = velocity.add(impulse.div(mass));
-        applyTorqueImpulse(pos.sub(centerOfMass.get()).cross(impulse));
-    }
+    @Override
+    public void createInner() {
+        body = dBodyCreate(manager.world);
+        body.setPosition(pose.position.x, pose.position.y, pose.position.z);
 
-    public void applyTorque(Vec3d torque) {
-        applyTorqueImpulse(torque.mul(dt()));
-    }
+        mass = new DxMass();
+        mass.setSphereTotal(100, 1);
+        body.setMass(mass);
 
-    public void applyTorqueImpulse(Vec3d torqueImpulse) {
-        if (allowRotation) {
-            rotationalVelocity = rotationalVelocity.add(torqueImpulse.div(rotationalInertia));
-        }
-    }
-
-    private List<Vec3d> collide(Vec3d pos) {
-        return world.collisionShape.intersect(new SphereShape(pos, radius));
-    }
-
-    private double findFirstCollision(Vec3d delta) {
-        double t = 0;
-        double step = .5;
-        for (int i = 0; i < 10; i++) {
-            if (!wouldCollideAt(pose.position.add(delta.mul(t + step)))) {
-                t += step;
-            }
-            step *= .5;
-        }
-        return t;
+        geom = dCreateSphere(manager.space, 1);
+        geom.setBody(body);
     }
 
     @Override
     public Layer layer() {
-        return PHYSICS;
+        return POST_PHYSICS;
     }
 
-    public Vec3d momentum() {
-        return velocity.mul(mass);
+    public void physicsStep() {
+        if (!allowRotation) {
+            body.setQuaternion(toDQuaternion(Quaternion.IDENTITY));
+            body.setAngularVel(0, 0, 0);
+        }
+
+        pose.position = toVec3d(body.getPosition());
+        pose.rotation = toQuaternion(body.getQuaternion());
+//        double airResistanceForce = drag * velocity().lengthSquared();
+//        if (airResistanceForce > 1e-12) {
+//            applyForce(velocity().setLength(-airResistanceForce));
+//        }
+        body.addForce(toDVector3(totalForce));
     }
 
-    private void projectVelocityAgainst(List<Vec3d> l) {
-        Vec3d sum = l.stream().reduce(new Vec3d(0, 0, 0), Vec3d::add);
-        if (velocity.dot(sum) < 0) {
-            velocity = velocity.projectAgainst(sum);
-        }
-        if (sum.z > 0) {
-            onGround = true;
-        }
+    public void setVelocity(Vec3d vel) {
+        body.setLinearVel(vel.x, vel.y, vel.z);
     }
 
     @Override
     public void step() {
-        onGround = false;
-        velocity = velocity.add(acceleration.mul(dt()));
-        if (allowRotation) {
-            pose.rotate(Quaternion.fromAngleAxis(rotationalVelocity.mul(dt())));
+        if (prevVel != null) {
+            collisionVel = velocity().sub(prevVel);
         }
-
-        double airResistanceForce = drag * velocity.lengthSquared();
-        if (airResistanceForce > 1e-12) {
-            applyForce(velocity.setLength(-airResistanceForce), pose.position);
-        }
-        double airResistanceTorque = rotationalDrag * (rotationalVelocity.length() + rotationalVelocity.lengthSquared());
-        if (airResistanceTorque > 1e-12) {
-            applyTorque(rotationalVelocity.setLength(-airResistanceTorque));
-        }
-        double reorientTorque = reorient * pose.rotation.applyTo(new Vec3d(0, 0, 1)).setZ(0).length();
-        if (reorientTorque > 1e-12) {
-            applyTorque(pose.rotation.applyTo(new Vec3d(0, 0, 1)).cross(new Vec3d(0, 0, 1)).setLength(reorientTorque));
-        }
-
-        var oldVelocity = velocity;
-        Vec3d newPos = pose.position.add(velocity.mul(dt()));
-        if (!wouldCollideAt(newPos)) {
-            pose.position = newPos;
-        } else {
-            double t2 = 1;
-            for (int i = 0; i < 4; i++) {
-                double t = findFirstCollision(velocity.mul(t2 * dt()));
-                pose.translate(velocity.mul(t * t2 * dt()));
-                projectVelocityAgainst(collide(pose.position.add(velocity.mul(1e-3 * t2 * dt()))));
-                t2 *= 1 - t;
-            }
-        }
-        collisionVel = oldVelocity.sub(velocity);
+        prevVel = velocity();
+        totalForce = new Vec3d(0, 0, 0);
     }
 
-    public boolean wouldCollideAt(Vec3d pos) {
-        return !collide(pos).isEmpty();
+    public Vec3d velocity() {
+        return toVec3d(body.getLinearVel());
     }
 }

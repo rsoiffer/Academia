@@ -31,9 +31,8 @@ public class Missile extends Behavior {
     @Override
     public void createInner() {
         pointing = targetDir.get().normalize();
-        physics.acceleration = new Vec3d(0, 0, -2);
-        physics.radius = .2;
-        physics.mass = 5;
+//        physics.radius = .2;
+//        physics.mass = 5;
         model.node.addChild(AssimpLoader.load("bomb/mk83.obj").rootNode);
         var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .05);
@@ -43,14 +42,14 @@ public class Missile extends Behavior {
 
     @Override
     public void destroyInner() {
-        ParticleTypes.explosion(pose.position, physics.velocity.div(2), 1000);
+        ParticleTypes.explosion(pose.position, physics.velocity().div(2), 1000);
     }
 
     public void step() {
         time += dt();
         var force = 200;
         if (targetDir.get() != null) {
-            var dir = targetDir.get().normalize().lerp(physics.velocity.normalize(), -1).normalize();
+            var dir = targetDir.get().normalize().lerp(physics.velocity().normalize(), -1).normalize();
 
             var angle = Math.acos(pointing.dot(dir));
             if (angle > 1e-6) {
@@ -60,7 +59,7 @@ public class Missile extends Behavior {
             force *= .5 + Math.max(0, pointing.dot(dir));
         }
 
-        physics.applyForce(pointing.mul(force), physics.centerOfMass.get());
+        physics.applyForce(pointing.mul(force));
         pose.rotation = Quaternion.fromXYAxes(pointing, new Vec3d(0, 0, 1).cross(pointing));
 
 //        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
@@ -90,17 +89,17 @@ public class Missile extends Behavior {
         for (int i = 0; i < dt() * force - Math.random(); i++) {
             var timeInPast = Math.random() * dt();
             var p = FIRE.addParticle();
-            p.position = pose.position.sub(physics.velocity.mul(timeInPast));
+            p.position = pose.position.sub(physics.velocity().mul(timeInPast));
             p.scale = () -> new Vec3d(1, 1, 1).mul(Math.min(10 * p.time, .25 / (1 + 4 * p.time)));
-            p.velocity = physics.velocity.add(pointing.mul(-10).add(MathUtils.randomInSphere(new Random())).mul(5));
+            p.velocity = physics.velocity().add(pointing.mul(-10).add(MathUtils.randomInSphere(new Random())).mul(5));
             p.update(timeInPast);
         }
         for (int i = 0; i < dt() * force / 40 - Math.random(); i++) {
             var timeInPast = Math.random() * dt();
             var p = SMOKE.addParticle();
-            p.position = pose.position.sub(physics.velocity.mul(timeInPast));
+            p.position = pose.position.sub(physics.velocity().mul(timeInPast));
             p.scale = () -> new Vec3d(1, 1, 1).mul(Math.min(10 * p.time, .25 / (1 + .4 * p.time)));
-            p.velocity = physics.velocity.add(pointing.mul(-10).add(MathUtils.randomInSphere(new Random())).mul(5));
+            p.velocity = physics.velocity().add(pointing.mul(-10).add(MathUtils.randomInSphere(new Random())).mul(5));
             p.update(timeInPast);
         }
     }

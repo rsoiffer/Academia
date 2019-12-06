@@ -14,6 +14,7 @@ import hero.graphics.loading.RawMeshBuilder;
 import static hero.graphics.loading.VoxelModelLoader.DIRS;
 import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
+import hero.physics.PhysicsManager;
 import hero.physics.shapes.*;
 import java.util.*;
 
@@ -28,6 +29,7 @@ public class World extends Behavior {
     public static final double BLOCK_HEIGHT = 8 * BUILDING_SIZE + STREET_WIDTH;
 
     public final ModelBehavior modelNode = require(ModelBehavior.class);
+    public final PhysicsManager manager = require(PhysicsManager.class);
 
     public Random random = new Random();
     public Noise noise = new Noise(random);

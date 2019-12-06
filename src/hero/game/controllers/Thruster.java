@@ -35,23 +35,23 @@ public class Thruster extends Behavior {
             }
 //            pullDir = pullDir.lerp(controller.forwards().mul(-1), 1).normalize();
 //            controller.player.applyForce(pullDir.mul(t * -10), .03);
-            controller.player.physics.applyForce(pullDir.mul(t * -1000), controller.pos());
+            controller.player.physics.applyForce(pullDir.mul(t * -1000));
 //            double pullStrength = Math.exp(.02 * pullDir.dot(controller.player.velocity.velocity));
 //            controller.player.velocity.velocity = controller.player.velocity.velocity.add(pullDir.mul(dt() * t * pullStrength * -10));
             for (int i = 0; i < 1000 * t * dt(); i++) {
                 var timeInPast = Math.random() * dt();
                 var p = FIRE.addParticle();
-                p.position = controller.pos().sub(controller.player.physics.velocity.mul(timeInPast));
+                p.position = controller.pos().sub(controller.player.physics.velocity().mul(timeInPast));
                 p.scale = () -> new Vec3d(1, 1, 1).mul(Math.min(10 * p.time, .25 / (1 + 4 * p.time)));
-                p.velocity = controller.player.physics.velocity.add(pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5));
+                p.velocity = controller.player.physics.velocity().add(pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5));
                 p.update(timeInPast);
             }
             for (int i = 0; i < 1000 * t * dt() / 40; i++) {
                 var timeInPast = Math.random() * dt();
                 var p = SMOKE.addParticle();
-                p.position = controller.pos().sub(controller.player.physics.velocity.mul(timeInPast));
+                p.position = controller.pos().sub(controller.player.physics.velocity().mul(timeInPast));
                 p.scale = () -> new Vec3d(1, 1, 1).mul(Math.min(10 * p.time, .25 / (1 + .4 * p.time)));
-                p.velocity = controller.player.physics.velocity.add(pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5));
+                p.velocity = controller.player.physics.velocity().add(pullDir.mul(10).add(MathUtils.randomInSphere(new Random())).mul(5));
                 p.update(timeInPast);
             }
 

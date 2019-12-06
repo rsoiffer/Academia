@@ -59,14 +59,14 @@ public class Wing extends Behavior {
                     System.out.println(strength);
                 }
                 strength = clamp(strength, -1e5, 1e5);
-                controller.player.physics.applyForce(wingUp.mul(strength), pos);
+                controller.player.physics.applyForce(wingUp.mul(strength));
             }
         }
         prevPos = pos;
 
         if (!controller.player.physics.onGround) {
             double thrustStrength = 200;
-            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength), pos);
+            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength));
         }
     }
 }

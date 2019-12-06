@@ -39,7 +39,7 @@ public class WebSlinger extends Behavior {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.controllerPose().applyRotation(new Vec3d(1, 0, -.2)).normalize();
-            OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
+            OptionalDouble t = controller.player.physics.manager.raycast(start, dir);
             if (t.isPresent()) {
                 web = start.add(dir.mul(t.getAsDouble()));
                 prefLength = t.getAsDouble() - 4;
@@ -55,10 +55,10 @@ public class WebSlinger extends Behavior {
             prefLength = Math.min(prefLength, web.sub(controller.pos(exag)).length() - controller.controller.trigger());
             Vec3d pullDir = web.sub(controller.pos(exag)).normalize();
             double strength = (godMode ? 10000 : 1000) * Math.max(controller.pos(exag).sub(web).length() - prefLength, 0);
-            controller.player.physics.applyForce(pullDir.mul(strength), controller.pos());
+            controller.player.physics.applyForce(pullDir.mul(strength));
 
             double thrustStrength = 200;
-            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength), controller.pos());
+            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength));
 
 //            Vec3d pullDir = web.sub(controller.pos()).normalize();
 //            pullDir = pullDir.lerp(controller.controller.forwards(), .2);

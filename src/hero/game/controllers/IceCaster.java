@@ -90,15 +90,15 @@ public class IceCaster extends Behavior {
 //        if (velocity.velocity.length() > 20) {
 //            velocity.velocity = velocity.velocity.setLength(20);
 //        }
-        Vec3d along = vel.setLength(vel.normalize().dot(physics.velocity));
-        Vec3d opposite = physics.velocity.sub(along);
-        Vec3d newVel = opposite.mul(Math.pow(.001, dt())).add(along).add(vel.mul(dt() * Math.exp(-.05 * physics.velocity.dot(vel.normalize()))));
-        Vec3d accel = newVel.sub(physics.velocity);
-        physics.velocity = newVel;
+        Vec3d along = vel.setLength(vel.normalize().dot(physics.velocity()));
+        Vec3d opposite = physics.velocity().sub(along);
+        Vec3d newVel = opposite.mul(Math.pow(.001, dt())).add(along).add(vel.mul(dt() * Math.exp(-.05 * physics.velocity().dot(vel.normalize()))));
+        Vec3d accel = newVel.sub(physics.velocity());
+        physics.setVelocity(newVel);
 
         if (timer2 > 0) {
             timer2 -= 1 / 30.;
-            createIce(pose.position, pose.position.add(physics.velocity.mul(.3)), accel);
+            createIce(pose.position, pose.position.add(physics.velocity().mul(.3)), accel);
         }
     }
 

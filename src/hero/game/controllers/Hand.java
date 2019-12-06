@@ -40,7 +40,7 @@ public class Hand extends Behavior {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.forwards();
-            OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
+            OptionalDouble t = controller.player.physics.manager.raycast(start, dir);
             if (t.isPresent() && t.getAsDouble() <= 8) {
                 handPos = start.add(dir.mul(t.getAsDouble()));
             } else {
@@ -50,7 +50,7 @@ public class Hand extends Behavior {
         if (controller.controller.buttonJustReleased(TRIGGER) && handPos != null) {
             handPos = null;
             if (jumpTimer > 0) {
-                controller.player.physics.velocity = EyeCamera.headPose().applyRotation(new Vec3d(1, 0, .5)).mul(25);
+                controller.player.physics.setVelocity(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, .5)).mul(25));
                 jumpTimer = 0;
             } else {
                 jumpTimer = .2;
@@ -59,19 +59,18 @@ public class Hand extends Behavior {
         if (handPos != null) {
             jumpTimer -= dt();
             Vec3d dir = handPos.sub(controller.pos()).normalize();
-            controller.player.physics.velocity = controller.player.physics.velocity
-                    .lerp(dir.mul(20), 1 - Math.pow(1e-6, dt()));
+            controller.player.physics.setVelocity(controller.player.physics.velocity()
+                    .lerp(dir.mul(20), 1 - Math.pow(1e-6, dt())));
         } else if (!controller.player.physics.onGround) {
             controller.player.physics.applyForce(
-                    EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300),
-                    controller.player.physics.centerOfMass.get());
+                    EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300));
         }
 
         Vec3d v = handPos;
         if (v == null) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.forwards();
-            OptionalDouble t = controller.player.physics.world.collisionShape.raycast(start, dir);
+            OptionalDouble t = controller.player.physics.manager.raycast(start, dir);
             if (t.isPresent() && t.getAsDouble() <= 8) {
                 v = start.add(dir.mul(t.getAsDouble()));
             }

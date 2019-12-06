@@ -9,10 +9,7 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.game.particles.ParticleTypes;
-import hero.graphics.ModelNode;
-import hero.graphics.Platonics;
 import hero.graphics.loading.AssimpLoader;
-import hero.graphics.materials.ColorMaterial;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import java.util.Collection;
@@ -36,7 +33,6 @@ public class Drone extends Behavior {
 
     @Override
     public void createInner() {
-        physics.acceleration = new Vec3d(0, 0, 0);
         model.node.addChild(AssimpLoader.load("drone model/optimized.fbx").rootNode);
         var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
@@ -45,18 +41,17 @@ public class Drone extends Behavior {
 
     @Override
     public void destroyInner() {
-        ParticleTypes.explosion(pose.position, physics.velocity.div(2), 1000);
+        ParticleTypes.explosion(pose.position, physics.velocity().div(2), 1000);
     }
 
     @Override
     public void step() {
         time += dt();
         var dir = camera3d.position.sub(pose.position);
-        physics.applyForce(dir.setLength(100 * (noise.noise2d(time, 0, 1) + 1)), physics.centerOfMass.get());
+        physics.applyForce(dir.setLength(100 * (noise.noise2d(time, 0, 1) + 1)));
         pose.rotation = Quaternion.fromXYAxes(dir, new Vec3d(0, 0, 1).cross(dir));
 
-        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
-
+//        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
         health = Math.min(maxHealth, health + .1 * maxHealth * dt());
         health -= physics.collisionVel.lengthSquared();
         if (health <= 0) {
@@ -65,7 +60,7 @@ public class Drone extends Behavior {
 
         int numParts = floor(physics.collisionVel.div(4).lengthSquared());
         if (numParts > 0) {
-            ParticleTypes.explosion(pose.position, physics.velocity.div(2), numParts);
+            ParticleTypes.explosion(pose.position, physics.velocity().div(2), numParts);
         }
 
         missileTimer -= dt();
@@ -74,10 +69,10 @@ public class Drone extends Behavior {
 
             Missile m = new Missile();
             m.pose.position = pose.position;
-            m.physics.velocity = physics.velocity;
-            m.physics.world = physics.world;
+            m.physics.manager = physics.manager;
             m.targetDir = () -> camera3d.position.sub(m.pose.position);
             m.create();
+            m.physics.setVelocity(physics.velocity());
         }
     }
 }

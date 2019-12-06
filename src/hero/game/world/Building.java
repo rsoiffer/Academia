@@ -8,10 +8,12 @@ import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.DiffuseMaterial;
 import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
+import static hero.physics.OdeUtils.toDVector3;
 import hero.physics.shapes.AABB;
 import hero.physics.shapes.CollisionShape;
 import java.util.Map;
 import java.util.stream.Stream;
+import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class Building extends Structure {
 
@@ -43,6 +45,9 @@ public class Building extends Structure {
         super(world);
         this.bounds = bounds;
         this.type = world.random.nextInt(NUM_WALL_TYPES);
+
+        var geom = dCreateBox(world.manager.staticSpace, bounds.size().x, bounds.size().y, bounds.size().z);
+        geom.setPosition(toDVector3(bounds.center()));
     }
 
     @Override

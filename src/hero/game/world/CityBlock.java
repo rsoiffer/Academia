@@ -8,10 +8,12 @@ import static hero.game.World.*;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
+import static hero.physics.OdeUtils.toDVector3;
 import hero.physics.shapes.AABB;
 import hero.physics.shapes.CollisionShape;
 import java.util.Map;
 import java.util.stream.Stream;
+import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class CityBlock extends Structure {
 
@@ -22,6 +24,9 @@ public class CityBlock extends Structure {
     public CityBlock(World world, double x, double y) {
         super(world);
         bounds = new AABB(new Vec3d(x - SIDEWALK_WIDTH, y - SIDEWALK_WIDTH, -500), new Vec3d(x + 2 * BUILDING_SIZE + SIDEWALK_WIDTH, y + 8 * BUILDING_SIZE + SIDEWALK_WIDTH, .1));
+
+        var geom = dCreateBox(world.manager.staticSpace, bounds.size().x, bounds.size().y, bounds.size().z);
+        geom.setPosition(toDVector3(bounds.center()));
 
         for (int i2 = 0; i2 < 2; i2++) {
             for (int j2 = 0; j2 < 8; j2++) {

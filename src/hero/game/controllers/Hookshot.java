@@ -45,12 +45,12 @@ public class Hookshot extends Behavior {
         if (hookPos != null) {
             if (!grabbing) {
                 hookPos = hookPos.add(hookVel.mul(dt()));
-                grabbing = controller.player.physics.world.collisionShape.contains(hookPos);
+//                grabbing = controller.player.physics.manager.collisionShape.contains(hookPos);
             } else {
                 Vec3d pullDir = hookPos.sub(controller.pos()).normalize();
                 pullDir = pullDir.lerp(controller.forwards(), .2);
-                controller.player.physics.velocity = controller.player.physics.velocity.lerp(
-                        pullDir.mul(40), 1 - Math.exp(-1 * dt()));
+                controller.player.physics.setVelocity(controller.player.physics.velocity().lerp(
+                        pullDir.mul(40), 1 - Math.exp(-1 * dt())));
             }
         }
 

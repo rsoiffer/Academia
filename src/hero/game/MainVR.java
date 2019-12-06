@@ -51,7 +51,7 @@ public class MainVR {
 
         Player p = new Player();
         p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-        p.physics.world = world;
+        p.physics.manager = world.manager;
         p.cameraOffset = new Vec3d(0, 0, -1);
         p.create();
 
@@ -108,7 +108,7 @@ public class MainVR {
                 Drone d = new Drone();
                 d.pose.position = p.pose.position.add(new Vec3d(0, 0, 100))
                         .add(MathUtils.randomInSphere(new Random()).mul(50));
-                d.physics.world = world;
+                d.physics.manager = world.manager;
                 d.create();
             }
             if (Input.keyJustPressed(GLFW_KEY_G)) {
@@ -124,8 +124,8 @@ public class MainVR {
 
                     Missile m = new Missile();
                     m.pose.position = controller.pose().position();
-                    m.physics.velocity = p.physics.velocity;
-                    m.physics.world = world;
+                    m.physics.setVelocity(p.physics.velocity());
+                    m.physics.manager = world.manager;
                     m.isFriendly = true;
                     if (drone.isEmpty()) {
                         var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));

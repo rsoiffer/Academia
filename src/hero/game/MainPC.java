@@ -2,6 +2,7 @@ package hero.game;
 
 import beige_engine.behaviors.FPSBehavior;
 import beige_engine.behaviors.QuitOnEscapeBehavior;
+import beige_engine.engine.Behavior;
 import beige_engine.engine.Core;
 import static beige_engine.engine.Core.dt;
 import beige_engine.engine.Input;
@@ -10,17 +11,15 @@ import beige_engine.engine.Settings;
 import static beige_engine.graphics.Camera.camera3d;
 import static beige_engine.util.math.MathUtils.clamp;
 import static beige_engine.util.math.MathUtils.round;
-
-import beige_engine.graphics.Camera;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
-import hero.ode_physics.OdeBox;
-import hero.ode_physics.OdePhysicsManager;
-
+import hero.physics.PinkBox;
+import hero.physics.PhysicsBehavior;
+import hero.physics.PoseBehavior;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainPC {
@@ -38,30 +37,28 @@ public class MainPC {
         World world = new World();
         world.create();
 
-        FrozoneAI f = new FrozoneAI();
-        f.player.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-        f.player.physics.world = world;
-        f.create();
+        PlayerPC p = new PlayerPC();
+        p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
+        p.physics.manager = world.manager;
+        p.create();
 
-        var manager = new OdePhysicsManager();
-        manager.create();
         UPDATE.onStep(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
                 Drone d = new Drone();
                 d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
-                d.physics.world = world;
+                d.physics.manager = world.manager;
                 d.create();
             }
             if (Input.mouseDown(0)) {
-                var v = world.collisionShape.raycast(camera3d.position, camera3d.facing());
+                var v = world.manager.raycast(camera3d.position, camera3d.facing());
                 v.ifPresent(t -> {
                     explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
                 });
             }
             if (Input.keyJustPressed(GLFW_KEY_B)) {
-                var b = new OdeBox();
-                b.pose.position = camera3d.position;
-                b.manager = manager;
+                var b = new PinkBox();
+                b.pose.position = camera3d.position.add(new Vec3d(0, 0, -2));
+                b.physics.manager = world.manager;
                 b.create();
             }
         });
@@ -82,31 +79,45 @@ public class MainPC {
         Core.run();
     }
 
-    public static void moveCamera(Player p) {
-        camera3d.horAngle -= Input.mouseDelta().x * 16. / 3;
-        camera3d.vertAngle -= Input.mouseDelta().y * 3;
-        camera3d.vertAngle = clamp(camera3d.vertAngle, -1.55, 1.55);
+    public static class PlayerPC extends Behavior {
 
-        double flySpeed = 20;
-        Vec3d vel = new Vec3d(0, 0, 0);
-        if (Input.keyDown(GLFW_KEY_W)) {
-            vel = vel.add(camera3d.facing().setLength(flySpeed));
+        public final PoseBehavior pose = require(PoseBehavior.class);
+        public final PhysicsBehavior physics = require(PhysicsBehavior.class);
+
+        @Override
+        public void createInner() {
+            physics.allowRotation = false;
         }
-        if (Input.keyDown(GLFW_KEY_A)) {
-            vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(-flySpeed));
+
+        @Override
+        public void step() {
+            camera3d.horAngle -= Input.mouseDelta().x * 16. / 3;
+            camera3d.vertAngle -= Input.mouseDelta().y * 3;
+            camera3d.vertAngle = clamp(camera3d.vertAngle, -1.55, 1.55);
+            camera3d.position = pose.position;
+
+            double flySpeed = 20;
+            Vec3d vel = new Vec3d(0, 0, 0);
+            if (Input.keyDown(GLFW_KEY_W)) {
+                vel = vel.add(camera3d.facing().setLength(flySpeed));
+            }
+            if (Input.keyDown(GLFW_KEY_A)) {
+                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(-flySpeed));
+            }
+            if (Input.keyDown(GLFW_KEY_S)) {
+                vel = vel.add(camera3d.facing().setLength(-flySpeed));
+            }
+            if (Input.keyDown(GLFW_KEY_D)) {
+                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(flySpeed));
+            }
+            if (Input.keyDown(GLFW_KEY_SPACE)) {
+                vel = vel.add(camera3d.up.setLength(flySpeed));
+            }
+            if (Input.keyDown(GLFW_KEY_LEFT_SHIFT)) {
+                vel = vel.add(camera3d.up.setLength(-flySpeed));
+            }
+//            physics.setVelocity(vel);
+            physics.applyForce(vel.mul(100));
         }
-        if (Input.keyDown(GLFW_KEY_S)) {
-            vel = vel.add(camera3d.facing().setLength(-flySpeed));
-        }
-        if (Input.keyDown(GLFW_KEY_D)) {
-            vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(flySpeed));
-        }
-        if (Input.keyDown(GLFW_KEY_SPACE)) {
-            vel = vel.add(camera3d.up.setLength(flySpeed));
-        }
-        if (Input.keyDown(GLFW_KEY_LEFT_SHIFT)) {
-            vel = vel.add(camera3d.up.setLength(-flySpeed));
-        }
-        p.physics.velocity = vel;
     }
 }
