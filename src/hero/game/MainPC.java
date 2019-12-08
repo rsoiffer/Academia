@@ -21,6 +21,7 @@ import hero.physics.PhysicsBehavior;
 import hero.physics.PinkBox;
 import hero.physics.PoseBehavior;
 import static org.lwjgl.glfw.GLFW.*;
+import org.ode4j.ode.DJoint;
 import org.ode4j.ode.internal.DxMass;
 import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
@@ -86,6 +87,10 @@ public class MainPC {
         public final PoseBehavior pose = require(PoseBehavior.class);
         public final PhysicsBehavior physics = require(PhysicsBehavior.class);
 
+        public boolean flyMode = true;
+        public Web web;
+        public DJoint myJoint;
+
         @Override
         public void createInner() {
             var mass = new DxMass();
@@ -96,6 +101,29 @@ public class MainPC {
             physics.setGeom(geom);
         }
 
+        private static Vec3d getMoveDir() {
+            Vec3d vel = new Vec3d(0, 0, 0);
+            if (Input.keyDown(GLFW_KEY_W)) {
+                vel = vel.add(camera3d.facing().setLength(1));
+            }
+            if (Input.keyDown(GLFW_KEY_A)) {
+                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(-1));
+            }
+            if (Input.keyDown(GLFW_KEY_S)) {
+                vel = vel.add(camera3d.facing().setLength(-1));
+            }
+            if (Input.keyDown(GLFW_KEY_D)) {
+                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(1));
+            }
+            if (Input.keyDown(GLFW_KEY_SPACE)) {
+                vel = vel.add(camera3d.up.setLength(1));
+            }
+            if (Input.keyDown(GLFW_KEY_LEFT_SHIFT)) {
+                vel = vel.add(camera3d.up.setLength(-1));
+            }
+            return vel;
+        }
+
         @Override
         public void step() {
             camera3d.horAngle -= Input.mouseDelta().x * 16. / 3;
@@ -103,28 +131,44 @@ public class MainPC {
             camera3d.vertAngle = clamp(camera3d.vertAngle, -1.55, 1.55);
             camera3d.position = pose.position;
 
-            double flySpeed = 20;
-            Vec3d vel = new Vec3d(0, 0, 0);
-            if (Input.keyDown(GLFW_KEY_W)) {
-                vel = vel.add(camera3d.facing().setLength(flySpeed));
+            if (Input.keyJustPressed(GLFW_KEY_Q)) {
+                flyMode = !flyMode;
             }
-            if (Input.keyDown(GLFW_KEY_A)) {
-                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(-flySpeed));
+
+            if (flyMode) {
+
+                var vel = getMoveDir().mul(20);
+                physics.applyForce(vel.sub(physics.velocity()).mul(1000));
+                physics.applyForce(new Vec3d(0, 0, 9.81 * physics.getMass()));
+
+            } else {
+
+                if (!Input.mouseDown(1)) {
+                    var vel = getMoveDir().mul(5);
+                    physics.applyForce(vel.sub(physics.velocity()).setZ(0).mul(1000));
+                }
+
+                if (Input.mouseJustPressed(1)) {
+                    web = new Web();
+                    web.initialPos = pose.position;
+                    web.initialBaseVel = physics.velocity();
+                    web.initialEndVel = camera3d.facing().mul(100);
+                    web.manager = physics.manager;
+                    web.toIgnore.add(physics);
+                    web.create();
+                    myJoint = web.attachTo(physics);
+                }
+                if (web != null) {
+                    web.prefLength += Input.mouseWheel();
+                }
+                if (Input.mouseJustReleased(1)) {
+                    web = null;
+                    if (myJoint != null) {
+                        myJoint.destroy();
+                        myJoint = null;
+                    }
+                }
             }
-            if (Input.keyDown(GLFW_KEY_S)) {
-                vel = vel.add(camera3d.facing().setLength(-flySpeed));
-            }
-            if (Input.keyDown(GLFW_KEY_D)) {
-                vel = vel.add(camera3d.facing().cross(camera3d.up).setLength(flySpeed));
-            }
-            if (Input.keyDown(GLFW_KEY_SPACE)) {
-                vel = vel.add(camera3d.up.setLength(flySpeed));
-            }
-            if (Input.keyDown(GLFW_KEY_LEFT_SHIFT)) {
-                vel = vel.add(camera3d.up.setLength(-flySpeed));
-            }
-            physics.applyForce(vel.sub(physics.velocity()).mul(1000));
-            physics.applyForce(new Vec3d(0, 0, 9.81 * physics.getMass()));
         }
     }
 }

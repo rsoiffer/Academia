@@ -129,8 +129,29 @@ public class RawMeshBuilder {
         return this;
     }
 
+    private static Vec3d getVec3d(List<Float> f, int i) {
+        return new Vec3d(f.get(3 * i), f.get(3 * i + 1), f.get(3 * i + 2));
+    }
+
+    private static void setVec3d(List<Float> f, int i, Vec3d val) {
+        f.set(3 * i, (float) val.x);
+        f.set(3 * i + 1, (float) val.y);
+        f.set(3 * i + 2, (float) val.z);
+    }
+
     public void smoothVertexNormals() {
-        // TODO - implement
+        var normalSums = new HashMap<Vec3d, Vec3d>();
+        for (int i = 0; i < numVerts; i++) {
+            var pos = getVec3d(attribs.get(POSITIONS), i);
+            var normal = getVec3d(attribs.get(NORMALS), i);
+            var s = normalSums.getOrDefault(pos, new Vec3d(0, 0, 0));
+            normalSums.put(pos, s.add(normal));
+        }
+        for (int i = 0; i < numVerts; i++) {
+            var pos = getVec3d(attribs.get(POSITIONS), i);
+            var normal = normalSums.get(pos).normalize();
+            setVec3d(attribs.get(NORMALS), i, normal);
+        }
 
 //        HashMap<Vec3d, Vec3d> normals = new HashMap();
 //        for (VertexPBR v : vertices) {

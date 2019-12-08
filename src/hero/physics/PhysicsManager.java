@@ -69,16 +69,7 @@ public class PhysicsManager extends Behavior {
         return PHYSICS;
     }
 
-    public OptionalDouble raycast(Vec3d start, Vec3d dir) {
-        var ray = dCreateRay(null, 1000);
-        ray.set(toDVector3(start), toDVector3(dir));
-        ray.setClosestHit(true);
-        return collide(ray, staticSpace).stream().mapToDouble(contact -> contact.geom.depth).min();
-    }
-
-    @Override
-    public void step() {
-        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPrePhysicsStep);
+    private void physicsStep() {
         space.collide(null, (data, o1, o2) -> {
             if (o1 == o2) {
                 return;
@@ -111,12 +102,25 @@ public class PhysicsManager extends Behavior {
                 c.attach(b1, b2);
             }
         });
+        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep1);
+        world.quickStep(STEP_SIZE);
+        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep2);
+    }
+
+    public OptionalDouble raycast(Vec3d start, Vec3d dir) {
+        var ray = dCreateRay(null, 1000);
+        ray.set(toDVector3(start), toDVector3(dir));
+        ray.setClosestHit(true);
+        return collide(ray, staticSpace).stream().mapToDouble(contact -> contact.geom.depth).min();
+    }
+
+    @Override
+    public void step() {
+        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPrePhysicsStep);
         time += dt();
         while (time > STEP_SIZE) {
             time -= STEP_SIZE;
-            world.quickStep(STEP_SIZE);
-//            world.step(STEP_SIZE);
-            PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep);
+            physicsStep();
         }
         contactGroup.empty();
         PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPostPhysicsStep);

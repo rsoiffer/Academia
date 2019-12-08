@@ -26,6 +26,8 @@ public class PhysicsBehavior extends Behavior {
     public boolean onGround = false;
     public boolean allowRotation = false;
     public List<DGeom> hit = new ArrayList();
+    public Vec3d lastClearPos;
+    public Runnable onPhysicsStep = null;
 
     private DxBody body;
     private DxMass mass;
@@ -39,13 +41,18 @@ public class PhysicsBehavior extends Behavior {
     @Override
     public void createInner() {
         body = dBodyCreate(manager.world);
-        body.setPosition(pose.position.x, pose.position.y, pose.position.z);
+        setPosition(pose.position);
+        lastClearPos = pose.position;
     }
 
     @Override
     public void destroyInner() {
         body.destroy();
         geom.destroy();
+    }
+
+    public DxBody getBody() {
+        return body;
     }
 
     public double getMass() {
@@ -56,7 +63,22 @@ public class PhysicsBehavior extends Behavior {
         hit.clear();
     }
 
-    void onPhysicsStep() {
+    void onPhysicsStep1() {
+        if (hit.isEmpty()) {
+            lastClearPos = pose.position;
+        }
+
+        double airResistanceForce = drag * velocity().lengthSquared();
+        if (airResistanceForce > 1e-12) {
+            applyForce(velocity().setLength(-airResistanceForce));
+        }
+        body.addForce(toDVector3(totalForce));
+        if (onPhysicsStep != null) {
+            onPhysicsStep.run();
+        }
+    }
+
+    void onPhysicsStep2() {
         pose.position = toVec3d(body.getPosition());
         if (!allowRotation) {
             body.setQuaternion(toDQuaternion(Quaternion.IDENTITY));
@@ -64,12 +86,6 @@ public class PhysicsBehavior extends Behavior {
         } else {
             pose.rotation = toQuaternion(body.getQuaternion());
         }
-
-//        double airResistanceForce = drag * velocity().lengthSquared();
-//        if (airResistanceForce > 1e-12) {
-//            applyForce(velocity().setLength(-airResistanceForce));
-//        }
-        body.addForce(toDVector3(totalForce));
     }
 
     void onPostPhysicsStep() {
@@ -90,8 +106,13 @@ public class PhysicsBehavior extends Behavior {
         this.mass = mass;
     }
 
+    public void setPosition(Vec3d pos) {
+        pose.position = pos;
+        body.setPosition(toDVector3(pos));
+    }
+
     public void setVelocity(Vec3d vel) {
-        body.setLinearVel(vel.x, vel.y, vel.z);
+        body.setLinearVel(toDVector3(vel));
     }
 
     public Vec3d velocity() {
