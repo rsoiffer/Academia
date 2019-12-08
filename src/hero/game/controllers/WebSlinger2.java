@@ -134,7 +134,7 @@ public class WebSlinger2 extends Behavior {
 
         @Override
         public void step() {
-            if (next == null && physics.collisionVel.length() > 0) {
+            if (next == null && !physics.hit.isEmpty()) {
                 stuck = true;
 //                physics.acceleration = new Vec3d(0, 0, 0);
             }

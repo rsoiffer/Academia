@@ -15,6 +15,8 @@ import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.ode4j.ode.internal.DxMass;
+import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Missile extends Behavior {
 
@@ -30,21 +32,29 @@ public class Missile extends Behavior {
 
     @Override
     public void createInner() {
-        pointing = targetDir.get().normalize();
-//        physics.radius = .2;
-//        physics.mass = 5;
+        var mass = new DxMass();
+        mass.setSphereTotal(5, .2);
+        physics.setMass(mass);
+
+        var geom = dCreateSphere(physics.manager.space, .2);
+        physics.setGeom(geom);
+
         model.node.addChild(AssimpLoader.load("bomb/mk83.obj").rootNode);
         var rot = Quaternion.fromEulerAngles(Math.PI, 0, Math.PI / 2);
         var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .05);
         model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
         lifetime.lifetime = 30;
+
+        pointing = targetDir.get().normalize();
     }
 
     @Override
     public void destroyInner() {
-        ParticleTypes.explosion(pose.position, physics.velocity().div(2), 1000);
+//        ParticleTypes.explosion(pose.position, physics.velocity().div(2), 1000);
+        ParticleTypes.explosion(pose.position, new Vec3d(0, 0, 0), 1000);
     }
 
+    @Override
     public void step() {
         time += dt();
         var force = 200;
@@ -59,11 +69,12 @@ public class Missile extends Behavior {
             force *= .5 + Math.max(0, pointing.dot(dir));
         }
 
+        physics.applyForce(new Vec3d(0, 0, 9.81 * physics.getMass()));
         physics.applyForce(pointing.mul(force));
         pose.rotation = Quaternion.fromXYAxes(pointing, new Vec3d(0, 0, 1).cross(pointing));
 
 //        physics.velocity = physics.velocity.mul(Math.exp(-dt() * .1));
-        if (physics.collisionVel.length() > .1) {
+        if (!physics.hit.isEmpty()) {
             destroy();
         }
 

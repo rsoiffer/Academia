@@ -9,6 +9,7 @@ import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 import static org.ode4j.ode.internal.DxBox.dCreateBox;
+import org.ode4j.ode.internal.DxMass;
 
 public class PinkBox extends Behavior {
 
@@ -18,10 +19,14 @@ public class PinkBox extends Behavior {
 
     @Override
     public void createInner() {
-        physics.mass.setBoxTotal(50, 2, 2, 2);
-        physics.body.setMass(physics.mass);
-        physics.geom = dCreateBox(physics.manager.space, 2, 2, 2);
-        physics.geom.setBody(physics.body);
+        var mass = new DxMass();
+        mass.setBoxTotal(50, 2, 2, 2);
+        physics.setMass(mass);
+
+        var geom = dCreateBox(physics.manager.space, 2, 2, 2);
+        physics.setGeom(geom);
+
+        physics.allowRotation = true;
 
         var material = new ColorMaterial();
         var node = new ModelNode(material.buildRenderable(Platonics.cube));

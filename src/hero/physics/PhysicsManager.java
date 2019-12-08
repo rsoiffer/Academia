@@ -6,8 +6,7 @@ import beige_engine.engine.Layer;
 import beige_engine.util.math.Vec3d;
 import static hero.physics.OdeUtils.*;
 import java.util.OptionalDouble;
-import static org.ode4j.ode.OdeConstants.dContactApprox1;
-import static org.ode4j.ode.OdeConstants.dContactFDir1;
+import static org.ode4j.ode.OdeConstants.*;
 import static org.ode4j.ode.OdeHelper.createContactJoint;
 import static org.ode4j.ode.internal.DxHashSpace.dHashSpaceCreate;
 import static org.ode4j.ode.internal.DxPlane.dCreatePlane;
@@ -79,19 +78,33 @@ public class PhysicsManager extends Behavior {
 
     @Override
     public void step() {
+        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPrePhysicsStep);
         space.collide(null, (data, o1, o2) -> {
             if (o1 == o2) {
+                return;
+            }
+            var p1 = (PhysicsBehavior) o1.getData();
+            var p2 = (PhysicsBehavior) o2.getData();
+            if (p1 != null && p2 != null && (p1.ignore.contains(p2) || p2.ignore.contains(p1))) {
                 return;
             }
             var b1 = o1.getBody();
             var b2 = o2.getBody();
             var contacts = collide(o1, o2, contact -> {
                 var surface = contact.surface;
-                surface.mode = dContactApprox1 | dContactFDir1;
+                surface.mode = dContactApprox1 | dContactFDir1 | dContactBounce;
                 surface.mu = .5;
-//                surface.bounce = 0.01;
-//                surface.bounce_vel = 0.001;
+                surface.bounce = 0.1;
+                surface.bounce_vel = 0.001;
             });
+            if (!contacts.isEmpty()) {
+                if (p1 != null) {
+                    p1.hit.add(o2);
+                }
+                if (p2 != null) {
+                    p2.hit.add(o1);
+                }
+            }
             for (var contact : contacts) {
                 contact.fdir1.set(randomFrictionDir(contact.geom.normal));
                 var c = createContactJoint(world, contactGroup, contact);
@@ -103,8 +116,9 @@ public class PhysicsManager extends Behavior {
             time -= STEP_SIZE;
             world.quickStep(STEP_SIZE);
 //            world.step(STEP_SIZE);
-            PhysicsBehavior.ALL.forEach(PhysicsBehavior::physicsStep);
+            PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep);
         }
         contactGroup.empty();
+        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPostPhysicsStep);
     }
 }

@@ -17,10 +17,12 @@ import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
-import hero.physics.PinkBox;
 import hero.physics.PhysicsBehavior;
+import hero.physics.PinkBox;
 import hero.physics.PoseBehavior;
 import static org.lwjgl.glfw.GLFW.*;
+import org.ode4j.ode.internal.DxMass;
+import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class MainPC {
 
@@ -45,7 +47,7 @@ public class MainPC {
         UPDATE.onStep(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
                 Drone d = new Drone();
-                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 1.5);
+                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 2.5);
                 d.physics.manager = world.manager;
                 d.create();
             }
@@ -86,7 +88,12 @@ public class MainPC {
 
         @Override
         public void createInner() {
-            physics.allowRotation = false;
+            var mass = new DxMass();
+            mass.setSphereTotal(100, 1);
+            physics.setMass(mass);
+
+            var geom = dCreateSphere(physics.manager.space, 1);
+            physics.setGeom(geom);
         }
 
         @Override
@@ -116,8 +123,8 @@ public class MainPC {
             if (Input.keyDown(GLFW_KEY_LEFT_SHIFT)) {
                 vel = vel.add(camera3d.up.setLength(-flySpeed));
             }
-//            physics.setVelocity(vel);
-            physics.applyForce(vel.mul(100));
+            physics.applyForce(vel.sub(physics.velocity()).mul(1000));
+            physics.applyForce(new Vec3d(0, 0, 9.81 * physics.getMass()));
         }
     }
 }
