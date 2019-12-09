@@ -143,10 +143,12 @@ public class MainPC {
 
             } else {
 
-                if (!Input.mouseDown(1)) {
-                    var vel = getMoveDir().mul(5);
-                    physics.applyForce(vel.sub(physics.velocity()).setZ(0).mul(1000));
+//                if (!Input.mouseDown(1)) {
+                var vel = getMoveDir().mul(5).setZ(0);
+                if (vel.length() > 0) {
+                    physics.applyForce(vel.sub(physics.velocity()).mul(400));
                 }
+//                }
 
                 if (Input.mouseJustPressed(1)) {
                     web = new Web();
@@ -162,11 +164,18 @@ public class MainPC {
                     web.prefLength += Input.mouseWheel();
                 }
                 if (Input.mouseJustReleased(1)) {
-                    web = null;
+                    if (web != null) {
+                        web.destroy();
+                        web = null;
+                    }
                     if (myJoint != null) {
                         myJoint.destroy();
                         myJoint = null;
                     }
+                }
+
+                if (Input.keyJustPressed(GLFW_KEY_SPACE)) {
+                    physics.setVelocity(physics.velocity().setZ(5));
                 }
             }
         }

@@ -26,7 +26,7 @@ public class PhysicsManager extends Behavior {
         dInitODE();
     }
 
-    public static final double STEP_SIZE = .01;
+    public static final double STEP_SIZE = .001;
 
     public double time;
     public DxWorld world;

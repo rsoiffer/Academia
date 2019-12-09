@@ -23,7 +23,7 @@ import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Web extends Behavior {
 
-    private static final int NUM_PARTS = 100;
+    private static final int NUM_PARTS = 10;
     private static final double WEB_WIDTH = .03;
 
     private static final Material webMaterial;
@@ -46,6 +46,7 @@ public class Web extends Behavior {
     private List<WebPart> parts = new ArrayList<>();
     private List<SpringJoint> springs = new ArrayList<>();
     private DJoint finalJoint;
+    private double strength = 0;
 
     public DJoint attachTo(PhysicsBehavior pb) {
         var myJoint = createDBallJoint(pb.manager.world);
@@ -81,11 +82,13 @@ public class Web extends Behavior {
             var wp1 = parts.get(i);
             var wp2 = parts.get(i + 1);
             var s = new SpringJoint(manager);
-            s.kp = 1000 * NUM_PARTS;
-            s.kd = 100;
             s.attach(wp1.physics.getBody(), wp2.physics.getBody());
             springs.add(s);
         }
+    }
+
+    public void destroyInner() {
+        parts.forEach(Behavior::destroy);
     }
 
     @Override
@@ -96,6 +99,8 @@ public class Web extends Behavior {
 //        prefLength = MathUtils.clamp(totalLength, prefLength - 10 * dt(), prefLength + dt());
 
         for (var s : springs) {
+            s.kp = 1000 * NUM_PARTS * strength;
+            s.kd = 100;
             s.prefLength = prefLength / NUM_PARTS;
             s.updateParams();
         }
@@ -105,8 +110,16 @@ public class Web extends Behavior {
                 wp.physics.setPosition(wp.physics.lastClearPos);
                 finalJoint = createBallJoint(manager.world);
                 finalJoint.attach(wp.physics.getBody(), null);
+                strength = 1;
+                prefLength = totalLength();
             }
         }
+    }
+
+    public double totalLength() {
+        return IntStream.range(0, NUM_PARTS - 1)
+                .mapToDouble(i -> parts.get(i).pose.position.sub(parts.get(i + 1).pose.position).length())
+                .sum();
     }
 
     private static class WebPart extends Behavior {
@@ -117,13 +130,15 @@ public class Web extends Behavior {
         @Override
         public void createInner() {
             var mass = new DxMass();
-            mass.setSphereTotal(1, WEB_WIDTH);
+            mass.setSphereTotal(10, WEB_WIDTH);
             physics.setMass(mass);
 
             var geom = dCreateSphere(physics.manager.space, WEB_WIDTH);
             physics.setGeom(geom);
 
-            physics.getBody().setLinearDamping(PhysicsManager.STEP_SIZE);
+            physics.drag = 0;
+
+//            physics.getBody().setLinearDamping(.1 * PhysicsManager.STEP_SIZE);
         }
     }
 }
