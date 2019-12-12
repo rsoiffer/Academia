@@ -116,7 +116,7 @@ vec3 viewDir, vec3 F0, vec3 L, vec3 radiance)
 // ----------------------------------------------------------------------------
 vec3 FakeIrradiance(vec3 dir, float roughness)
 {
-    float x = tanh(cos(dir.z) / (roughness + .01));
+    float x = tanh(cos(dir.z) / (roughness + .02));
     return mix(vec3(.4, .7, 1), vec3(.3, .3, .3), x) * .15;
 }
 // ----------------------------------------------------------------------------
