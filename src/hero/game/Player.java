@@ -8,6 +8,8 @@ import beige_engine.vr.Vive;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PoseBehavior;
 import java.util.Collection;
+import org.ode4j.ode.internal.DxMass;
+import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Player extends Behavior {
 
@@ -23,6 +25,13 @@ public class Player extends Behavior {
 
     @Override
     public void createInner() {
+        var mass = new DxMass();
+        mass.setSphereTotal(100, 1);
+        physics.setMass(mass);
+
+        var geom = dCreateSphere(physics.manager.space, 1);
+        physics.setGeom(geom);
+
         // physics.centerOfMass = () -> Vive.footTransform.get().position().lerp(EyeCamera.headPose().position(), .5);
         Vive.footTransform = () -> pose.getTransform().translate(new Vec3d(0, 0, -1));
     }

@@ -124,8 +124,8 @@ public class MainVR {
 
                     Missile m = new Missile();
                     m.pose.position = controller.pose().position();
-                    m.physics.setVelocity(p.physics.velocity());
                     m.physics.manager = world.manager;
+                    m.physics.ignore.add(p.physics);
                     m.isFriendly = true;
                     if (drone.isEmpty()) {
                         var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
@@ -150,6 +150,7 @@ public class MainVR {
 
                     }
                     m.create();
+                    m.physics.setVelocity(p.physics.velocity());
                 }
             }
         });
