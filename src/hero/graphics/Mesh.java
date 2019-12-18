@@ -23,8 +23,8 @@ public class Mesh implements DrawableSupplier {
 
     public final int numFaces, numVerts;
     public final AABB aabb;
-    private final Map<VertexAttrib, float[]> data;
-    private final int[] indices;
+    public final Map<VertexAttrib, float[]> data;
+    public final int[] indices;
 
     private final Map<VertexAttrib, Integer> attribPositions;
     private final BufferObject vbo, ebo;

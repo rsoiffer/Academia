@@ -4,19 +4,24 @@ import beige_engine.engine.Behavior;
 import beige_engine.util.Noise;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import static hero.game.controllers.IceCaster.iceModel;
+import hero.game.controllers.IceCaster;
 import hero.game.world.CityBlock;
 import hero.game.world.ParkBlock;
 import hero.game.world.Structure;
+import hero.graphics.Mesh;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;
+import static hero.graphics.VertexAttrib.POSITIONS;
 import hero.graphics.loading.RawMeshBuilder;
 import static hero.graphics.loading.VoxelModelLoader.DIRS;
 import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
 import hero.physics.PhysicsManager;
-import hero.physics.shapes.*;
+import hero.physics.shapes.AABB;
 import java.util.*;
+import org.ode4j.ode.DGeom;
+import static org.ode4j.ode.OdeHelper.createTriMesh;
+import static org.ode4j.ode.OdeHelper.createTriMeshData;
 
 public class World extends Behavior {
 
@@ -34,13 +39,11 @@ public class World extends Behavior {
     public Random random = new Random();
     public Noise noise = new Noise(random);
 
-    public CollisionShape collisionShape;
-
     private final List<Structure> structures = new ArrayList();
 
     private final List<AABB> intersections = new ArrayList();
     private final List<AABB> roads = new ArrayList();
-    private final List<CapsuleShape> poles = new ArrayList();
+    // private final List<CapsuleShape> poles = new ArrayList();
 
     private void addStructure(Structure s) {
         structures.add(s);
@@ -60,21 +63,12 @@ public class World extends Behavior {
                 } else {
                     addStructure(new CityBlock(this, i, j));
                 }
-                poles.add(new CapsuleShape(new Vec3d(i - STREET_WIDTH + 3, j - STREET_WIDTH + 3, 0), new Vec3d(0, 0, 5), .1));
-                poles.add(new CapsuleShape(new Vec3d(i - 3, j - STREET_WIDTH + 3, 0), new Vec3d(0, 0, 5), .1));
-                poles.add(new CapsuleShape(new Vec3d(i - STREET_WIDTH + 3, j - 3, 0), new Vec3d(0, 0, 5), .1));
-                poles.add(new CapsuleShape(new Vec3d(i - 3, j - 3, 0), new Vec3d(0, 0, 5), .1));
+//                poles.add(new CapsuleShape(new Vec3d(i - STREET_WIDTH + 3, j - STREET_WIDTH + 3, 0), new Vec3d(0, 0, 5), .1));
+//                poles.add(new CapsuleShape(new Vec3d(i - 3, j - STREET_WIDTH + 3, 0), new Vec3d(0, 0, 5), .1));
+//                poles.add(new CapsuleShape(new Vec3d(i - STREET_WIDTH + 3, j - 3, 0), new Vec3d(0, 0, 5), .1));
+//                poles.add(new CapsuleShape(new Vec3d(i - 3, j - 3, 0), new Vec3d(0, 0, 5), .1));
             }
         }
-
-        List<CollisionShape> l = new LinkedList();
-        for (var s : structures) {
-            s.getCollisionShapes().forEach(l::add);
-        }
-        l.add(new AABB(new Vec3d(0, 0, -500), new Vec3d(2000, 2000, 0)));
-        l.addAll(poles);
-        l.add(new SurfaceNetShape(iceModel));
-        collisionShape = new MultigridShape(l);
 
         modelNode.node = createModelNode();
     }
@@ -97,12 +91,11 @@ public class World extends Behavior {
             }
         }
 
-        var polesModel = new RawMeshBuilder();
-        for (CapsuleShape c : poles) {
-            polesModel.addCylinderUV(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
-        }
-        polesModel.smoothVertexNormals();
-
+//        var polesModel = new RawMeshBuilder();
+//        for (CapsuleShape c : poles) {
+//            polesModel.addCylinderUV(c.pos, c.dir, c.radius, 16, STREET_WIDTH, 1, c.dir.length() / (2 * Math.PI * c.radius));
+//        }
+//        polesModel.smoothVertexNormals();
         var renderables = new LinkedList<Renderable>();
         var m = new HashMap<Material, RawMeshBuilder>();
         for (var s : structures) {
@@ -114,7 +107,7 @@ public class World extends Behavior {
         }
         renderables.add(PBRMaterial.load("city/road_empty").buildRenderable(intersectionsModel));
         renderables.add(PBRMaterial.load("city/road").buildRenderable(roadsModel));
-        renderables.add(PBRMaterial.load("city/concrete_pole").buildRenderable(polesModel));
+//        renderables.add(PBRMaterial.load("city/concrete_pole").buildRenderable(polesModel));
         return new ModelNode(renderables);
     }
 
@@ -138,5 +131,33 @@ public class World extends Behavior {
 //            }
 //        }
         return d;
+    }
+
+    private Map<Mesh, DGeom> meshes = new HashMap();
+
+    @Override
+    public void step() {
+        var newMeshes = new HashMap<Mesh, DGeom>();
+        IceCaster.iceModel.getMeshes().forEach(m -> {
+            if (meshes.containsKey(m)) {
+                newMeshes.put(m, meshes.get(m));
+            } else {
+                // add a new mesh to the world (and the map)
+                var t = createTriMeshData();
+                t.build(m.data.get(POSITIONS), m.indices);
+                t.preprocess();
+                var t2 = createTriMesh(manager.staticSpace, t, null, null, null);
+                System.out.println("Created mesh!");
+                newMeshes.put(m, t2);
+            }
+        });
+        for (var m : meshes.keySet()) {
+            if (!newMeshes.containsKey(m)) {
+                // remove a mesh from the world
+                meshes.get(m).destroy();
+                System.out.println("Destroyed mesh!");
+            }
+        }
+        meshes = newMeshes;
     }
 }
