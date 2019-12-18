@@ -84,7 +84,7 @@ public class PhysicsManager extends Behavior {
             var contacts = collide(o1, o2, contact -> {
                 var surface = contact.surface;
                 surface.mode = dContactApprox1 | dContactFDir1 | dContactBounce;
-                surface.mu = .5;
+                surface.mu = .2;
                 surface.bounce = 0.1;
                 surface.bounce_vel = 0.001;
             });

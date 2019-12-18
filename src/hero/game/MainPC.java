@@ -70,7 +70,7 @@ public class MainPC {
                 b.create();
             }
 
-            if (Input.mouseJustPressed(1)) {
+            if (Input.mouseDown(1)) {
                 SDF shape2 = intersectionSmooth(3,
                         cylinder(camera3d.position, camera3d.facing(), .5),
                         halfSpace(camera3d.position.add(camera3d.facing()), camera3d.facing()),

@@ -156,6 +156,7 @@ public class World extends Behavior {
                 // remove a mesh from the world
                 meshes.get(m).destroy();
                 System.out.println("Destroyed mesh!");
+                System.out.println(newMeshes.size());
             }
         }
         meshes = newMeshes;

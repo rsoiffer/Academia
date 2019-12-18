@@ -22,7 +22,7 @@ public class PhysicsBehavior extends Behavior {
     public PhysicsManager manager;
 
     public List<PhysicsBehavior> ignore = new ArrayList();
-    public double drag = .1;
+    public double drag = .02;
     public boolean onGround = false;
     public boolean allowRotation = false;
     public List<DGeom> hit = new ArrayList();
