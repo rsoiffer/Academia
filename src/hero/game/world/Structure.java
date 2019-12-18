@@ -4,7 +4,6 @@ import hero.game.World;
 import hero.graphics.Renderable;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.materials.Material;
-import hero.physics.shapes.CollisionShape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +28,6 @@ public abstract class Structure {
     protected RawMeshBuilder getBuilder(Map<Material, RawMeshBuilder> models, Material material) {
         models.putIfAbsent(material, new RawMeshBuilder());
         return models.get(material);
-    }
-
-    public Stream<CollisionShape> getCollisionShapes() {
-        return Stream.empty();
     }
 
     public Stream<Renderable> getRenderables() {

@@ -10,9 +10,7 @@ import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
 import static hero.physics.OdeUtils.toDVector3;
 import hero.physics.shapes.AABB;
-import hero.physics.shapes.CollisionShape;
 import java.util.Map;
-import java.util.stream.Stream;
 import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class Building extends Structure {
@@ -58,10 +56,5 @@ public class Building extends Structure {
 
         var b2 = getBuilder(models, WALL_MATERIALS[type]);
         createWalls(bounds, FLOOR_HEIGHT * WALL_SCALES[type], WALL_SCALES_X[type], b2);
-    }
-
-    @Override
-    public Stream<CollisionShape> getCollisionShapes() {
-        return Stream.of(bounds);
     }
 }

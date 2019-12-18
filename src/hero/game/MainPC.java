@@ -14,12 +14,17 @@ import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
+import static hero.game.controllers.IceCaster.iceModel;
 import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
+import hero.graphics.utils.SDF;
+import static hero.graphics.utils.SDF.*;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PinkBox;
 import hero.physics.PoseBehavior;
+import hero.physics.shapes.AABB;
+import java.util.Arrays;
 import static org.lwjgl.glfw.GLFW.*;
 import org.ode4j.ode.DJoint;
 import org.ode4j.ode.internal.DxMass;
@@ -63,6 +68,15 @@ public class MainPC {
                 b.pose.position = camera3d.position.add(new Vec3d(0, 0, -2));
                 b.physics.manager = world.manager;
                 b.create();
+            }
+
+            if (Input.mouseJustPressed(1)) {
+                SDF shape2 = intersectionSmooth(3,
+                        cylinder(camera3d.position, camera3d.facing(), .5),
+                        halfSpace(camera3d.position.add(camera3d.facing()), camera3d.facing()),
+                        halfSpace(camera3d.position, camera3d.facing()));
+                AABB bounds2 = AABB.boundingBox(Arrays.asList(camera3d.position.sub(10), camera3d.position.add(10)));
+                iceModel.unionSDF(shape2, bounds2);
             }
         });
         AssimpLoader.load("drone model/optimized.fbx");

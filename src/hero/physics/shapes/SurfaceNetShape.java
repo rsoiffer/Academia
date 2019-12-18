@@ -1,16 +1,14 @@
 package hero.physics.shapes;
 
+import static beige_engine.util.math.MathUtils.ceil;
+import static beige_engine.util.math.MathUtils.floor;
 import beige_engine.util.math.Vec3d;
 import hero.graphics.utils.SurfaceNet;
-
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.floor;
-
-public class SurfaceNetShape extends CollisionShape {
+public class SurfaceNetShape {
 
     private static final int RADIUS = 4;
 
@@ -20,12 +18,10 @@ public class SurfaceNetShape extends CollisionShape {
         this.surfaceNet = surfaceNet;
     }
 
-    @Override
     public AABB boundingBox() {
         return null;
     }
 
-    @Override
     public boolean contains(Vec3d point) {
         return surfaceNet.getInterp(point) > 0;
     }
@@ -43,7 +39,6 @@ public class SurfaceNetShape extends CollisionShape {
 //        }
 //        return r;
 //    }
-    @Override
     public OptionalDouble raycast(Vec3d start, Vec3d dir) {
         double t = 0;
         for (int i = 0; i < 50; i++) {
@@ -69,7 +64,6 @@ public class SurfaceNetShape extends CollisionShape {
         return surfaceNet.crossingsNear(point, 4).collect(Collectors.toList());
     }
 
-    @Override
     public Vec3d surfaceClosest(Vec3d point) {
 //        return surfaceNet.crossingsNear(point, 4)
 //                .min(Comparator.comparingDouble(v -> v.sub(point).lengthSquared())).orElse(null);
@@ -113,7 +107,7 @@ public class SurfaceNetShape extends CollisionShape {
 //        }
 //        if (!closest.isEmpty()) {
 //            List<Vec3d> samples = new ArrayList<>();
-//            
+//
 //            Vec3d avg
 //            return avg.mul(surfaceNet.scale);
 //        }

@@ -10,9 +10,7 @@ import hero.graphics.materials.Material;
 import hero.graphics.materials.PBRMaterial;
 import static hero.physics.OdeUtils.toDVector3;
 import hero.physics.shapes.AABB;
-import hero.physics.shapes.CollisionShape;
 import java.util.Map;
-import java.util.stream.Stream;
 import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class CityBlock extends Structure {
@@ -54,10 +52,5 @@ public class CityBlock extends Structure {
         rmb.addRectangleUV(bounds.lower.setZ(bounds.upper.z), bounds.size().setY(0).setZ(0), bounds.size().setX(0).setZ(0),
                 new Vec2d(0, 0), new Vec2d(bounds.size().x / 2, 0), new Vec2d(0, bounds.size().y / 2));
         createWalls(new AABB(bounds.lower.setZ(0), bounds.upper), 2, 1, rmb);
-    }
-
-    @Override
-    public Stream<CollisionShape> getCollisionShapes() {
-        return Stream.of(bounds);
     }
 }

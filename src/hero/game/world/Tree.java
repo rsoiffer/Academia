@@ -4,10 +4,8 @@ import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import hero.game.World;
-import hero.game.trees.Stem;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;
-import hero.physics.shapes.CollisionShape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -32,11 +30,6 @@ public class Tree extends Structure {
         super(world);
         this.pos = pos;
         stem = STEMS.get(world.random.nextInt(NUM_TYPES));
-    }
-
-    @Override
-    public Stream<CollisionShape> getCollisionShapes() {
-        return stem.getCollisionShapes(pos);
     }
 
     @Override
