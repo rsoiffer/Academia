@@ -2,8 +2,11 @@ package engine.physics;
 
 import engine.core.AbstractComponent;
 import engine.core.AbstractEntity;
+import engine.core.AbstractSystem;
 import static engine.physics.OdeUtils.*;
+import static engine.physics.PhysicsManager.STEP_SIZE;
 import engine.util.math.Quaternion;
+import engine.util.math.SplineAnimation;
 import engine.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,48 @@ import org.ode4j.ode.DMass;
 import org.ode4j.ode.OdeHelper;
 
 public class PhysicsComponent extends AbstractComponent {
+
+    static final AbstractSystem BEFORE_STEP = AbstractSystem.perComponent(PhysicsComponent.class, physics -> {
+        physics.hit.clear();
+    });
+    static final AbstractSystem AFTER_STEP = AbstractSystem.perComponent(PhysicsComponent.class, physics -> {
+        physics.totalForce = new Vec3d(0, 0, 0);
+
+        physics.pose.position = SplineAnimation.cubicInterp(1 + physics.manager.timeSinceLastStep() / -STEP_SIZE,
+                physics.prevPos1, physics.prevVel1.mul(-STEP_SIZE), physics.prevPos2, physics.prevVel2.mul(-STEP_SIZE));
+        System.out.println(physics.pose.position + " " + physics.prevPos1 + " " + physics.prevPos2);
+        physics.velocity = SplineAnimation.cubicInterpDerivative(1 + physics.manager.timeSinceLastStep() / -STEP_SIZE,
+                physics.prevPos1, physics.prevVel1.mul(-STEP_SIZE), physics.prevPos2, physics.prevVel2.mul(-STEP_SIZE))
+                .div(-STEP_SIZE);
+    });
+
+    static final AbstractSystem BEFORE_PHYSICS_STEP = AbstractSystem.perComponent(PhysicsComponent.class, physics -> {
+        if (physics.hit.isEmpty()) {
+            physics.lastClearPos = physics.pose.position;
+        }
+
+        double airResistanceForce = physics.drag * physics.velocity().lengthSquared();
+        if (airResistanceForce > 1e-12) {
+            physics.applyForce(physics.velocity().setLength(-airResistanceForce));
+        }
+        physics.body.addForce(toDVector3(physics.totalForce));
+        if (physics.onPhysicsStep != null) {
+            physics.onPhysicsStep.run();
+        }
+    });
+    static final AbstractSystem AFTER_PHYSICS_STEP = AbstractSystem.perComponent(PhysicsComponent.class, physics -> {
+        physics.prevPos2 = physics.prevPos1;
+        physics.prevVel2 = physics.prevVel1;
+        physics.prevPos1 = toVec3d(physics.body.getPosition());
+        physics.prevVel1 = toVec3d(physics.body.getLinearVel());
+
+        if (!physics.allowRotation) {
+            physics.body.setQuaternion(toDQuaternion(Quaternion.IDENTITY));
+            physics.body.setAngularVel(0, 0, 0);
+        } else {
+            physics.pose.rotation = toQuaternion(physics.body.getQuaternion());
+        }
+    });
 
     public final PoseComponent pose = require(PoseComponent.class);
 
@@ -31,6 +76,9 @@ public class PhysicsComponent extends AbstractComponent {
     private DGeom geom;
     private Vec3d totalForce = new Vec3d(0, 0, 0);
 
+    private Vec3d prevPos1, prevPos2, prevVel1, prevVel2;
+    private Vec3d velocity;
+
     public void applyForce(Vec3d force) {
         totalForce = totalForce.add(force);
     }
@@ -47,6 +95,7 @@ public class PhysicsComponent extends AbstractComponent {
         manager.addDynamic(geom);
 
         setPosition(pose.position);
+        setVelocity(new Vec3d(0, 0, 0));
         lastClearPos = pose.position;
     }
 
@@ -64,49 +113,17 @@ public class PhysicsComponent extends AbstractComponent {
         return mass.getMass();
     }
 
-    void onPrePhysicsStep() {
-        hit.clear();
-    }
-
-    void onPhysicsStep1() {
-        if (hit.isEmpty()) {
-            lastClearPos = pose.position;
-        }
-
-        double airResistanceForce = drag * velocity().lengthSquared();
-        if (airResistanceForce > 1e-12) {
-            applyForce(velocity().setLength(-airResistanceForce));
-        }
-        body.addForce(toDVector3(totalForce));
-        if (onPhysicsStep != null) {
-            onPhysicsStep.run();
-        }
-    }
-
-    void onPhysicsStep2() {
-        pose.position = toVec3d(body.getPosition());
-        if (!allowRotation) {
-            body.setQuaternion(toDQuaternion(Quaternion.IDENTITY));
-            body.setAngularVel(0, 0, 0);
-        } else {
-            pose.rotation = toQuaternion(body.getQuaternion());
-        }
-    }
-
-    void onPostPhysicsStep() {
-        totalForce = new Vec3d(0, 0, 0);
-    }
-
     public void setPosition(Vec3d pos) {
-        pose.position = pos;
+        pose.position = prevPos1 = prevPos2 = pos;
         body.setPosition(toDVector3(pos));
     }
 
     public void setVelocity(Vec3d vel) {
+        velocity = prevVel1 = prevVel2 = vel;
         body.setLinearVel(toDVector3(vel));
     }
 
     public Vec3d velocity() {
-        return toVec3d(body.getLinearVel());
+        return velocity;
     }
 }

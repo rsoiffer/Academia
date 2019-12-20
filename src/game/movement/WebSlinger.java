@@ -1,14 +1,14 @@
 package game.movement;
 
+import engine.rendering.ModelComponent;
+import engine.rendering.ModelNode;
+import engine.rendering.Platonics;
+import engine.rendering.materials.ColorMaterial;
 import engine.util.math.Transformation;
 import engine.util.math.Vec3d;
 import static engine.vr.VrCore.TRIGGER;
 import game.entities.Controller;
-import engine.rendering.ModelComponent;
 import game.entities.Player;
-import engine.rendering.ModelNode;
-import engine.rendering.Platonics;
-import engine.rendering.materials.ColorMaterial;
 import java.util.OptionalDouble;
 
 public class WebSlinger extends MovementMode {
@@ -28,6 +28,18 @@ public class WebSlinger extends MovementMode {
         material.color = new Vec3d(1, 1, 1);
         webNode = new ModelNode(material.buildRenderable(Platonics.cube));
         model.node.addChild(webNode);
+
+        model.beforeRender = () -> {
+            webNode.visible = web != null;
+            if (webNode.visible) {
+                Vec3d pos = controller.pos();
+                Vec3d forwards = web.sub(pos);
+                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
+                Vec3d up = forwards.cross(side).setLength(.05);
+                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
+                webNode.transform = Transformation.create(pos2, forwards, side, up);
+            }
+        };
     }
 
     @Override
@@ -62,16 +74,6 @@ public class WebSlinger extends MovementMode {
 //
 //            double pullStrength = Math.exp(-.02 * pullDir.dot(controller.player.velocity.velocity));
 //            controller.player.velocity.velocity = controller.player.velocity.velocity.add(pullDir.mul(pullStrength * dt() * 20));
-        }
-
-        webNode.visible = web != null;
-        if (webNode.visible) {
-            Vec3d pos = controller.pos();
-            Vec3d forwards = web.sub(pos);
-            Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-            Vec3d up = forwards.cross(side).setLength(.05);
-            Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
-            webNode.transform = Transformation.create(pos2, forwards, side, up);
         }
     }
 }

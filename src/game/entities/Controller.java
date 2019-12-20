@@ -1,10 +1,10 @@
 package game.entities;
 
+import engine.core.AbstractEntity;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
 import engine.rendering.Platonics;
 import engine.rendering.materials.DiffuseMaterial;
-import engine.samples.Behavior;
 import engine.util.Resources;
 import engine.util.math.Quaternion;
 import engine.util.math.Transformation;
@@ -15,7 +15,7 @@ import static engine.vr.VrCore.footTransform;
 import engine.vr.VrSide;
 import static engine.vr.VrSide.LEFT_HAND;
 
-public class Controller extends Behavior {
+public class Controller extends AbstractEntity {
 
     private static final Vec3d OFFSET = new Vec3d(0, 0, 1.2);
 
@@ -55,6 +55,17 @@ public class Controller extends Behavior {
         selectedMat.hasShadows = false;
         selected = new ModelNode(selectedMat.buildRenderable(Platonics.square));
         model.node.addChild(selected);
+
+        model.beforeRender = () -> {
+            model.node.transform = controllerPose();
+
+            var i = (7 - myNum) % 6;
+            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
+                    .mul(new Vec3d(1, side == LEFT_HAND ? -1 : 1, 1));
+            var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
+            var trans = Transformation.create(offset.mul(.08), quat, .05);
+            selected.transform = trans;
+        };
     }
 
     public Transformation controllerPose() {
@@ -71,18 +82,6 @@ public class Controller extends Behavior {
 
     public Vec3d forwards() {
         return controllerPose().applyRotation(new Vec3d(1, 0, 0));
-    }
-
-    @Override
-    public void onStep() {
-        model.node.transform = controllerPose();
-
-        var i = (7 - myNum) % 6;
-        var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
-                .mul(new Vec3d(1, side == LEFT_HAND ? -1 : 1, 1));
-        var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
-        var trans = Transformation.create(offset.mul(.08), quat, .05);
-        selected.transform = trans;
     }
 
     public Vec3d pos() {

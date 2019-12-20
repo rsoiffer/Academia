@@ -9,13 +9,13 @@ public class SplineAnimation {
     private final List<Vec3d> keyframePositions = new ArrayList();
     private final List<Vec3d> keyframeVelocities = new ArrayList();
 
-    private static Vec3d cubicInterp(double t, Vec3d p1, Vec3d v1, Vec3d p2, Vec3d v2) {
+    public static Vec3d cubicInterp(double t, Vec3d p1, Vec3d v1, Vec3d p2, Vec3d v2) {
         Vec3d a = v1.sub(p2.sub(p1));
         Vec3d b = v2.mul(-1).add(p2.sub(p1));
         return p1.lerp(p2, t).add(a.lerp(b, t).mul(t * (1 - t)));
     }
 
-    private static Vec3d cubicInterpDerivative(double t, Vec3d p1, Vec3d v1, Vec3d p2, Vec3d v2) {
+    public static Vec3d cubicInterpDerivative(double t, Vec3d p1, Vec3d v1, Vec3d p2, Vec3d v2) {
         Vec3d a = v1.sub(p2.sub(p1));
         Vec3d b = v2.mul(-1).add(p2.sub(p1));
         return p2.sub(p1).add(a.lerp(b, t).mul(1 - 2 * t)).add(b.sub(a).mul(t * (1 - t)));

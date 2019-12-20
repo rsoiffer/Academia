@@ -1,14 +1,7 @@
 package game.movement;
 
 import static engine.core.Core.dt;
-import static engine.util.math.MathUtils.round;
-import engine.util.math.Transformation;
-import engine.util.math.Vec3d;
-import static engine.vr.VrCore.TRIGGER;
-import game.entities.Controller;
 import engine.rendering.ModelComponent;
-import game.entities.Player;
-import static game.particles.ParticleTypes.explosion;
 import engine.rendering.ModelNode;
 import engine.rendering.Platonics;
 import static engine.rendering.VertexAttrib.NORMALS;
@@ -16,6 +9,13 @@ import static engine.rendering.VertexAttrib.POSITIONS;
 import engine.rendering.drawables.ParticlesDS;
 import engine.rendering.loading.RawMeshBuilder;
 import engine.rendering.materials.ColorMaterial;
+import static engine.util.math.MathUtils.round;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
+import static engine.vr.VrCore.TRIGGER;
+import game.entities.Controller;
+import game.entities.Player;
+import static game.particles.ParticleTypes.explosion;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +44,8 @@ public class Teleport extends MovementMode {
                 .addCylinder(new Vec3d(.05, 0, -.05), new Vec3d(1, 0, 0), .015, 12);
         blade = new ModelNode(bladeMat.buildRenderable(mesh));
         model.node.addChild(blade);
+
+        model.beforeRender = () -> updateModelNode(blade);
     }
 
     public double dash = 0;
@@ -51,8 +53,6 @@ public class Teleport extends MovementMode {
 
     @Override
     public void onStep() {
-        updateModelNode(blade);
-
         dash -= dt();
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             dashDir = controller.forwards().setLength(100);

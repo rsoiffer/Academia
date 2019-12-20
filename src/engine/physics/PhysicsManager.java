@@ -1,6 +1,5 @@
 package engine.physics;
 
-import engine.core.AbstractComponent;
 import engine.core.AbstractSystem;
 import static engine.core.Core.dt;
 import static engine.physics.OdeUtils.*;
@@ -21,13 +20,13 @@ public class PhysicsManager extends AbstractSystem {
         dInitODE();
     }
 
-    public static final double STEP_SIZE = .01;
+    public static final double STEP_SIZE = .02;
 
     private final DWorld world;
     private final DHashSpace dynamics;
     private final DQuadTreeSpace statics;
 
-    private double time;
+    private double timeSinceLastStep;
     private final DxJointGroup contactGroup;
 
     public PhysicsManager() {
@@ -135,22 +134,18 @@ public class PhysicsManager extends AbstractSystem {
 
     @Override
     public void onStep() {
-        AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPrePhysicsStep);
-        time += dt();
-        while (time > STEP_SIZE) {
-            time -= STEP_SIZE;
-            physicsStep();
+        PhysicsComponent.BEFORE_STEP.step();
+        timeSinceLastStep += dt();
+        while (timeSinceLastStep > STEP_SIZE) {
+            timeSinceLastStep -= STEP_SIZE;
+            dynamics.collide(null, this::handleDynamicsCollision);
+            dynamics.collide2(statics, null, this::handleCollision);
+            PhysicsComponent.BEFORE_PHYSICS_STEP.step();
+            world.quickStep(STEP_SIZE);
+            PhysicsComponent.AFTER_PHYSICS_STEP.step();
         }
         contactGroup.empty();
-        AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPostPhysicsStep);
-    }
-
-    private void physicsStep() {
-        dynamics.collide(null, this::handleDynamicsCollision);
-        dynamics.collide2(statics, null, this::handleCollision);
-        AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPhysicsStep1);
-        world.quickStep(STEP_SIZE);
-        AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPhysicsStep2);
+        PhysicsComponent.AFTER_STEP.step();
     }
 
     public OptionalDouble raycast(Vec3d start, Vec3d dir) {
@@ -158,5 +153,9 @@ public class PhysicsManager extends AbstractSystem {
         ray.set(toDVector3(start), toDVector3(dir));
         ray.setClosestHit(true);
         return collide(ray, statics).stream().mapToDouble(contact -> contact.geom.depth).min();
+    }
+
+    public double timeSinceLastStep() {
+        return timeSinceLastStep;
     }
 }

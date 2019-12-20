@@ -5,6 +5,7 @@ import engine.graphics.Camera;
 import engine.graphics.Color;
 import engine.graphics.opengl.GLState;
 import engine.graphics.opengl.Texture;
+import static engine.rendering.ModelComponent.BEFORE_RENDER;
 import engine.util.math.Transformation;
 import engine.util.math.Vec2d;
 import engine.util.math.Vec3d;
@@ -88,6 +89,7 @@ public class RenderPipeline extends AbstractSystem {
         if (isVR) {
             VrEyeCamera.waitUpdatePos();
         }
+        BEFORE_RENDER.step();
         gpList.forEach(RenderPass::doPass);
         spList.forEach(RenderPass::doPass);
         lpList.forEach(RenderPass::doPass);

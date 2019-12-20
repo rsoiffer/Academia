@@ -1,18 +1,16 @@
 package game.movement;
 
 import static engine.core.Core.dt;
+import engine.physics.AABB;
+import engine.rendering.utils.SDF;
+import static engine.rendering.utils.SDF.*;
+import engine.rendering.utils.SurfaceNet;
 import engine.util.math.MathUtils;
 import engine.util.math.Vec3d;
 import engine.vr.VrEyeCamera;
 import game.entities.Controller;
 import game.entities.Player;
 import static game.particles.ParticleTypes.ICE;
-import engine.rendering.utils.SDF;
-import static engine.rendering.utils.SDF.*;
-import engine.rendering.utils.SurfaceNet;
-import engine.physics.PhysicsComponent;
-import engine.physics.PoseComponent;
-import engine.physics.AABB;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -21,7 +19,10 @@ public class IceCaster extends MovementMode {
     public static final SurfaceNet iceModel = new SurfaceNet(.5);
 
     public double timer;
-    public double timer2;
+
+    public IceCaster(Player player, Controller controller) {
+        super(player, controller);
+    }
 
     public static void createIce(Vec3d pos1, Vec3d pos2, Vec3d up) {
         double radius = 2, thickness = 1.5, negRadius = 1.5;
@@ -58,16 +59,11 @@ public class IceCaster extends MovementMode {
         }
     }
 
-    public IceCaster(Player player, Controller controller) {
-        super(player, controller);
-    }
-
     private void moveTowards(Vec3d vel) {
         timer += dt();
-        timer2 += dt();
 
-        PoseComponent pose = player.pose;
-        PhysicsComponent physics = player.physics;
+        var pose = player.pose;
+        var physics = player.physics;
 
 //        double height = controller.player.engine.physics.world.raycastDown(position.position);
 //        double speedMod = 8 + 50 * Math.pow(.7, height);
@@ -83,8 +79,8 @@ public class IceCaster extends MovementMode {
         Vec3d accel = newVel.sub(physics.velocity());
         physics.setVelocity(newVel);
 
-        if (timer2 > 0) {
-            timer2 -= 1 / 30.;
+        if (timer > 0) {
+            timer -= 1 / 30.;
             createIce(pose.position, pose.position.add(physics.velocity().mul(.3)), accel);
         }
     }

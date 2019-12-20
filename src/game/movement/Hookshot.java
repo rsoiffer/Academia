@@ -1,15 +1,15 @@
 package game.movement;
 
 import static engine.core.Core.dt;
+import engine.rendering.ModelComponent;
+import engine.rendering.ModelNode;
+import engine.rendering.Platonics;
+import engine.rendering.materials.ColorMaterial;
 import engine.util.math.Transformation;
 import engine.util.math.Vec3d;
 import static engine.vr.VrCore.TRIGGER;
 import game.entities.Controller;
-import engine.rendering.ModelComponent;
 import game.entities.Player;
-import engine.rendering.ModelNode;
-import engine.rendering.Platonics;
-import engine.rendering.materials.ColorMaterial;
 
 public class Hookshot extends MovementMode {
 
@@ -26,6 +26,18 @@ public class Hookshot extends MovementMode {
         material.color = new Vec3d(.5, .5, .5);
         lineNode = new ModelNode(material.buildRenderable(Platonics.cube));
         model.node.addChild(lineNode);
+
+        model.beforeRender = () -> {
+            lineNode.visible = hookPos != null;
+            if (lineNode.visible) {
+                Vec3d pos = controller.pos();
+                Vec3d forwards = hookPos.sub(pos);
+                Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
+                Vec3d up = forwards.cross(side).setLength(.05);
+                Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
+                lineNode.transform = Transformation.create(pos2, forwards, side, up);
+            }
+        };
     }
 
     @Override
@@ -48,16 +60,6 @@ public class Hookshot extends MovementMode {
                 player.physics.setVelocity(player.physics.velocity().lerp(
                         pullDir.mul(40), 1 - Math.exp(-1 * dt())));
             }
-        }
-
-        lineNode.visible = hookPos != null;
-        if (lineNode.visible) {
-            Vec3d pos = controller.pos();
-            Vec3d forwards = hookPos.sub(pos);
-            Vec3d side = forwards.cross(new Vec3d(0, 0, 1)).setLength(.05);
-            Vec3d up = forwards.cross(side).setLength(.05);
-            Vec3d pos2 = pos.sub(side.div(2)).sub(up.div(2));
-            lineNode.transform = Transformation.create(pos2, forwards, side, up);
         }
     }
 }

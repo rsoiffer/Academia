@@ -1,17 +1,17 @@
 package game.movement;
 
 import static engine.core.Core.dt;
+import engine.rendering.ModelComponent;
+import engine.rendering.ModelNode;
+import engine.rendering.Platonics;
+import engine.rendering.materials.ColorMaterial;
 import static engine.util.math.MathUtils.clamp;
 import engine.util.math.Quaternion;
 import engine.util.math.Transformation;
 import engine.util.math.Vec3d;
 import engine.vr.VrCore;
 import game.entities.Controller;
-import engine.rendering.ModelComponent;
 import game.entities.Player;
-import engine.rendering.ModelNode;
-import engine.rendering.Platonics;
-import engine.rendering.materials.ColorMaterial;
 
 public class Wing extends MovementMode {
 
@@ -32,12 +32,12 @@ public class Wing extends MovementMode {
         var size = new Vec3d(.8, 1.6, .05);
         var offset = new Vec3d(-.3, controller.controller == VrCore.LEFT ? 1 : -1, 0);
         wingNode.transform = Transformation.create(offset.sub(size.div(2)), Quaternion.IDENTITY, size);
+
+        model.beforeRender = () -> updateModelNode(model.node);
     }
 
     @Override
     public void onStep() {
-        updateModelNode(model.node);
-
         Vec3d sideways = controller.sideways();
         if (controller.controller != VrCore.LEFT) {
             sideways = sideways.mul(-1);
