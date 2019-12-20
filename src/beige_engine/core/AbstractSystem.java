@@ -8,6 +8,7 @@ public abstract class AbstractSystem {
 
     public static AbstractSystem empty() {
         return new AbstractSystem() {
+            @Override
             protected void onStep() {
             }
         };
@@ -15,6 +16,7 @@ public abstract class AbstractSystem {
 
     public static AbstractSystem of(Runnable r) {
         return new AbstractSystem() {
+            @Override
             protected void onStep() {
                 r.run();
             }
@@ -23,6 +25,7 @@ public abstract class AbstractSystem {
 
     public static <T extends AbstractComponent> AbstractSystem perComponent(Class<T> type, Consumer<T> onEach) {
         return new AbstractSystem() {
+            @Override
             protected void onStep() {
                 for (var c : AbstractComponent.getAll(type)) {
                     onEach.accept(c);
@@ -33,6 +36,7 @@ public abstract class AbstractSystem {
 
     public static <T extends AbstractEntity> AbstractSystem perEntity(Class<T> type, Consumer<T> onEach) {
         return new AbstractSystem() {
+            @Override
             protected void onStep() {
                 for (var e : AbstractEntity.getAll(type)) {
                     onEach.accept(e);

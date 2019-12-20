@@ -1,23 +1,20 @@
 package beige_engine.core;
 
-import java.util.*;
+import static beige_engine.core.AbstractEntity.ALL_ENTITIES;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public abstract class AbstractComponent {
 
-    private static final Map<Class, Set<AbstractComponent>> ALL_COMPONENTS = new HashMap();
-
     public static <T extends AbstractComponent> Collection<T> getAll(Class<T> c) {
-        return ALL_COMPONENTS.getOrDefault(c, new HashSet());
+        return ALL_ENTITIES.values().stream().flatMap(x -> x.stream()).filter(e -> e.hasComponent(c))
+                .map(e -> e.getComponent(c)).collect(Collectors.toList());
     }
 
     public final AbstractEntity entity;
 
     public AbstractComponent(AbstractEntity entity) {
         this.entity = entity;
-        if (!ALL_COMPONENTS.containsKey(getClass())) {
-            ALL_COMPONENTS.put(getClass(), new HashSet());
-        }
-        ALL_COMPONENTS.get(getClass()).add(this);
     }
 
     protected void onDestroy() {

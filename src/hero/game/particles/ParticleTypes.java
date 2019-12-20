@@ -22,19 +22,18 @@ public abstract class ParticleTypes {
     public static final ParticleEmitter FIRE, SMOKE, ICE;
 
     static {
-        FIRE = new ParticleEmitter();
-        FIRE.material = new EmissiveMaterial(new Vec3d(5, .5, .2));
+        var fireMaterial = new EmissiveMaterial(new Vec3d(5, .5, .2));
+        FIRE = new ParticleEmitter(fireMaterial);
         FIRE.archetype = p -> {
             p.rotation = Quaternion.fromAngleAxis(new Vec3d(0, 0, Math.random() * 2 * Math.PI));
             p.scale = () -> new Vec3d(1, 1, 1).mul(1 / (1 + 4 * p.time));
             p.fadeTime = .1;
         };
 
-        SMOKE = new ParticleEmitter();
         var smokeMaterial = new ColorMaterial();
         smokeMaterial.color = new Vec3d(.4, .4, .4);
         smokeMaterial.hasShadows = false;
-        SMOKE.material = smokeMaterial;
+        SMOKE = new ParticleEmitter(smokeMaterial);
         SMOKE.archetype = p -> {
             p.rotation = Quaternion.fromAngleAxis(new Vec3d(0, 0, Math.random() * 2 * Math.PI));
             p.scale = () -> new Vec3d(1, 1, 1).mul(1 / (1 + .4 * p.time));
@@ -43,11 +42,10 @@ public abstract class ParticleTypes {
             p.fadeTime = .5;
         };
 
-        ICE = new ParticleEmitter();
         var iceMaterial = new EmissiveTexMaterial();
         iceMaterial.tex = Texture.load("ball.png");
         iceMaterial.color = new Color(.4, .6, 1).multRGB(.005);
-        ICE.material = iceMaterial;
+        ICE = new ParticleEmitter(iceMaterial);
         ICE.archetype = p -> {
             p.rotation = Quaternion.fromAngleAxis(new Vec3d(0, 0, Math.random() * 2 * Math.PI));
 //            p.rotation = Quaternion.fromXYAxes(MathUtils.randomInSphere(random), MathUtils.randomInSphere(random));

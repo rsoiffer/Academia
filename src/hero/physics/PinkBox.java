@@ -13,12 +13,14 @@ import org.ode4j.ode.internal.DxMass;
 
 public class PinkBox extends Behavior {
 
-    public final PoseBehavior pose = new PoseBehavior(this);
+    public final PoseBehavior pose;
     public final PhysicsBehavior physics;
-    public final ModelBehavior model = new ModelBehavior(this);
+    public final ModelBehavior model;
 
-    public PinkBox(PhysicsManager manager) {
+    public PinkBox(Vec3d position, PhysicsManager manager) {
+        pose = new PoseBehavior(this, position);
         physics = new PhysicsBehavior(this, manager);
+        model = new ModelBehavior(this);
 
         var mass = new DxMass();
         mass.setBoxTotal(50, 2, 2, 2);

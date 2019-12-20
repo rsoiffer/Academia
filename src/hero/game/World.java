@@ -1,17 +1,15 @@
 package hero.game;
 
-import beige_engine.samples.Behavior;
+import beige_engine.core.AbstractEntity;
 import beige_engine.util.Noise;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import hero.game.controllers.IceCaster;
+import static hero.game.controllers.IceCaster.iceModel;
 import hero.game.world.CityBlock;
 import hero.game.world.ParkBlock;
 import hero.game.world.Structure;
-import hero.graphics.Mesh;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;
-import static hero.graphics.VertexAttrib.POSITIONS;
 import hero.graphics.loading.RawMeshBuilder;
 import static hero.graphics.loading.VoxelModelLoader.DIRS;
 import hero.graphics.materials.Material;
@@ -19,11 +17,8 @@ import hero.graphics.materials.PBRMaterial;
 import hero.physics.PhysicsManager;
 import hero.physics.shapes.AABB;
 import java.util.*;
-import org.ode4j.ode.DGeom;
-import static org.ode4j.ode.OdeHelper.createTriMesh;
-import static org.ode4j.ode.OdeHelper.createTriMeshData;
 
-public class World extends Behavior {
+public class World extends AbstractEntity {
 
     public static final double SIDEWALK_WIDTH = 4.2;
 
@@ -33,7 +28,7 @@ public class World extends Behavior {
     public static final double BLOCK_WIDTH = 2 * BUILDING_SIZE + STREET_WIDTH;
     public static final double BLOCK_HEIGHT = 8 * BUILDING_SIZE + STREET_WIDTH;
 
-    public final ModelBehavior modelNode = new ModelBehavior(this);
+    public final ModelBehavior modelNode = add(new ModelBehavior(this));
     public final PhysicsManager manager = new PhysicsManager();
 
     public Random random = new Random();
@@ -70,6 +65,8 @@ public class World extends Behavior {
         }
 
         modelNode.node = createModelNode();
+
+        new SurfaceNetEntity(iceModel, PBRMaterial.load("ice"), manager);
     }
 
     public ModelNode createModelNode() {
@@ -130,34 +127,5 @@ public class World extends Behavior {
 //            }
 //        }
         return d;
-    }
-
-    private Map<Mesh, DGeom> meshes = new HashMap();
-
-    @Override
-    public void onStep() {
-        var newMeshes = new HashMap<Mesh, DGeom>();
-        IceCaster.iceModel.getMeshes().forEach(m -> {
-            if (meshes.containsKey(m)) {
-                newMeshes.put(m, meshes.get(m));
-            } else {
-                // add a new mesh to the world (and the map)
-                var t = createTriMeshData();
-                t.build(m.data.get(POSITIONS), m.indices);
-                t.preprocess();
-                var t2 = createTriMesh(manager.staticSpace, t, null, null, null);
-                System.out.println("Created mesh!");
-                newMeshes.put(m, t2);
-            }
-        });
-        for (var m : meshes.keySet()) {
-            if (!newMeshes.containsKey(m)) {
-                // remove a mesh from the world
-                meshes.get(m).destroy();
-                System.out.println("Destroyed mesh!");
-                System.out.println(newMeshes.size());
-            }
-        }
-        meshes = newMeshes;
     }
 }

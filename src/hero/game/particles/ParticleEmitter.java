@@ -13,23 +13,22 @@ import java.util.function.Consumer;
 
 public class ParticleEmitter extends Behavior {
 
-    public final ModelBehavior model = new ModelBehavior(this);
+    public final ModelBehavior model = add(new ModelBehavior(this));
 
-    public Material<DrawableSupplier> material;
     public Consumer<Particle> archetype;
 
     private final List<Particle> particles = new ArrayList<>();
+
+    public ParticleEmitter(Material<DrawableSupplier> material) {
+        var pds = new ParticlesDS(Platonics.square, () -> particles.stream().map(Particle::getTransform));
+        model.node.addChild(material.buildRenderable(pds));
+    }
 
     public Particle addParticle() {
         var p = new Particle();
         archetype.accept(p);
         particles.add(p);
         return p;
-    }
-
-    public ParticleEmitter() {
-        var pds = new ParticlesDS(Platonics.square, () -> particles.stream().map(Particle::getTransform));
-        model.node.addChild(material.buildRenderable(pds));
     }
 
     @Override

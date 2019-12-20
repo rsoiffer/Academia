@@ -2,6 +2,7 @@ package hero.game;
 
 import beige_engine.core.AbstractSystem;
 import beige_engine.core.Core;
+import static beige_engine.core.Core.dt;
 import beige_engine.core.Input;
 import beige_engine.core.Settings;
 import static beige_engine.graphics.Camera.camera3d;
@@ -10,10 +11,12 @@ import static beige_engine.samples.Behavior.BEHAVIOR_SYSTEM;
 import beige_engine.samples.FPSBehavior;
 import beige_engine.samples.QuitOnEscapeBehavior;
 import static beige_engine.util.math.MathUtils.clamp;
+import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.controllers.IceCaster.iceModel;
+import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 import hero.graphics.utils.SDF;
@@ -44,23 +47,20 @@ public class MainPC {
 
         var world = new World();
 
-        var p = new PlayerPC(world.manager);
-        p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
+        var p = new PlayerPC(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10), world.manager);
 
         var updateSystem = AbstractSystem.of(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
-                Drone d = new Drone(world.manager);
-                d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 2.5);
+                Drone d = new Drone(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 2.5), world.manager);
             }
             if (Input.mouseDown(0)) {
                 var v = world.manager.raycast(camera3d.position, camera3d.facing());
                 v.ifPresent(t -> {
-//                    explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
+                    explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
                 });
             }
             if (Input.keyJustPressed(GLFW_KEY_B)) {
-                var b = new PinkBox(world.manager);
-                b.pose.position = camera3d.position.add(new Vec3d(0, 0, -2));
+                var b = new PinkBox(camera3d.position.add(new Vec3d(0, 0, -2)), world.manager);
             }
 
             if (Input.mouseDown(1)) {
@@ -72,6 +72,7 @@ public class MainPC {
                 iceModel.unionSDF(shape2, bounds2);
             }
         });
+        Core.ROOT.add(updateSystem);
         AssimpLoader.load("drone model/optimized.fbx");
 
         var rp = new RenderPipeline();
@@ -95,11 +96,9 @@ public class MainPC {
         public final PhysicsBehavior physics;
 
         public boolean flyMode = true;
-//        public Web web;
-//        public DJoint myJoint;
 
-        public PlayerPC(PhysicsManager manager) {
-            pose = add(new PoseBehavior(this));
+        public PlayerPC(Vec3d position, PhysicsManager manager) {
+            pose = add(new PoseBehavior(this, position));
             physics = add(new PhysicsBehavior(this, manager));
 
             var mass = new DxMass();
@@ -152,36 +151,10 @@ public class MainPC {
 
             } else {
 
-//                if (!Input.mouseDown(1)) {
                 var vel = getMoveDir().mul(5).setZ(0);
                 if (vel.length() > 0) {
-                    physics.applyForce(vel.sub(physics.velocity()).mul(400));
+                    physics.applyForce(vel.sub(physics.velocity()).setZ(0).mul(400));
                 }
-//                }
-
-//                if (Input.mouseJustPressed(1)) {
-//                    web = new Web();
-//                    web.initialPos = pose.position;
-//                    web.initialBaseVel = physics.velocity();
-//                    web.initialEndVel = camera3d.facing().mul(100);
-//                    web.manager = physics.manager;
-//                    web.toIgnore.add(physics);
-//                    web.create();
-//                    myJoint = web.attachTo(physics);
-//                }
-//                if (web != null) {
-//                    web.prefLength += Input.mouseWheel();
-//                }
-//                if (Input.mouseJustReleased(1)) {
-//                    if (web != null) {
-//                        web.destroy();
-//                        web = null;
-//                    }
-//                    if (myJoint != null) {
-//                        myJoint.destroy();
-//                        myJoint = null;
-//                    }
-//                }
                 if (Input.keyJustPressed(GLFW_KEY_SPACE)) {
                     physics.setVelocity(physics.velocity().setZ(5));
                 }

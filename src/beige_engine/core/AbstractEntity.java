@@ -4,10 +4,10 @@ import java.util.*;
 
 public abstract class AbstractEntity {
 
-    private static final Map<Class, Set<AbstractEntity>> ALL_ENTITIES = new HashMap();
+    static final Map<Class, Set<AbstractEntity>> ALL_ENTITIES = new HashMap();
 
     public static <T extends AbstractEntity> Collection<T> getAll(Class<T> c) {
-        return ALL_ENTITIES.getOrDefault(c, new HashSet());
+        return new LinkedList(ALL_ENTITIES.getOrDefault(c, new HashSet()));
     }
 
     private final Map<Class, AbstractComponent> components = new HashMap();
@@ -39,6 +39,7 @@ public abstract class AbstractEntity {
             throw new IllegalStateException("Entity " + this + " has already been destroyed");
         }
         isDestroyed = true;
+        ALL_ENTITIES.get(getClass()).remove(this);
         onDestroy();
         for (var c : components.values()) {
             c.onDestroy();

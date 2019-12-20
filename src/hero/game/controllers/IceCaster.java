@@ -1,15 +1,11 @@
 package hero.game.controllers;
 
-import beige_engine.core.AbstractEntity;
 import static beige_engine.core.Core.dt;
 import beige_engine.samples.Behavior;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.VrEyeCamera;
-import hero.game.ModelBehavior;
 import static hero.game.particles.ParticleTypes.ICE;
-import hero.graphics.ModelNode;
-import hero.graphics.materials.PBRMaterial;
 import hero.graphics.utils.SDF;
 import static hero.graphics.utils.SDF.*;
 import hero.graphics.utils.SurfaceNet;
@@ -22,12 +18,6 @@ import java.util.Random;
 public class IceCaster extends Behavior {
 
     public static final SurfaceNet iceModel = new SurfaceNet(.5);
-
-    static {
-        var mnb = new ModelBehavior(new AbstractEntity() {
-        });
-        mnb.node = new ModelNode(PBRMaterial.load("ice").buildModularRenderable(iceModel::getMeshes));
-    }
 
     public final Controller controller = new Controller(this);
 

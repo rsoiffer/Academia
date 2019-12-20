@@ -9,11 +9,12 @@ import org.joml.Matrix4d;
 
 public class PoseBehavior extends AbstractComponent {
 
-    public Vec3d position = new Vec3d(0, 0, 0);
+    public Vec3d position;
     public Quaternion rotation = Quaternion.IDENTITY;
 
-    public PoseBehavior(AbstractEntity entity) {
+    public PoseBehavior(AbstractEntity entity, Vec3d position) {
         super(entity);
+        this.position = position;
     }
 
     public Matrix4d getMatrix() {

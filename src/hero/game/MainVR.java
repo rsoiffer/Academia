@@ -22,6 +22,7 @@ import hero.graphics.passes.RenderPipeline;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.function.Function;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MainVR {
@@ -45,11 +46,11 @@ public class MainVR {
 //                Vive.resetSeatedZeroPose();
 //            }
         });
+        Core.ROOT.add(vrUpdateSystem);
 
         var world = new World();
 
-        var p = new Player(world.manager);
-        p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
+        var p = new Player(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10), world.manager);
         p.cameraOffset = new Vec3d(0, 0, -1);
 
         Class[] c = {WebSlinger.class, Thruster.class, IceCaster.class,
@@ -98,9 +99,8 @@ public class MainVR {
             }
 
             if (LEFT.buttonJustPressed(MENU) || RIGHT.buttonJustPressed(MENU) || Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
-                Drone d = new Drone(world.manager);
-                d.pose.position = p.pose.position.add(new Vec3d(0, 0, 100))
-                        .add(MathUtils.randomInSphere(new Random()).mul(50));
+                var position = p.pose.position.add(new Vec3d(0, 0, 100)).add(MathUtils.randomInSphere(new Random()).mul(50));
+                Drone d = new Drone(position, world.manager);
             }
             if (Input.keyJustPressed(GLFW_KEY_G)) {
                 WebSlinger.godMode = !WebSlinger.godMode;
@@ -113,36 +113,30 @@ public class MainVR {
                         return delPos.normalize().dot(dir);
                     }));
 
-                    Missile m = new Missile(world.manager);
-                    m.pose.position = controller.pose().position();
-                    m.physics.ignore.add(p.physics);
-                    m.isFriendly = true;
-                    if (drone.isEmpty()) {
-                        var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
-                        m.targetDir = () -> dir;
-                    } else {
+                    var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
+                    Function<Missile, Vec3d> targeter = m -> dir;
+                    if (!drone.isEmpty()) {
                         var delPos = drone.get().pose.position.sub(controller.pose().position());
-                        var dir2 = controller.pose().applyRotation(new Vec3d(1, 0, 0));
-                        var closeness = delPos.normalize().dot(dir2);
-
+                        var closeness = delPos.normalize().dot(dir);
                         if (closeness > .8) {
-                            m.targetDir = () -> {
+                            targeter = m -> {
                                 if (!drone.get().isDestroyed()) {
                                     return drone.get().pose.position.sub(m.pose.position);
                                 } else {
                                     return null;
                                 }
                             };
-                        } else {
-                            var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
-                            m.targetDir = () -> dir;
                         }
-
                     }
+
+                    Missile m = new Missile(controller.pose().position(), world.manager, targeter);
+                    m.physics.ignore.add(p.physics);
+                    m.isFriendly = true;
                     m.physics.setVelocity(p.physics.velocity());
                 }
             }
         });
+        Core.ROOT.add(updateSystem);
         AssimpLoader.load("drone model/optimized.fbx");
         AssimpLoader.load("bomb/mk83.obj");
 

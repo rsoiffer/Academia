@@ -12,14 +12,15 @@ import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Player extends Behavior {
 
-    public final PoseBehavior pose = new PoseBehavior(this);
+    public final PoseBehavior pose;
     public final PhysicsBehavior physics;
 
     public Vec3d cameraOffset = new Vec3d(0, 0, .8);
     public Vec3d prevVelocity = new Vec3d(0, 0, 0);
 
-    public Player(PhysicsManager manager) {
-        physics = new PhysicsBehavior(this, manager);
+    public Player(Vec3d position, PhysicsManager manager) {
+        pose = add(new PoseBehavior(this, position));
+        physics = add(new PhysicsBehavior(this, manager));
 
         var mass = new DxMass();
         mass.setSphereTotal(100, 1);

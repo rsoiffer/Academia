@@ -18,17 +18,19 @@ import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Drone extends Behavior {
 
-    public final PoseBehavior pose = new PoseBehavior(this);
+    public final PoseBehavior pose;
     public final PhysicsBehavior physics;
-    public final ModelBehavior model = new ModelBehavior(this);
+    public final ModelBehavior model;
 
     public double missileTimer = 4;
 
     private Noise noise = new Noise(new Random());
     private double time = 0;
 
-    public Drone(PhysicsManager manager) {
-        physics = new PhysicsBehavior(this, manager);
+    public Drone(Vec3d position, PhysicsManager manager) {
+        pose = add(new PoseBehavior(this, position));
+        physics = add(new PhysicsBehavior(this, manager));
+        model = add(new ModelBehavior(this));
 
         var mass = new DxMass();
         mass.setSphereTotal(100, 1);
@@ -38,9 +40,6 @@ public class Drone extends Behavior {
         physics.setGeom(geom);
 
         model.node.addChild(AssimpLoader.load("drone model/optimized.fbx").rootNode);
-        var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
-        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
-//        model.beforeRender = () -> model.node.transform = pose.getTransform().mul(trans);
     }
 
     @Override
@@ -50,6 +49,10 @@ public class Drone extends Behavior {
 
     @Override
     public void onStep() {
+        var rot = Quaternion.fromEulerAngles(-Math.PI / 2, 0, Math.PI / 2);
+        var trans = Transformation.create(new Vec3d(0, 0, 0), rot, .02);
+        model.node.transform = pose.getTransform().mul(trans);
+
         time += dt();
         var dir = camera3d.position.sub(pose.position);
         physics.applyForce(new Vec3d(0, 0, 9.81 * physics.getMass()));
@@ -61,10 +64,8 @@ public class Drone extends Behavior {
         if (missileTimer < 0) {
             missileTimer = 1 + 2 * Math.random();
 
-            Missile m = new Missile(physics.manager);
-            m.pose.position = pose.position;
+            var m = new Missile(pose.position, physics.manager, m2 -> camera3d.position.sub(m2.pose.position));
             m.physics.ignore.add(physics);
-            m.targetDir = () -> camera3d.position.sub(m.pose.position);
             m.physics.setVelocity(physics.velocity());
         }
     }
