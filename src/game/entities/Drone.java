@@ -2,20 +2,19 @@ package game.entities;
 
 import static engine.core.Core.dt;
 import static engine.graphics.Camera.camera3d;
+import static engine.physics.DynamicShape.sphere;
+import engine.physics.PhysicsComponent;
+import engine.physics.PhysicsManager;
+import engine.physics.PoseComponent;
+import engine.rendering.ModelComponent;
 import engine.samples.Behavior;
 import engine.util.Noise;
+import engine.util.Resources;
 import engine.util.math.Quaternion;
 import engine.util.math.Transformation;
 import engine.util.math.Vec3d;
 import game.particles.ParticleTypes;
-import engine.rendering.ModelComponent;
-import engine.rendering.loading.AssimpLoader;
-import engine.physics.PhysicsComponent;
-import engine.physics.PhysicsManager;
-import engine.physics.PoseComponent;
 import java.util.Random;
-import org.ode4j.ode.internal.DxMass;
-import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Drone extends Behavior {
 
@@ -30,17 +29,9 @@ public class Drone extends Behavior {
 
     public Drone(Vec3d position, PhysicsManager manager) {
         pose = add(new PoseComponent(this, position));
-        physics = add(new PhysicsComponent(this, manager));
+        physics = add(new PhysicsComponent(this, manager, sphere(1, 100)));
         model = add(new ModelComponent(this));
-
-        var mass = new DxMass();
-        mass.setSphereTotal(100, 1);
-        physics.setMass(mass);
-
-        var geom = dCreateSphere(physics.manager.space, 1);
-        physics.setGeom(geom);
-
-        model.node.addChild(AssimpLoader.load("drone model/optimized.fbx").rootNode);
+        model.node.addChild(Resources.loadAssimpModel("drone model/optimized.fbx"));
     }
 
     @Override

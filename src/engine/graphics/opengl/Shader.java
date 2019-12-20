@@ -30,25 +30,6 @@ public class Shader extends GLObject {
         }
     }
 
-    public static Shader load(String name) {
-        return load(name, name);
-    }
-
-    public static Shader loadGeom(String name) {
-        return loadGeom(name, name, name);
-    }
-
-    public static Shader load(String vert, String frag) {
-        return loadGeom(vert, null, frag);
-    }
-
-    public static Shader loadGeom(String vert, String geom, String frag) {
-        return new Shader(
-                vert == null ? null : Resources.loadFileAsString("src/shaders/" + vert + ".vert"),
-                geom == null ? null : Resources.loadFileAsString("src/shaders/" + geom + ".geom"),
-                frag == null ? null : Resources.loadFileAsString("src/shaders/" + frag + ".frag"));
-    }
-
     private void attach(int type, String source) {
         if (source != null) {
             int shader = glCreateShader(type);
@@ -77,6 +58,16 @@ public class Shader extends GLObject {
             uniformLocations.put(name, glGetUniformLocation(id, name));
         }
         return uniformLocations.get(name);
+    }
+
+    public static Shader loadNew(String name) {
+        var vertPath = "src/shaders/" + name + ".vert";
+        var geomPath = "src/shaders/" + name + ".geom";
+        var fragPath = "src/shaders/" + name + ".frag";
+        return new Shader(
+                Resources.fileExists(vertPath) ? Resources.loadFileAsString(vertPath) : null,
+                Resources.fileExists(geomPath) ? Resources.loadFileAsString(geomPath) : null,
+                Resources.fileExists(fragPath) ? Resources.loadFileAsString(fragPath) : null);
     }
 
     public void setMVP(Transformation t) {

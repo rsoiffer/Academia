@@ -4,9 +4,6 @@ import engine.core.AbstractEntity;
 import engine.util.Noise;
 import engine.util.math.Vec2d;
 import engine.util.math.Vec3d;
-import static game.movement.IceCaster.iceModel;
-
-import game.entities.DynamicSurface;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
 import engine.rendering.Renderable;
@@ -66,7 +63,7 @@ public class World extends AbstractEntity {
 
         modelNode.node = createModelNode();
 
-        new DynamicSurface(iceModel, PBRMaterial.load("ice"), manager);
+        // new DynamicSurface(iceModel, PBRMaterial.load("ice"), manager);
     }
 
     public ModelNode createModelNode() {

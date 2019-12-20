@@ -2,9 +2,11 @@ package game;
 
 import engine.core.*;
 import engine.graphics.Camera;
+import engine.rendering.passes.RenderPipeline;
 import static engine.samples.Behavior.BEHAVIOR_SYSTEM;
 import engine.samples.FPSBehavior;
 import engine.samples.QuitOnEscapeBehavior;
+import engine.util.Resources;
 import engine.util.math.MathUtils;
 import static engine.util.math.MathUtils.floor;
 import static engine.util.math.MathUtils.mod;
@@ -13,17 +15,14 @@ import engine.vr.VrCore;
 import static engine.vr.VrCore.*;
 import engine.vr.VrSide;
 import static engine.vr.VrSide.LEFT_HAND;
-import static game.world.World.BLOCK_HEIGHT;
-import static game.world.World.BLOCK_WIDTH;
-
 import game.entities.Controller;
 import game.entities.Drone;
 import game.entities.Missile;
 import game.entities.Player;
 import game.movement.*;
 import game.world.World;
-import engine.rendering.loading.AssimpLoader;
-import engine.rendering.passes.RenderPipeline;
+import static game.world.World.BLOCK_HEIGHT;
+import static game.world.World.BLOCK_WIDTH;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -98,11 +97,13 @@ public class MainVR {
         });
         Core.ROOT.add(fireMissiles);
 
+        Core.ROOT.add(world.manager);
+
         var rp = new RenderPipeline(true);
         Core.ROOT.add(rp);
 
-        AssimpLoader.load("drone model/optimized.fbx");
-        AssimpLoader.load("bomb/mk83.obj");
+        Resources.loadAssimpModel("drone model/optimized.fbx");
+        Resources.loadAssimpModel("bomb/mk83.obj");
 
 //        var timeOfDay = new Mutable<>(0.);
 //        UPDATE.onStep(() -> {

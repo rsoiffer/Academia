@@ -1,14 +1,35 @@
 package engine.graphics.opengl;
 
 import engine.core.Settings;
+import engine.graphics.Color;
+import engine.util.Resources;
+import engine.util.math.Transformation;
+
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture extends GLObject {
+
+    public static final Shader SPRITE_SHADER = Resources.loadShader("sprite");
+    public static final VertexArrayObject SPRITE_VAO = VertexArrayObject.createVAO(() -> {
+        BufferObject vbo = new BufferObject(GL_ARRAY_BUFFER, new float[]{
+                0.5f, 0.5f, 0, 1, 1,
+                0.5f, -0.5f, 0, 1, 0,
+                -0.5f, -0.5f, 0, 0, 0,
+                -0.5f, 0.5f, 0, 0, 1
+        });
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 20, 0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 20, 12);
+        glEnableVertexAttribArray(1);
+    });
 
     public static int MAG_FILTER = GL_NEAREST;
 
@@ -21,7 +42,14 @@ public class Texture extends GLObject {
         this.type = type;
     }
 
-    public static Texture load(String fileName) {
+    public static void drawTexture(Texture texture, Transformation t, Color color) {
+        SPRITE_SHADER.setMVP(t);
+        SPRITE_SHADER.setUniform("color", color);
+        bindAll(texture, SPRITE_SHADER, SPRITE_VAO);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    }
+
+    public static Texture loadNew(String fileName) {
         int[] widthArray = new int[1];
         int[] heightArray = new int[1];
         int[] compArray = new int[1];

@@ -1,17 +1,15 @@
 package game.world;
 
-import static engine.util.math.MathUtils.floor;
-import engine.util.math.Vec2d;
-import engine.util.math.Vec3d;
-
-import static game.world.World.*;
+import engine.physics.AABB;
+import static engine.physics.StaticShape.box;
 import engine.rendering.loading.RawMeshBuilder;
 import engine.rendering.materials.Material;
 import engine.rendering.materials.PBRMaterial;
-import static engine.physics.OdeUtils.toDVector3;
-import engine.physics.AABB;
+import static engine.util.math.MathUtils.floor;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
+import static game.world.World.*;
 import java.util.Map;
-import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class CityBlock extends Structure {
 
@@ -23,8 +21,7 @@ public class CityBlock extends Structure {
         super(world);
         bounds = new AABB(new Vec3d(x - SIDEWALK_WIDTH, y - SIDEWALK_WIDTH, -500), new Vec3d(x + 2 * BUILDING_SIZE + SIDEWALK_WIDTH, y + 8 * BUILDING_SIZE + SIDEWALK_WIDTH, .1));
 
-        var geom = dCreateBox(world.manager.staticSpace, bounds.size().x, bounds.size().y, bounds.size().z);
-        geom.setPosition(toDVector3(bounds.center()));
+        world.manager.addStatic(box(bounds.size()), bounds.center());
 
         for (int i2 = 0; i2 < 2; i2++) {
             for (int j2 = 0; j2 < 8; j2++) {

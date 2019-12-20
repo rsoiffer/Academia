@@ -9,6 +9,8 @@ import static engine.rendering.passes.GeometryPass.SHADER_PBR;
 import static engine.rendering.passes.ShadowPass.SHADER_SHADOW;
 import static engine.rendering.passes.ShadowPass.SHADER_SHADOW_ALPHA;
 import engine.rendering.utils.PBRTexture;
+import engine.util.Resources;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class LODPBRMaterial extends Material<Mesh> {
 
     public static LODPBRMaterial load(String folder) {
         var m = new LODPBRMaterial();
-        m.tex = PBRTexture.loadFromFolder(folder);
+        m.tex = Resources.loadPBRTexture(folder);
         return m;
     }
 

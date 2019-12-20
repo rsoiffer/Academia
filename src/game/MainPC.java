@@ -6,33 +6,27 @@ import static engine.core.Core.dt;
 import engine.core.Input;
 import engine.core.Settings;
 import static engine.graphics.Camera.camera3d;
+import engine.physics.*;
+import engine.rendering.passes.RenderPipeline;
+import engine.rendering.utils.SDF;
+import static engine.rendering.utils.SDF.*;
 import engine.samples.Behavior;
 import static engine.samples.Behavior.BEHAVIOR_SYSTEM;
 import engine.samples.FPSBehavior;
 import engine.samples.QuitOnEscapeBehavior;
+import engine.util.Resources;
 import static engine.util.math.MathUtils.clamp;
 import static engine.util.math.MathUtils.round;
 import engine.util.math.Vec3d;
-import static game.world.World.BLOCK_HEIGHT;
-import static game.world.World.BLOCK_WIDTH;
+import game.entities.Drone;
+import game.entities.PinkBox;
 import static game.movement.IceCaster.iceModel;
 import static game.particles.ParticleTypes.explosion;
-
-import game.entities.Drone;
 import game.world.World;
-import engine.rendering.loading.AssimpLoader;
-import engine.rendering.passes.RenderPipeline;
-import engine.rendering.utils.SDF;
-import static engine.rendering.utils.SDF.*;
-import engine.physics.PhysicsComponent;
-import engine.physics.PhysicsManager;
-import game.entities.PinkBox;
-import engine.physics.PoseComponent;
-import engine.physics.AABB;
+import static game.world.World.BLOCK_HEIGHT;
+import static game.world.World.BLOCK_WIDTH;
 import java.util.Arrays;
 import static org.lwjgl.glfw.GLFW.*;
-import org.ode4j.ode.internal.DxMass;
-import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class MainPC {
 
@@ -50,7 +44,7 @@ public class MainPC {
 
         var world = new World();
 
-        var p = new PlayerPC(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10), world.manager);
+        var player = new PlayerPC(new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10), world.manager);
 
         var updateSystem = AbstractSystem.of(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
@@ -76,10 +70,13 @@ public class MainPC {
             }
         });
         Core.ROOT.add(updateSystem);
-        AssimpLoader.load("drone model/optimized.fbx");
+
+        Core.ROOT.add(world.manager);
 
         var rp = new RenderPipeline(false);
         Core.ROOT.add(rp);
+
+        Resources.loadAssimpModel("drone model/optimized.fbx");
 
 //        var timeOfDay = new Mutable<>(0.);
 //        UPDATE.onStep(() -> {
@@ -102,14 +99,7 @@ public class MainPC {
 
         public PlayerPC(Vec3d position, PhysicsManager manager) {
             pose = add(new PoseComponent(this, position));
-            physics = add(new PhysicsComponent(this, manager));
-
-            var mass = new DxMass();
-            mass.setSphereTotal(100, 1);
-            physics.setMass(mass);
-
-            var geom = dCreateSphere(physics.manager.space, 1);
-            physics.setGeom(geom);
+            physics = add(new PhysicsComponent(this, manager, DynamicShape.sphere(1, 100)));
         }
 
         private static Vec3d getMoveDir() {

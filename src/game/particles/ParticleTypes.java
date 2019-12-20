@@ -2,6 +2,7 @@ package game.particles;
 
 import engine.graphics.Color;
 import engine.graphics.opengl.Texture;
+import engine.util.Resources;
 import engine.util.math.MathUtils;
 import engine.util.math.Quaternion;
 import engine.util.math.Vec3d;
@@ -43,7 +44,7 @@ public abstract class ParticleTypes {
         };
 
         var iceMaterial = new EmissiveTexMaterial();
-        iceMaterial.tex = Texture.load("ball.png");
+        iceMaterial.tex = Resources.loadTexture("ball.png");
         iceMaterial.color = new Color(.4, .6, 1).multRGB(.005);
         ICE = new ParticleEmitter(iceMaterial);
         ICE.archetype = p -> {

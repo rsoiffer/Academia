@@ -6,6 +6,8 @@ import engine.rendering.Renderable;
 import engine.rendering.VertexAttrib;
 import static engine.rendering.VertexAttrib.*;
 import engine.rendering.drawables.DrawableSupplier;
+import engine.util.Resources;
+
 import static engine.rendering.passes.GeometryPass.SHADER_DIFFUSE;
 import static engine.rendering.passes.ShadowPass.SHADER_SHADOW;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ public class DiffuseMaterial extends Material {
 
     public static DiffuseMaterial load(String name) {
         var m = new DiffuseMaterial();
-        m.texture = Texture.load(name);
+        m.texture = Resources.loadTexture(name);
         return m;
     }
 

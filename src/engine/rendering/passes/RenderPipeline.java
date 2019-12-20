@@ -4,7 +4,7 @@ import engine.core.AbstractSystem;
 import engine.graphics.Camera;
 import engine.graphics.Color;
 import engine.graphics.opengl.GLState;
-import engine.graphics.sprites.Sprite;
+import engine.graphics.opengl.Texture;
 import engine.util.math.Transformation;
 import engine.util.math.Vec2d;
 import engine.util.math.Vec3d;
@@ -101,10 +101,10 @@ public class RenderPipeline extends AbstractSystem {
         GLState.disable(GL_DEPTH_TEST);
         GLState.bindFramebuffer(null);
         if (isVR) {
-            Sprite.drawTexture(lpList.get(0).colorBuffer(), Transformation.create(new Vec2d(.25, .5), new Vec2d(.48, 0), new Vec2d(0, .96)), Color.WHITE);
-            Sprite.drawTexture(lpList.get(1).colorBuffer(), Transformation.create(new Vec2d(.75, .5), new Vec2d(.48, 0), new Vec2d(0, .96)), Color.WHITE);
+            Texture.drawTexture(lpList.get(0).colorBuffer(), Transformation.create(new Vec2d(.25, .5), new Vec2d(.48, 0), new Vec2d(0, .96)), Color.WHITE);
+            Texture.drawTexture(lpList.get(1).colorBuffer(), Transformation.create(new Vec2d(.75, .5), new Vec2d(.48, 0), new Vec2d(0, .96)), Color.WHITE);
         } else {
-            Sprite.drawTexture(lpList.get(0).colorBuffer(), Transformation.create(new Vec2d(.5, .5), 0, 1), Color.WHITE);
+            Texture.drawTexture(lpList.get(0).colorBuffer(), Transformation.create(new Vec2d(.5, .5), 0, 1), Color.WHITE);
         }
     }
 

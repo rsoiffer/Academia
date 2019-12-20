@@ -9,6 +9,7 @@ import static engine.graphics.opengl.GLObject.bindAll;
 import engine.graphics.opengl.GLState;
 import engine.graphics.opengl.Shader;
 import engine.graphics.opengl.Texture;
+import engine.util.Resources;
 import engine.util.math.Transformation;
 import engine.util.math.Vec2d;
 import engine.util.math.Vec3d;
@@ -23,14 +24,14 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class LightingPass implements RenderPass {
 
-    public static final Shader SHADER_EMISSIVE_FLAT = Shader.load("emissive_pass_flat");
-    public static final Shader SHADER_EMISSIVE_TEX = Shader.load("emissive_pass_tex");
+    public static final Shader SHADER_EMISSIVE_FLAT = Resources.loadShader("emissive_pass_flat");
+    public static final Shader SHADER_EMISSIVE_TEX = Resources.loadShader("emissive_pass_tex");
 
-    private static final Shader SHADER_LIGHTING = Shader.load("lighting_pass");
-    private static final Shader SHADER_HDR = Shader.load("hdr");
-    private static final Shader SHADER_BLOOM = Shader.load("bloom");
-    private static final Shader SHADER_SPRITE = Shader.load("sprite");
-    private static final Texture BRDF_LUT = Texture.load("brdf_lut.png");
+    private static final Shader SHADER_LIGHTING = Resources.loadShader("lighting_pass");
+    private static final Shader SHADER_HDR = Resources.loadShader("hdr");
+    private static final Shader SHADER_BLOOM = Resources.loadShader("bloom");
+    private static final Shader SHADER_SPRITE = Resources.loadShader("sprite");
+    private static final Texture BRDF_LUT = Resources.loadTexture("brdf_lut.png");
 
     static {
         SHADER_LIGHTING.setUniform("gPosition", 0);

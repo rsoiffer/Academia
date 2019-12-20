@@ -2,16 +2,15 @@ package engine.physics;
 
 import engine.core.AbstractComponent;
 import engine.core.AbstractEntity;
+import static engine.physics.OdeUtils.*;
 import engine.util.math.Quaternion;
 import engine.util.math.Vec3d;
-import static engine.physics.OdeUtils.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.ode4j.ode.DBody;
 import org.ode4j.ode.DGeom;
-import org.ode4j.ode.internal.DxBody;
-import static org.ode4j.ode.internal.DxBody.dBodyCreate;
-import org.ode4j.ode.internal.DxGeom;
-import org.ode4j.ode.internal.DxMass;
+import org.ode4j.ode.DMass;
+import org.ode4j.ode.OdeHelper;
 
 public class PhysicsComponent extends AbstractComponent {
 
@@ -27,19 +26,26 @@ public class PhysicsComponent extends AbstractComponent {
     public Vec3d lastClearPos;
     public Runnable onPhysicsStep = null;
 
-    private DxBody body;
-    private DxMass mass;
-    private DxGeom geom;
+    private DBody body;
+    private DMass mass;
+    private DGeom geom;
     private Vec3d totalForce = new Vec3d(0, 0, 0);
 
     public void applyForce(Vec3d force) {
         totalForce = totalForce.add(force);
     }
 
-    public PhysicsComponent(AbstractEntity entity, PhysicsManager manager) {
+    public PhysicsComponent(AbstractEntity entity, PhysicsManager manager, DynamicShape shape) {
         super(entity);
         this.manager = manager;
-        body = dBodyCreate(manager.world);
+        body = manager.newBody();
+        mass = OdeHelper.createMass();
+        geom = shape.build(mass);
+        body.setMass(mass);
+        geom.setBody(body);
+        geom.setData(this);
+        manager.addDynamic(geom);
+
         setPosition(pose.position);
         lastClearPos = pose.position;
     }
@@ -50,7 +56,7 @@ public class PhysicsComponent extends AbstractComponent {
         geom.destroy();
     }
 
-    public DxBody getBody() {
+    public DBody getBody() {
         return body;
     }
 
@@ -89,20 +95,6 @@ public class PhysicsComponent extends AbstractComponent {
 
     void onPostPhysicsStep() {
         totalForce = new Vec3d(0, 0, 0);
-    }
-
-    public void setGeom(DxGeom geom) {
-        if (this.geom != null) {
-            this.geom.destroy();
-        }
-        geom.setBody(body);
-        geom.setData(this);
-        this.geom = geom;
-    }
-
-    public void setMass(DxMass mass) {
-        body.setMass(mass);
-        this.mass = mass;
     }
 
     public void setPosition(Vec3d pos) {

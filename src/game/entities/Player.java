@@ -1,14 +1,13 @@
 package game.entities;
 
 import engine.graphics.Camera;
-import engine.samples.Behavior;
-import engine.util.math.Vec3d;
-import engine.vr.VrCore;
+import static engine.physics.DynamicShape.sphere;
 import engine.physics.PhysicsComponent;
 import engine.physics.PhysicsManager;
 import engine.physics.PoseComponent;
-import org.ode4j.ode.internal.DxMass;
-import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
+import engine.samples.Behavior;
+import engine.util.math.Vec3d;
+import engine.vr.VrCore;
 
 public class Player extends Behavior {
 
@@ -20,14 +19,7 @@ public class Player extends Behavior {
 
     public Player(Vec3d position, PhysicsManager manager) {
         pose = add(new PoseComponent(this, position));
-        physics = add(new PhysicsComponent(this, manager));
-
-        var mass = new DxMass();
-        mass.setSphereTotal(100, 1);
-        physics.setMass(mass);
-
-        var geom = dCreateSphere(physics.manager.space, 1);
-        physics.setGeom(geom);
+        physics = add(new PhysicsComponent(this, manager, sphere(1, 100)));
 
         // physics.centerOfMass = () -> Vive.footTransform.get().position().lerp(EyeCamera.headPose().position(), .5);
         VrCore.footTransform = () -> pose.getTransform().translate(new Vec3d(0, 0, -1));

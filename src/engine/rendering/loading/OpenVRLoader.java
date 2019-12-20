@@ -1,6 +1,7 @@
 package engine.rendering.loading;
 
 import engine.graphics.opengl.Texture;
+import engine.rendering.Renderable;
 import engine.util.math.Quaternion;
 import engine.util.math.Vec2d;
 import engine.util.math.Vec3d;
@@ -13,9 +14,7 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
 
 public class OpenVRLoader {
 
-    public final ModelNode rootNode;
-
-    public OpenVRLoader(VrController vc) {
+    public static Renderable loadNew(VrController vc) {
         var rm = loadRenderModel(vc);
         var rmtm = loadRenderModelTextureMap(rm.diffuseTextureId());
 
@@ -39,6 +38,6 @@ public class OpenVRLoader {
         var diffuseMat = new DiffuseMaterial();
         diffuseMat.texture = diffuseTexture;
 
-        rootNode = new ModelNode(diffuseMat.buildRenderable(RMB.toMesh()));
+        return diffuseMat.buildRenderable(RMB.toMesh());
     }
 }

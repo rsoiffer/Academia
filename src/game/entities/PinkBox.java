@@ -1,19 +1,17 @@
 package game.entities;
 
-import engine.samples.Behavior;
-import engine.util.math.Quaternion;
-import engine.util.math.Transformation;
-import engine.util.math.Vec3d;
+import static engine.physics.DynamicShape.box;
+import engine.physics.PhysicsComponent;
+import engine.physics.PhysicsManager;
+import engine.physics.PoseComponent;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
 import engine.rendering.Platonics;
 import engine.rendering.materials.ColorMaterial;
-import static org.ode4j.ode.internal.DxBox.dCreateBox;
-
-import engine.physics.PhysicsComponent;
-import engine.physics.PhysicsManager;
-import engine.physics.PoseComponent;
-import org.ode4j.ode.internal.DxMass;
+import engine.samples.Behavior;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 
 public class PinkBox extends Behavior {
 
@@ -23,15 +21,8 @@ public class PinkBox extends Behavior {
 
     public PinkBox(Vec3d position, PhysicsManager manager) {
         pose = new PoseComponent(this, position);
-        physics = new PhysicsComponent(this, manager);
+        physics = new PhysicsComponent(this, manager, box(new Vec3d(2, 2, 2), 50));
         model = new ModelComponent(this);
-
-        var mass = new DxMass();
-        mass.setBoxTotal(50, 2, 2, 2);
-        physics.setMass(mass);
-
-        var geom = dCreateBox(physics.manager.space, 2, 2, 2);
-        physics.setGeom(geom);
 
         physics.allowRotation = true;
 

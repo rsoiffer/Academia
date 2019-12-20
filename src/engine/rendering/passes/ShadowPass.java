@@ -5,6 +5,7 @@ import engine.graphics.opengl.Framebuffer;
 import engine.graphics.opengl.GLState;
 import engine.graphics.opengl.Shader;
 import engine.graphics.opengl.Texture;
+import engine.util.Resources;
 import engine.util.math.Transformation;
 import engine.util.math.Vec3d;
 import engine.rendering.ModelComponent;
@@ -37,8 +38,8 @@ import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 
 public class ShadowPass implements RenderPass {
 
-    public static final Shader SHADER_SHADOW = Shader.load("shadow_pass");
-    public static final Shader SHADER_SHADOW_ALPHA = Shader.load("shadow_pass_alpha");
+    public static final Shader SHADER_SHADOW = Resources.loadShader("shadow_pass");
+    public static final Shader SHADER_SHADOW_ALPHA = Resources.loadShader("shadow_pass_alpha");
     public static ShadowPass current;
 
     static {

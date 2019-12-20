@@ -1,13 +1,13 @@
 package game.entities;
 
-import engine.samples.Behavior;
+import engine.physics.PhysicsManager;
 import engine.rendering.Mesh;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
 import static engine.rendering.VertexAttrib.POSITIONS;
 import engine.rendering.materials.Material;
 import engine.rendering.utils.SurfaceNet;
-import engine.physics.PhysicsManager;
+import engine.samples.Behavior;
 import java.util.HashMap;
 import java.util.Map;
 import org.ode4j.ode.DGeom;
@@ -40,7 +40,7 @@ public class DynamicSurface extends Behavior {
                 var t = createTriMeshData();
                 t.build(m.data.get(POSITIONS), m.indices);
                 t.preprocess();
-                var t2 = createTriMesh(manager.staticSpace, t, null, null, null);
+                var t2 = createTriMesh(null, t, null, null, null);
                 System.out.println("Created mesh!");
                 newMeshes.put(m, t2);
             }

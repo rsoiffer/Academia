@@ -1,64 +1,136 @@
 package engine.physics;
 
 import engine.core.AbstractComponent;
+import engine.core.AbstractSystem;
 import static engine.core.Core.dt;
-import engine.samples.Behavior;
-import engine.util.math.Vec3d;
 import static engine.physics.OdeUtils.*;
+import engine.util.math.Vec3d;
 import java.util.OptionalDouble;
+import org.ode4j.math.DVector3;
 import static org.ode4j.ode.OdeConstants.*;
+import org.ode4j.ode.*;
 import static org.ode4j.ode.OdeHelper.createContactJoint;
-import static org.ode4j.ode.internal.DxHashSpace.dHashSpaceCreate;
-import static org.ode4j.ode.internal.DxPlane.dCreatePlane;
 import static org.ode4j.ode.internal.DxRay.dCreateRay;
-import org.ode4j.ode.internal.DxSpace;
-import org.ode4j.ode.internal.DxWorld;
-import static org.ode4j.ode.internal.DxWorld.dWorldCreate;
 import static org.ode4j.ode.internal.OdeInit.dInitODE;
 import org.ode4j.ode.internal.joints.DxJointGroup;
 import static org.ode4j.ode.internal.joints.DxJointGroup.dJointGroupCreate;
 
-public class PhysicsManager extends Behavior {
+public class PhysicsManager extends AbstractSystem {
 
     static {
         dInitODE();
     }
 
-    public static final double STEP_SIZE = .001;
+    public static final double STEP_SIZE = .01;
 
-    public double time;
-    public DxWorld world;
-    public DxSpace space;
-    public DxSpace staticSpace;
-    public DxJointGroup contactGroup;
+    private final DWorld world;
+    private final DHashSpace dynamics;
+    private final DQuadTreeSpace statics;
+
+    private double time;
+    private final DxJointGroup contactGroup;
 
     public PhysicsManager() {
-        world = dWorldCreate();
+        world = OdeHelper.createWorld();
         world.setGravity(0, 0, -9.81);
         world.setERP(.1);
         world.setCFM(1e-5);
         world.setContactSurfaceLayer(.001);
 
-        var hspace = dHashSpaceCreate(null);
-        hspace.setLevels(2, 8);
-        space = hspace;
+        dynamics = OdeHelper.createHashSpace();
+        dynamics.setLevels(2, 14);
 
-        var hspace2 = dHashSpaceCreate(null);
-        hspace2.setLevels(2, 8);
-        hspace2.setSublevel(1);
-        staticSpace = hspace2;
-        space.add(staticSpace);
+        statics = OdeHelper.createQuadTreeSpace(new DVector3(1000, 1000, 200), new DVector3(2000, 2000, 400), 10);
 
         contactGroup = dJointGroupCreate(0);
 
-        dCreatePlane(staticSpace, 0, 0, 1, 0);
+        OdeHelper.createPlane(statics, 0, 0, 1, 0);
     }
 
-    @Override
-    public void onDestroy() {
+    public void addDynamic(DGeom geom) {
+        dynamics.add(geom);
+    }
+
+    public void addStatic(StaticShape shape, Vec3d position) {
+        var geom = shape.build();
+        geom.setPosition(toDVector3(position));
+        statics.add(geom);
+    }
+
+    public void destroy() {
         contactGroup.destroy();
-        space.destroy();
+        dynamics.destroy();
+        statics.destroy();
         world.destroy();
+    }
+
+    private void handleCollision(Object data, DGeom o1, DGeom o2) {
+        if (o1 == o2) {
+            return;
+        }
+        var p1 = (PhysicsComponent) o1.getData();
+        var p2 = (PhysicsComponent) o2.getData();
+        if (p1 == null && p2 == null) {
+            return;
+        }
+        if (p1 != null && p2 != null && (p1.ignore.contains(p2) || p2.ignore.contains(p1))) {
+            return;
+        }
+        var b1 = o1.getBody();
+        var b2 = o2.getBody();
+        var contacts = collide(o1, o2, contact -> {
+            var surface = contact.surface;
+            surface.mode = dContactApprox1 | dContactFDir1 | dContactBounce;
+            surface.mu = .2;
+            surface.bounce = 0.1;
+            surface.bounce_vel = 0.001;
+        });
+        if (!contacts.isEmpty()) {
+            if (p1 != null) {
+                p1.hit.add(o2);
+            }
+            if (p2 != null) {
+                p2.hit.add(o1);
+            }
+        }
+        for (var contact : contacts) {
+            contact.fdir1.set(randomFrictionDir(contact.geom.normal));
+            var c = createContactJoint(world, contactGroup, contact);
+            c.attach(b1, b2);
+        }
+    }
+
+    private void handleDynamicsCollision(Object data, DGeom o1, DGeom o2) {
+        if (o1 == o2) {
+            return;
+        }
+        var p1 = (PhysicsComponent) o1.getData();
+        var p2 = (PhysicsComponent) o2.getData();
+        if (p1.ignore.contains(p2) || p2.ignore.contains(p1)) {
+            return;
+        }
+        var b1 = o1.getBody();
+        var b2 = o2.getBody();
+        var contacts = collide(o1, o2, contact -> {
+            var surface = contact.surface;
+            surface.mode = dContactApprox1 | dContactFDir1 | dContactBounce;
+            surface.mu = .2;
+            surface.bounce = 0.1;
+            surface.bounce_vel = 0.001;
+        });
+        if (!contacts.isEmpty()) {
+            p1.hit.add(o2);
+            p2.hit.add(o1);
+        }
+        for (var contact : contacts) {
+            contact.fdir1.set(randomFrictionDir(contact.geom.normal));
+            var c = createContactJoint(world, contactGroup, contact);
+            c.attach(b1, b2);
+        }
+    }
+
+    public DBody newBody() {
+        return OdeHelper.createBody(world);
     }
 
     @Override
@@ -74,38 +146,8 @@ public class PhysicsManager extends Behavior {
     }
 
     private void physicsStep() {
-        space.collide(null, (data, o1, o2) -> {
-            if (o1 == o2) {
-                return;
-            }
-            var p1 = (PhysicsComponent) o1.getData();
-            var p2 = (PhysicsComponent) o2.getData();
-            if (p1 != null && p2 != null && (p1.ignore.contains(p2) || p2.ignore.contains(p1))) {
-                return;
-            }
-            var b1 = o1.getBody();
-            var b2 = o2.getBody();
-            var contacts = collide(o1, o2, contact -> {
-                var surface = contact.surface;
-                surface.mode = dContactApprox1 | dContactFDir1 | dContactBounce;
-                surface.mu = .2;
-                surface.bounce = 0.1;
-                surface.bounce_vel = 0.001;
-            });
-            if (!contacts.isEmpty()) {
-                if (p1 != null) {
-                    p1.hit.add(o2);
-                }
-                if (p2 != null) {
-                    p2.hit.add(o1);
-                }
-            }
-            for (var contact : contacts) {
-                contact.fdir1.set(randomFrictionDir(contact.geom.normal));
-                var c = createContactJoint(world, contactGroup, contact);
-                c.attach(b1, b2);
-            }
-        });
+        dynamics.collide(null, this::handleDynamicsCollision);
+        dynamics.collide2(statics, null, this::handleCollision);
         AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPhysicsStep1);
         world.quickStep(STEP_SIZE);
         AbstractComponent.getAll(PhysicsComponent.class).forEach(PhysicsComponent::onPhysicsStep2);
@@ -115,6 +157,6 @@ public class PhysicsManager extends Behavior {
         var ray = dCreateRay(null, 1000);
         ray.set(toDVector3(start), toDVector3(dir));
         ray.setClosestHit(true);
-        return collide(ray, staticSpace).stream().mapToDouble(contact -> contact.geom.depth).min();
+        return collide(ray, statics).stream().mapToDouble(contact -> contact.geom.depth).min();
     }
 }

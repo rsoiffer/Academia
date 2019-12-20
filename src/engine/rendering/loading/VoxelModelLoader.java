@@ -18,7 +18,6 @@ public class VoxelModelLoader {
             new Vec3d(-1, 0, 0), new Vec3d(1, 0, 0),
             new Vec3d(0, -1, 0), new Vec3d(0, 1, 0),
             new Vec3d(0, 0, -1), new Vec3d(0, 0, 1));
-    private static final Map<String, VoxelModelLoader> MODEL_CACHE = new HashMap();
     private static final int[] DEFAULT_COLOR_PALETTE = {
         0x00000000, 0xffffffff, 0xffccffff, 0xff99ffff, 0xff66ffff, 0xff33ffff, 0xff00ffff, 0xffffccff, 0xffccccff, 0xff99ccff, 0xff66ccff, 0xff33ccff, 0xff00ccff, 0xffff99ff, 0xffcc99ff, 0xff9999ff,
         0xff6699ff, 0xff3399ff, 0xff0099ff, 0xffff66ff, 0xffcc66ff, 0xff9966ff, 0xff6666ff, 0xff3366ff, 0xff0066ff, 0xffff33ff, 0xffcc33ff, 0xff9933ff, 0xff6633ff, 0xff3333ff, 0xff0033ff, 0xffff00ff,
@@ -85,12 +84,9 @@ public class VoxelModelLoader {
         mesh = RMB.toMesh();
     }
 
-    public static VoxelModelLoader load(String fileName) {
-        if (!MODEL_CACHE.containsKey(fileName)) {
-            VoxelModelLoader s = new VoxelModelLoader(fileName);
-            MODEL_CACHE.put(fileName, s);
-        }
-        return MODEL_CACHE.get(fileName);
+    public static Mesh loadNew(String path) {
+        var vml = new VoxelModelLoader(path);
+        return vml.mesh;
     }
 
     private static int[] loadRGBA(byte[] bytes, int pos) {

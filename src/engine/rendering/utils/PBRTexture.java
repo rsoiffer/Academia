@@ -2,6 +2,8 @@ package engine.rendering.utils;
 
 import engine.graphics.opengl.GLObject;
 import engine.graphics.opengl.Texture;
+import engine.util.Resources;
+
 import java.io.File;
 
 public class PBRTexture extends GLObject {
@@ -10,7 +12,7 @@ public class PBRTexture extends GLObject {
     private static final String[] NAMES = {
         "albedo", "normal", "metallic", "roughness",
         "ao", "height", "alpha", "emissive"};
-    private static final PBRTexture DEFAULT = loadFromFolder("default");
+    private static final PBRTexture DEFAULT = loadNew("default");
 
     private final Texture[] textures;
 
@@ -20,7 +22,7 @@ public class PBRTexture extends GLObject {
         for (int i = 0; i < NUM_COMPONENTS; i++) {
             String filename = folder + "/" + NAMES[i] + "." + extension;
             if (new File("sprites/" + filename).isFile()) {
-                textures[i] = Texture.load(filename);
+                textures[i] = Resources.loadTexture(filename);
                 textures[i].num = i;
             } else {
                 textures[i] = DEFAULT.textures[i];
@@ -28,12 +30,8 @@ public class PBRTexture extends GLObject {
         }
     }
 
-    public static PBRTexture loadFromFolder(String folder) {
+    public static PBRTexture loadNew(String folder) {
         return new PBRTexture(folder, "png");
-    }
-
-    public static PBRTexture loadFromFolder(String folder, String ext) {
-        return new PBRTexture(folder, ext);
     }
 
     @Override

@@ -2,7 +2,9 @@ package game.entities;
 
 import engine.core.AbstractEntity;
 import static engine.core.Core.dt;
+import static engine.physics.DynamicShape.sphere;
 import engine.samples.Behavior;
+import engine.util.Resources;
 import engine.util.math.MathUtils;
 import engine.util.math.Quaternion;
 import engine.util.math.Transformation;
@@ -12,14 +14,11 @@ import static game.particles.ParticleTypes.FIRE;
 import static game.particles.ParticleTypes.SMOKE;
 
 import engine.rendering.ModelComponent;
-import engine.rendering.loading.AssimpLoader;
 import engine.physics.PhysicsComponent;
 import engine.physics.PhysicsManager;
 import engine.physics.PoseComponent;
 import java.util.Random;
 import java.util.function.Function;
-import org.ode4j.ode.internal.DxMass;
-import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Missile extends Behavior {
 
@@ -36,19 +35,12 @@ public class Missile extends Behavior {
 
     public Missile(Vec3d position, PhysicsManager manager, Function<Missile, Vec3d> targeter) {
         pose = add(new PoseComponent(this, position));
-        physics = add(new PhysicsComponent(this, manager));
+        physics = add(new PhysicsComponent(this, manager, sphere(.2, 5)));
         model = add(new ModelComponent(this));
 
         this.targeter = targeter;
 
-        var mass = new DxMass();
-        mass.setSphereTotal(5, .2);
-        physics.setMass(mass);
-
-        var geom = dCreateSphere(physics.manager.space, .2);
-        physics.setGeom(geom);
-
-        model.node.addChild(AssimpLoader.load("bomb/mk83.obj").rootNode);
+        model.node.addChild(Resources.loadAssimpModel("bomb/mk83.obj"));
         lifetime = 30;
 
         pointing = targeter.apply(this).normalize();

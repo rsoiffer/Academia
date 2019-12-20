@@ -1,17 +1,15 @@
 package game.world;
 
-import engine.util.math.Vec2d;
-
-import static game.world.World.FLOOR_HEIGHT;
-import static game.world.World.createWalls;
+import engine.physics.AABB;
+import static engine.physics.StaticShape.box;
 import engine.rendering.loading.RawMeshBuilder;
 import engine.rendering.materials.DiffuseMaterial;
 import engine.rendering.materials.Material;
 import engine.rendering.materials.PBRMaterial;
-import static engine.physics.OdeUtils.toDVector3;
-import engine.physics.AABB;
+import engine.util.math.Vec2d;
+import static game.world.World.FLOOR_HEIGHT;
+import static game.world.World.createWalls;
 import java.util.Map;
-import static org.ode4j.ode.internal.DxBox.dCreateBox;
 
 public class Building extends Structure {
 
@@ -44,8 +42,7 @@ public class Building extends Structure {
         this.bounds = bounds;
         this.type = world.random.nextInt(NUM_WALL_TYPES);
 
-        var geom = dCreateBox(world.manager.staticSpace, bounds.size().x, bounds.size().y, bounds.size().z);
-        geom.setPosition(toDVector3(bounds.center()));
+        world.manager.addStatic(box(bounds.size()), bounds.center());
     }
 
     @Override
