@@ -1,15 +1,15 @@
 package hero.graphics.passes;
 
-import beige_engine.core.AbstractSystem;
-import beige_engine.graphics.Camera;
-import beige_engine.graphics.Color;
-import beige_engine.graphics.opengl.GLState;
-import beige_engine.graphics.sprites.Sprite;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrCore;
-import beige_engine.vr.VrEyeCamera;
+import engine.core.AbstractSystem;
+import engine.graphics.Camera;
+import engine.graphics.Color;
+import engine.graphics.opengl.GLState;
+import engine.graphics.sprites.Sprite;
+import engine.util.math.Transformation;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
+import engine.vr.VrCore;
+import engine.vr.VrEyeCamera;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

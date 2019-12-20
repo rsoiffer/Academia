@@ -1,11 +1,11 @@
 package hero.game.movement;
 
-import static beige_engine.core.Core.dt;
-import static beige_engine.util.math.MathUtils.clamp;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrCore;
+import static engine.core.Core.dt;
+import static engine.util.math.MathUtils.clamp;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
+import engine.vr.VrCore;
 import hero.game.Controller;
 import hero.game.ModelBehavior;
 import hero.game.Player;

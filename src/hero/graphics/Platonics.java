@@ -1,7 +1,7 @@
 package hero.graphics;
 
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.graphics.loading.VoxelModelLoader;
 

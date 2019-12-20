@@ -1,8 +1,8 @@
 package hero.game.world;
 
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.game.World;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;

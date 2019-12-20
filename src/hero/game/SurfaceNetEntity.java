@@ -1,6 +1,6 @@
 package hero.game;
 
-import beige_engine.samples.Behavior;
+import engine.samples.Behavior;
 import hero.graphics.Mesh;
 import hero.graphics.ModelNode;
 import static hero.graphics.VertexAttrib.POSITIONS;

@@ -1,7 +1,7 @@
 package hero.game.particles;
 
-import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
+import static engine.core.Core.dt;
+import engine.samples.Behavior;
 import hero.game.ModelBehavior;
 import hero.graphics.Platonics;
 import hero.graphics.drawables.DrawableSupplier;

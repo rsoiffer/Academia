@@ -1,8 +1,8 @@
 package hero.graphics.loading;
 
-import beige_engine.util.Resources;
-import static beige_engine.util.math.MathUtils.mod;
-import beige_engine.util.math.Vec3d;
+import engine.util.Resources;
+import static engine.util.math.MathUtils.mod;
+import engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import static hero.graphics.VertexAttrib.NORMALS;
 import static hero.graphics.VertexAttrib.POSITIONS;

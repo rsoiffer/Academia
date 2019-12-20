@@ -1,8 +1,8 @@
 package hero.physics.shapes;
 
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Vec3d;
+import static engine.util.math.MathUtils.ceil;
+import static engine.util.math.MathUtils.floor;
+import engine.util.math.Vec3d;
 import hero.graphics.utils.SurfaceNet;
 import java.util.List;
 import java.util.OptionalDouble;

@@ -1,10 +1,10 @@
 package hero.game.movement;
 
-import static beige_engine.core.Core.dt;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
-import static beige_engine.vr.VrCore.TRIGGER;
-import beige_engine.vr.VrEyeCamera;
+import static engine.core.Core.dt;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
+import static engine.vr.VrCore.TRIGGER;
+import engine.vr.VrEyeCamera;
 import hero.game.Controller;
 import hero.game.ModelBehavior;
 import hero.game.Player;

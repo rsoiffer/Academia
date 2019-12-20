@@ -1,9 +1,9 @@
 package hero.game;
 
-import beige_engine.graphics.Camera;
-import beige_engine.samples.Behavior;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrCore;
+import engine.graphics.Camera;
+import engine.samples.Behavior;
+import engine.util.math.Vec3d;
+import engine.vr.VrCore;
 import hero.physics.PhysicsBehavior;
 import hero.physics.PhysicsManager;
 import hero.physics.PoseBehavior;

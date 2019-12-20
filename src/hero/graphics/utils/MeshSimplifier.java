@@ -1,7 +1,7 @@
 package hero.graphics.utils;
 
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import static hero.graphics.VertexAttrib.POSITIONS;
 import static hero.graphics.VertexAttrib.TEX_COORDS;

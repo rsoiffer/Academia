@@ -1,6 +1,6 @@
 package hero.game.world;
 
-import beige_engine.util.math.Vec2d;
+import engine.util.math.Vec2d;
 import hero.game.World;
 import static hero.game.World.FLOOR_HEIGHT;
 import static hero.game.World.createWalls;

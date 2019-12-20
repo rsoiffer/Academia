@@ -1,10 +1,10 @@
 package hero.graphics.loading;
 
-import beige_engine.graphics.opengl.Texture;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrController;
+import engine.graphics.opengl.Texture;
+import engine.util.math.Quaternion;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
+import engine.vr.VrController;
 import hero.graphics.ModelNode;
 import static hero.graphics.loading.ConversionUtils.*;
 import hero.graphics.materials.DiffuseMaterial;

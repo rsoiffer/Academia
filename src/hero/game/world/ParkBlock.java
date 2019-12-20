@@ -1,7 +1,7 @@
 package hero.game.world;
 
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import hero.game.World;
 import static hero.game.World.*;
 import hero.graphics.loading.RawMeshBuilder;

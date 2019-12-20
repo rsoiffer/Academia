@@ -1,6 +1,6 @@
 package hero.game.movement;
 
-import beige_engine.samples.Behavior;
+import engine.samples.Behavior;
 import hero.game.Controller;
 import hero.game.Player;
 import hero.graphics.ModelNode;

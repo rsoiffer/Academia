@@ -1,12 +1,12 @@
 package hero.game;
 
-import static beige_engine.core.Core.dt;
-import static beige_engine.graphics.Camera.camera3d;
-import beige_engine.samples.Behavior;
-import beige_engine.util.Noise;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import static engine.core.Core.dt;
+import static engine.graphics.Camera.camera3d;
+import engine.samples.Behavior;
+import engine.util.Noise;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.game.particles.ParticleTypes;
 import hero.graphics.loading.AssimpLoader;
 import hero.physics.PhysicsBehavior;

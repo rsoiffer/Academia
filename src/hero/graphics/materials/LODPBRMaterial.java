@@ -1,6 +1,6 @@
 package hero.graphics.materials;
 
-import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static engine.graphics.opengl.GLObject.bindAll;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;

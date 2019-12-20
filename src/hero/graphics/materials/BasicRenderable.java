@@ -1,6 +1,6 @@
 package hero.graphics.materials;
 
-import beige_engine.util.math.Transformation;
+import engine.util.math.Transformation;
 import hero.graphics.Renderable;
 import hero.graphics.drawables.Drawable;
 import hero.graphics.VertexAttrib;

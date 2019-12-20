@@ -1,7 +1,6 @@
 package hero.graphics.materials;
 
-import beige_engine.util.math.Vec3d;
-import hero.graphics.Mesh;
+import engine.util.math.Vec3d;
 import hero.graphics.VertexAttrib;
 import hero.graphics.Renderable;
 import hero.graphics.drawables.DrawableSupplier;

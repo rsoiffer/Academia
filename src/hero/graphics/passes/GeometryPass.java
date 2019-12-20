@@ -1,23 +1,22 @@
 package hero.graphics.passes;
 
-import beige_engine.graphics.Camera;
-import beige_engine.graphics.opengl.Framebuffer;
-import beige_engine.graphics.opengl.GLState;
-import beige_engine.graphics.opengl.Shader;
-import beige_engine.graphics.opengl.Texture;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec2d;
+import engine.graphics.Camera;
+import engine.graphics.opengl.Framebuffer;
+import engine.graphics.opengl.GLState;
+import engine.graphics.opengl.Shader;
+import engine.graphics.opengl.Texture;
+import engine.util.math.Transformation;
+import engine.util.math.Vec2d;
 import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 
-import static beige_engine.graphics.Color.BLACK;
-import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static engine.graphics.Color.BLACK;
+import static engine.graphics.opengl.GLObject.bindAll;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGB;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 

@@ -1,7 +1,7 @@
 package hero.graphics.utils;
 
-import beige_engine.graphics.opengl.GLObject;
-import beige_engine.graphics.opengl.Texture;
+import engine.graphics.opengl.GLObject;
+import engine.graphics.opengl.Texture;
 import java.io.File;
 
 public class PBRTexture extends GLObject {

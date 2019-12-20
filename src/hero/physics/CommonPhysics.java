@@ -1,8 +1,8 @@
 package hero.physics;
 
-import static beige_engine.util.math.MathUtils.clamp;
-import static beige_engine.util.math.MathUtils.max;
-import beige_engine.util.math.Vec3d;
+import static engine.util.math.MathUtils.clamp;
+import static engine.util.math.MathUtils.max;
+import engine.util.math.Vec3d;
 
 public abstract class CommonPhysics {
 

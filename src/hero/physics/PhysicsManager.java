@@ -1,9 +1,9 @@
 package hero.physics;
 
-import beige_engine.core.AbstractComponent;
-import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
-import beige_engine.util.math.Vec3d;
+import engine.core.AbstractComponent;
+import static engine.core.Core.dt;
+import engine.samples.Behavior;
+import engine.util.math.Vec3d;
 import static hero.physics.OdeUtils.*;
 import java.util.OptionalDouble;
 import static org.ode4j.ode.OdeConstants.*;

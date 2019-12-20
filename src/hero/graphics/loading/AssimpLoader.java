@@ -1,9 +1,9 @@
 package hero.graphics.loading;
 
-import beige_engine.graphics.opengl.Texture;
-import beige_engine.graphics.sprites.Sprite;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.graphics.opengl.Texture;
+import engine.graphics.sprites.Sprite;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.ModelNode;
 import hero.graphics.Renderable;

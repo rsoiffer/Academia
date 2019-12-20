@@ -1,14 +1,14 @@
 package hero.game;
 
-import beige_engine.samples.Behavior;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrController;
-import beige_engine.vr.VrCore;
-import static beige_engine.vr.VrCore.footTransform;
-import beige_engine.vr.VrSide;
-import static beige_engine.vr.VrSide.LEFT_HAND;
+import engine.samples.Behavior;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
+import engine.vr.VrController;
+import engine.vr.VrCore;
+import static engine.vr.VrCore.footTransform;
+import engine.vr.VrSide;
+import static engine.vr.VrSide.LEFT_HAND;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.loading.OpenVRLoader;

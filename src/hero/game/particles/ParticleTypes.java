@@ -1,10 +1,10 @@
 package hero.game.particles;
 
-import beige_engine.graphics.Color;
-import beige_engine.graphics.opengl.Texture;
-import beige_engine.util.math.MathUtils;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Vec3d;
+import engine.graphics.Color;
+import engine.graphics.opengl.Texture;
+import engine.util.math.MathUtils;
+import engine.util.math.Quaternion;
+import engine.util.math.Vec3d;
 import static hero.game.movement.IceCaster.iceModel;
 import hero.graphics.materials.ColorMaterial;
 import hero.graphics.materials.EmissiveMaterial;

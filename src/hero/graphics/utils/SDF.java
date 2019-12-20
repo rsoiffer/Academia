@@ -1,6 +1,6 @@
 package hero.graphics.utils;
 
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Vec3d;
 
 public interface SDF {
 

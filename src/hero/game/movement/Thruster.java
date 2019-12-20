@@ -1,9 +1,9 @@
 package hero.game.movement;
 
-import static beige_engine.core.Core.dt;
-import beige_engine.util.math.MathUtils;
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrCore;
+import static engine.core.Core.dt;
+import engine.util.math.MathUtils;
+import engine.util.math.Vec3d;
+import engine.vr.VrCore;
 import hero.game.Controller;
 import hero.game.Player;
 import static hero.game.particles.ParticleTypes.FIRE;

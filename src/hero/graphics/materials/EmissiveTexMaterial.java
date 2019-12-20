@@ -1,7 +1,7 @@
 package hero.graphics.materials;
 
-import beige_engine.graphics.Color;
-import beige_engine.graphics.opengl.Texture;
+import engine.graphics.Color;
+import engine.graphics.opengl.Texture;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
 import hero.graphics.drawables.DrawableSupplier;
@@ -9,7 +9,7 @@ import hero.graphics.drawables.DrawableSupplier;
 import java.util.Arrays;
 import java.util.List;
 
-import static beige_engine.graphics.opengl.GLObject.bindAll;
+import static engine.graphics.opengl.GLObject.bindAll;
 import static hero.graphics.VertexAttrib.POSITIONS;
 import static hero.graphics.VertexAttrib.TEX_COORDS;
 import static hero.graphics.passes.LightingPass.SHADER_EMISSIVE_TEX;

@@ -1,12 +1,12 @@
 package hero.graphics.passes;
 
-import beige_engine.graphics.Camera;
-import beige_engine.graphics.opengl.Framebuffer;
-import beige_engine.graphics.opengl.GLState;
-import beige_engine.graphics.opengl.Shader;
-import beige_engine.graphics.opengl.Texture;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.graphics.Camera;
+import engine.graphics.opengl.Framebuffer;
+import engine.graphics.opengl.GLState;
+import engine.graphics.opengl.Shader;
+import engine.graphics.opengl.Texture;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 import hero.physics.shapes.AABB;

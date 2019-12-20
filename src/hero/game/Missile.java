@@ -1,12 +1,12 @@
 package hero.game;
 
-import beige_engine.core.AbstractEntity;
-import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
-import beige_engine.util.math.MathUtils;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.core.AbstractEntity;
+import static engine.core.Core.dt;
+import engine.samples.Behavior;
+import engine.util.math.MathUtils;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.game.particles.ParticleTypes;
 import static hero.game.particles.ParticleTypes.FIRE;
 import static hero.game.particles.ParticleTypes.SMOKE;

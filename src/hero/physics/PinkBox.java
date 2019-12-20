@@ -1,9 +1,9 @@
 package hero.physics;
 
-import beige_engine.samples.Behavior;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.samples.Behavior;
+import engine.util.math.Quaternion;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.game.ModelBehavior;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;

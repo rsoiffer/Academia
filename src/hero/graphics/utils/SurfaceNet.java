@@ -1,8 +1,8 @@
 package hero.graphics.utils;
 
-import static beige_engine.util.math.MathUtils.*;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import static engine.util.math.MathUtils.*;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.loading.RawMeshBuilder;
 import hero.physics.shapes.AABB;

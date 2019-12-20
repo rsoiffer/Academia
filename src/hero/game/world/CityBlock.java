@@ -1,8 +1,8 @@
 package hero.game.world;
 
-import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import static engine.util.math.MathUtils.floor;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import hero.game.World;
 import static hero.game.World.*;
 import hero.graphics.loading.RawMeshBuilder;

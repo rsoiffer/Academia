@@ -1,7 +1,7 @@
 package hero.graphics.materials;
 
-import static beige_engine.graphics.opengl.GLObject.bindAll;
-import beige_engine.graphics.opengl.Texture;
+import static engine.graphics.opengl.GLObject.bindAll;
+import engine.graphics.opengl.Texture;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
 import static hero.graphics.VertexAttrib.*;

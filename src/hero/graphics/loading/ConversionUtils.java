@@ -1,7 +1,7 @@
 package hero.graphics.loading;
 
-import beige_engine.util.math.Vec3d;
-import beige_engine.vr.VrController;
+import engine.util.math.Vec3d;
+import engine.vr.VrController;
 import java.nio.IntBuffer;
 import java.util.*;
 import java.util.function.Supplier;

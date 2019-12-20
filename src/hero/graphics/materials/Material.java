@@ -1,6 +1,6 @@
 package hero.graphics.materials;
 
-import beige_engine.util.Mutable;
+import engine.util.Mutable;
 import hero.graphics.Renderable;
 import hero.graphics.drawables.DrawableSupplier;
 import hero.graphics.loading.RawMeshBuilder;

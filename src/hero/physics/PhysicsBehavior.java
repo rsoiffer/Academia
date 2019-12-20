@@ -1,9 +1,9 @@
 package hero.physics;
 
-import beige_engine.core.AbstractComponent;
-import beige_engine.core.AbstractEntity;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Vec3d;
+import engine.core.AbstractComponent;
+import engine.core.AbstractEntity;
+import engine.util.math.Quaternion;
+import engine.util.math.Vec3d;
 import static hero.physics.OdeUtils.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package hero.physics;
 
-import beige_engine.util.math.MathUtils;
-import beige_engine.util.math.Quaternion;
-import beige_engine.util.math.Vec3d;
+import engine.util.math.MathUtils;
+import engine.util.math.Quaternion;
+import engine.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

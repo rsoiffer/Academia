@@ -1,6 +1,6 @@
 package hero.physics.shapes;
 
-import beige_engine.util.math.Vec3d;
+import engine.util.math.Vec3d;
 import java.util.List;
 
 public class AABB {

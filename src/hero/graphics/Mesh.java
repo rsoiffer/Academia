@@ -1,9 +1,9 @@
 package hero.graphics;
 
-import beige_engine.graphics.opengl.BufferObject;
-import beige_engine.graphics.opengl.GLState;
-import beige_engine.graphics.opengl.VertexArrayObject;
-import beige_engine.util.math.Vec3d;
+import engine.graphics.opengl.BufferObject;
+import engine.graphics.opengl.GLState;
+import engine.graphics.opengl.VertexArrayObject;
+import engine.util.math.Vec3d;
 import static hero.graphics.VertexAttrib.POSITIONS;
 import hero.graphics.drawables.Drawable;
 import hero.graphics.drawables.DrawableSupplier;

@@ -1,7 +1,7 @@
 package hero.game;
 
-import beige_engine.core.AbstractComponent;
-import beige_engine.core.AbstractEntity;
+import engine.core.AbstractComponent;
+import engine.core.AbstractEntity;
 import hero.graphics.ModelNode;
 import java.util.stream.Stream;
 

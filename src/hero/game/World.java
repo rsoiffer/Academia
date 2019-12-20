@@ -1,9 +1,9 @@
 package hero.game;
 
-import beige_engine.core.AbstractEntity;
-import beige_engine.util.Noise;
-import beige_engine.util.math.Vec2d;
-import beige_engine.util.math.Vec3d;
+import engine.core.AbstractEntity;
+import engine.util.Noise;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
 import static hero.game.movement.IceCaster.iceModel;
 import hero.game.world.CityBlock;
 import hero.game.world.ParkBlock;

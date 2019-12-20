@@ -1,11 +1,11 @@
 package hero.graphics.materials;
 
-import beige_engine.graphics.Camera;
-import beige_engine.graphics.opengl.GLState;
-import static beige_engine.util.math.MathUtils.ceil;
-import static beige_engine.util.math.MathUtils.floor;
-import beige_engine.util.math.Transformation;
-import beige_engine.util.math.Vec3d;
+import engine.graphics.Camera;
+import engine.graphics.opengl.GLState;
+import static engine.util.math.MathUtils.ceil;
+import static engine.util.math.MathUtils.floor;
+import engine.util.math.Transformation;
+import engine.util.math.Vec3d;
 import hero.graphics.Mesh;
 import hero.graphics.Renderable;
 import hero.graphics.VertexAttrib;
