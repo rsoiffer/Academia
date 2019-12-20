@@ -4,7 +4,7 @@ import beige_engine.graphics.opengl.Texture;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.ViveController;
+import beige_engine.vr.VrController;
 import hero.graphics.ModelNode;
 import static hero.graphics.loading.ConversionUtils.*;
 import hero.graphics.materials.DiffuseMaterial;
@@ -15,7 +15,7 @@ public class OpenVRLoader {
 
     public final ModelNode rootNode;
 
-    public OpenVRLoader(ViveController vc) {
+    public OpenVRLoader(VrController vc) {
         var rm = loadRenderModel(vc);
         var rmtm = loadRenderModelTextureMap(rm.diffuseTextureId());
 

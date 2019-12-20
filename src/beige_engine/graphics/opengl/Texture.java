@@ -1,9 +1,7 @@
 package beige_engine.graphics.opengl;
 
-import beige_engine.engine.Settings;
-
+import beige_engine.core.Settings;
 import java.nio.ByteBuffer;
-
 import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;

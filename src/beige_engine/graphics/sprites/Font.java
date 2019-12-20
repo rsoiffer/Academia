@@ -1,6 +1,6 @@
 package beige_engine.graphics.sprites;
 
-import beige_engine.engine.Settings;
+import beige_engine.core.Settings;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.BufferObject;
 import static beige_engine.graphics.opengl.GLObject.bindAll;

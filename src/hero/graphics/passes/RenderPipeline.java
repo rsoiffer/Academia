@@ -1,8 +1,6 @@
 package hero.graphics.passes;
 
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.RENDER3D;
+import beige_engine.core.AbstractSystem;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.GLState;
@@ -10,15 +8,15 @@ import beige_engine.graphics.sprites.Sprite;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.EyeCamera;
-import beige_engine.vr.Vive;
+import beige_engine.vr.VrCore;
+import beige_engine.vr.VrEyeCamera;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glFlush;
 
-public class RenderPipeline extends Behavior {
+public class RenderPipeline extends AbstractSystem {
 
     public static RenderPass currentPass;
     private final List<GeometryPass> gpList = new ArrayList();
@@ -31,10 +29,9 @@ public class RenderPipeline extends Behavior {
     private List<Camera> cameras;
     private List<Vec2d> framebufferSizes;
 
-    @Override
-    public void createInner() {
-        cameras = isVR ? Arrays.asList(new EyeCamera(true), new EyeCamera(false)) : Arrays.asList(Camera.camera3d);
-        framebufferSizes = isVR ? Arrays.asList(Vive.getRecommendedRenderTargetSize(), Vive.getRecommendedRenderTargetSize()) : Arrays.asList((Vec2d) null);
+    public RenderPipeline() {
+        cameras = isVR ? Arrays.asList(new VrEyeCamera(true), new VrEyeCamera(false)) : Arrays.asList(Camera.camera3d);
+        framebufferSizes = isVR ? Arrays.asList(VrCore.getRecommendedRenderTargetSize(), VrCore.getRecommendedRenderTargetSize()) : Arrays.asList((Vec2d) null);
 
         for (int i = 0; i < 5; i++) {
             ShadowPass sp = new ShadowPass();
@@ -57,11 +54,6 @@ public class RenderPipeline extends Behavior {
             lp.sunDirection = sunDirection;
             lpList.add(lp);
         }
-    }
-
-    @Override
-    public Layer layer() {
-        return RENDER3D;
     }
 
     public void setSunColor(Vec3d sunColor) {
@@ -89,16 +81,16 @@ public class RenderPipeline extends Behavior {
     }
 
     @Override
-    public void step() {
+    public void onStep() {
         if (isVR) {
-            EyeCamera.waitUpdatePos();
+            VrEyeCamera.waitUpdatePos();
         }
         gpList.forEach(RenderPass::doPass);
         spList.forEach(RenderPass::doPass);
         lpList.forEach(RenderPass::doPass);
         if (isVR) {
-            Vive.submit(true, lpList.get(0).colorBuffer());
-            Vive.submit(false, lpList.get(1).colorBuffer());
+            VrCore.submit(true, lpList.get(0).colorBuffer());
+            VrCore.submit(false, lpList.get(1).colorBuffer());
             glFlush();
         }
 

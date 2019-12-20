@@ -1,8 +1,8 @@
 package hero.physics;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import beige_engine.core.AbstractComponent;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Vec3d;
 import static hero.physics.OdeUtils.*;
 import java.util.OptionalDouble;
@@ -20,8 +20,6 @@ import static org.ode4j.ode.internal.joints.DxJointGroup.dJointGroupCreate;
 
 public class PhysicsManager extends Behavior {
 
-    public static final Layer PHYSICS = new Layer(5);
-
     static {
         dInitODE();
     }
@@ -34,8 +32,7 @@ public class PhysicsManager extends Behavior {
     public DxSpace staticSpace;
     public DxJointGroup contactGroup;
 
-    @Override
-    public void createInner() {
+    public PhysicsManager() {
         world = dWorldCreate();
         world.setGravity(0, 0, -9.81);
         world.setERP(.1);
@@ -58,15 +55,22 @@ public class PhysicsManager extends Behavior {
     }
 
     @Override
-    public void destroyInner() {
+    public void onDestroy() {
         contactGroup.destroy();
         space.destroy();
         world.destroy();
     }
 
     @Override
-    public Layer layer() {
-        return PHYSICS;
+    public void onStep() {
+        AbstractComponent.getAll(PhysicsBehavior.class).forEach(PhysicsBehavior::onPrePhysicsStep);
+        time += dt();
+        while (time > STEP_SIZE) {
+            time -= STEP_SIZE;
+            physicsStep();
+        }
+        contactGroup.empty();
+        AbstractComponent.getAll(PhysicsBehavior.class).forEach(PhysicsBehavior::onPostPhysicsStep);
     }
 
     private void physicsStep() {
@@ -102,9 +106,9 @@ public class PhysicsManager extends Behavior {
                 c.attach(b1, b2);
             }
         });
-        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep1);
+        AbstractComponent.getAll(PhysicsBehavior.class).forEach(PhysicsBehavior::onPhysicsStep1);
         world.quickStep(STEP_SIZE);
-        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPhysicsStep2);
+        AbstractComponent.getAll(PhysicsBehavior.class).forEach(PhysicsBehavior::onPhysicsStep2);
     }
 
     public OptionalDouble raycast(Vec3d start, Vec3d dir) {
@@ -112,17 +116,5 @@ public class PhysicsManager extends Behavior {
         ray.set(toDVector3(start), toDVector3(dir));
         ray.setClosestHit(true);
         return collide(ray, staticSpace).stream().mapToDouble(contact -> contact.geom.depth).min();
-    }
-
-    @Override
-    public void step() {
-        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPrePhysicsStep);
-        time += dt();
-        while (time > STEP_SIZE) {
-            time -= STEP_SIZE;
-            physicsStep();
-        }
-        contactGroup.empty();
-        PhysicsBehavior.ALL.forEach(PhysicsBehavior::onPostPhysicsStep);
     }
 }

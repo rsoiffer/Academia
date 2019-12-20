@@ -7,7 +7,6 @@ import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-
 import static beige_engine.graphics.opengl.GLObject.bindAll;
 import static beige_engine.util.math.MathUtils.rotate;
 import static org.lwjgl.opengl.GL11.*;

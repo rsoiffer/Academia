@@ -2,6 +2,11 @@ package beige_engine.vr;
 
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec2d;
+import static beige_engine.vr.VrCore.COORD_CHANGE;
+import static beige_engine.vr.VrCore.footTransform;
+import static beige_engine.vr.VrUtils.read4x3Matrix;
+import java.util.LinkedList;
+import java.util.List;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.lwjgl.openvr.TrackedDevicePose;
@@ -9,13 +14,7 @@ import org.lwjgl.openvr.VR;
 import org.lwjgl.openvr.VRControllerState;
 import org.lwjgl.openvr.VRSystem;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static beige_engine.vr.OpenVRUtils.read4x3Matrix;
-import static beige_engine.vr.Vive.*;
-
-public class ViveController {
+public class VrController {
 
     private final int id;
     private final List<Vec2d> axes = new LinkedList();
@@ -24,7 +23,7 @@ public class ViveController {
     private final List<Integer> prevButtons = new LinkedList();
     private Transformation poseRaw = null;
 
-    ViveController(int id) {
+    VrController(int id) {
         this.id = id;
     }
 

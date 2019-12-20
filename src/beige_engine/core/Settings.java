@@ -1,4 +1,4 @@
-package beige_engine.engine;
+package beige_engine.core;
 
 import beige_engine.graphics.Color;
 

@@ -1,6 +1,6 @@
 package hero.physics;
 
-import beige_engine.engine.Behavior;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
@@ -13,12 +13,13 @@ import org.ode4j.ode.internal.DxMass;
 
 public class PinkBox extends Behavior {
 
-    public final PoseBehavior pose = require(PoseBehavior.class);
-    public final PhysicsBehavior physics = require(PhysicsBehavior.class);
-    public final ModelBehavior model = require(ModelBehavior.class);
+    public final PoseBehavior pose = new PoseBehavior(this);
+    public final PhysicsBehavior physics;
+    public final ModelBehavior model = new ModelBehavior(this);
 
-    @Override
-    public void createInner() {
+    public PinkBox(PhysicsManager manager) {
+        physics = new PhysicsBehavior(this, manager);
+
         var mass = new DxMass();
         mass.setBoxTotal(50, 2, 2, 2);
         physics.setMass(mass);
@@ -35,7 +36,7 @@ public class PinkBox extends Behavior {
     }
 
     @Override
-    public void step() {
+    public void onStep() {
         model.node.transform = pose.getTransform();
     }
 }

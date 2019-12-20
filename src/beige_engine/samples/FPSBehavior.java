@@ -1,12 +1,9 @@
-package beige_engine.behaviors;
+package beige_engine.samples;
 
-import beige_engine.engine.Behavior;
+import static beige_engine.core.Core.dt;
 import beige_engine.graphics.Window;
-
 import java.util.LinkedList;
 import java.util.Queue;
-
-import static beige_engine.engine.Core.dt;
 
 public class FPSBehavior extends Behavior {
 
@@ -15,7 +12,7 @@ public class FPSBehavior extends Behavior {
     private double timeElapsed;
 
     @Override
-    public void step() {
+    public void onStep() {
         double t = System.nanoTime() / 1e9;
         tList.add(t);
         while (t - tList.peek() > 5) {

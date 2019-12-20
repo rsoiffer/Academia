@@ -1,9 +1,8 @@
 package beige_engine.graphics.opengl;
 
-import beige_engine.engine.Settings;
+import beige_engine.core.Settings;
 import beige_engine.graphics.Color;
 import beige_engine.util.math.Vec2d;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;

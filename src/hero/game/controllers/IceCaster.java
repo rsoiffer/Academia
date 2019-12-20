@@ -1,13 +1,12 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import beige_engine.core.AbstractEntity;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.EyeCamera;
+import beige_engine.vr.VrEyeCamera;
 import hero.game.ModelBehavior;
-import static hero.game.Player.POSTPHYSICS;
 import static hero.game.particles.ParticleTypes.ICE;
 import hero.graphics.ModelNode;
 import hero.graphics.materials.PBRMaterial;
@@ -25,12 +24,12 @@ public class IceCaster extends Behavior {
     public static final SurfaceNet iceModel = new SurfaceNet(.5);
 
     static {
-        var mnb = new ModelBehavior();
+        var mnb = new ModelBehavior(new AbstractEntity() {
+        });
         mnb.node = new ModelNode(PBRMaterial.load("ice").buildModularRenderable(iceModel::getMeshes));
-        mnb.create();
     }
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public double timer;
     public double timer2;
@@ -70,11 +69,6 @@ public class IceCaster extends Behavior {
         }
     }
 
-    @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
     private void moveTowards(Vec3d vel) {
         timer += dt();
         timer2 += dt();
@@ -103,9 +97,9 @@ public class IceCaster extends Behavior {
     }
 
     @Override
-    public void step() {
+    public void onStep() {
         if (controller.controller.trigger() > .01) {
-            Vec3d goalDir = controller.forwards().lerp(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)), .2);
+            Vec3d goalDir = controller.forwards().lerp(VrEyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)), .2);
             moveTowards(goalDir.mul(10 * controller.controller.trigger()));
         }
     }

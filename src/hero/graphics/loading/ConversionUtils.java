@@ -1,7 +1,7 @@
 package hero.graphics.loading;
 
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.ViveController;
+import beige_engine.vr.VrController;
 import java.nio.IntBuffer;
 import java.util.*;
 import java.util.function.Supplier;
@@ -42,8 +42,8 @@ public abstract class ConversionUtils {
         return ecode == 0 ? Optional.of(aiPath.dataString()) : Optional.empty();
     }
 
-    public static RenderModel loadRenderModel(ViveController vc) {
-        try (MemoryStack stack = stackPush()) {
+    public static RenderModel loadRenderModel(VrController vc) {
+        try ( MemoryStack stack = stackPush()) {
             var pb = stack.callocPointer(1);
             var renderModelName = vc.getPropertyString(VR.ETrackedDeviceProperty_Prop_RenderModelName_String);
             int ecode = repeatWhile(() -> VRRenderModels_LoadRenderModel_Async(renderModelName, pb), 100);
@@ -56,7 +56,7 @@ public abstract class ConversionUtils {
     }
 
     public static RenderModelTextureMap loadRenderModelTextureMap(int diffuseTextureId) {
-        try (MemoryStack stack = stackPush()) {
+        try ( MemoryStack stack = stackPush()) {
             var pb = stack.callocPointer(1);
             int ecode = repeatWhile(() -> VRRenderModels_LoadTexture_Async(diffuseTextureId, pb), 100);
             if (ecode != 0) {

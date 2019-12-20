@@ -1,13 +1,11 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.EyeCamera;
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
+import static beige_engine.vr.VrCore.TRIGGER;
+import beige_engine.vr.VrEyeCamera;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
@@ -17,13 +15,12 @@ public class Hand extends Behavior {
 
     private static double jumpTimer = 0;
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public Vec3d handPos;
     public ModelNode armNode;
 
-    @Override
-    public void createInner() {
+    public Hand() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, 1, .4);
         armNode = new ModelNode(material.buildRenderable(Platonics.cube));
@@ -31,12 +28,7 @@ public class Hand extends Behavior {
     }
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.forwards();
@@ -50,7 +42,7 @@ public class Hand extends Behavior {
         if (controller.controller.buttonJustReleased(TRIGGER) && handPos != null) {
             handPos = null;
             if (jumpTimer > 0) {
-                controller.player.physics.setVelocity(EyeCamera.headPose().applyRotation(new Vec3d(1, 0, .5)).mul(25));
+                controller.player.physics.setVelocity(VrEyeCamera.headPose().applyRotation(new Vec3d(1, 0, .5)).mul(25));
                 jumpTimer = 0;
             } else {
                 jumpTimer = .2;
@@ -63,7 +55,7 @@ public class Hand extends Behavior {
                     .lerp(dir.mul(20), 1 - Math.pow(1e-6, dt())));
         } else if (!controller.player.physics.onGround) {
             controller.player.physics.applyForce(
-                    EyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300));
+                    VrEyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)).mul(300));
         }
 
         Vec3d v = handPos;

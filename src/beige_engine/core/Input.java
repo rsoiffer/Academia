@@ -1,14 +1,12 @@
-package beige_engine.engine;
+package beige_engine.core;
 
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Camera.Camera2d;
 import beige_engine.graphics.Window;
 import beige_engine.util.math.Vec2d;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public abstract class Input {

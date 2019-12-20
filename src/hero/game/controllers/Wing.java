@@ -1,46 +1,38 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
-import static hero.game.Player.POSTPHYSICS;
+import beige_engine.vr.VrCore;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 
 public class Wing extends Behavior {
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public Vec3d prevPos = null;
     public ModelNode wingNode;
 
-    @Override
-    public void createInner() {
+    public Wing() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.3, .5, .1);
         wingNode = new ModelNode(material.buildRenderable(Platonics.cube));
         controller.ovrNode.addChild(wingNode);
 
         var size = new Vec3d(.8, 1.6, .05);
-        var offset = new Vec3d(-.3, controller.controller == Vive.LEFT ? 1 : -1, 0);
+        var offset = new Vec3d(-.3, controller.controller == VrCore.LEFT ? 1 : -1, 0);
         wingNode.transform = Transformation.create(offset.sub(size.div(2)), Quaternion.IDENTITY, size);
     }
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         Vec3d sideways = controller.sideways();
-        if (controller.controller != Vive.LEFT) {
+        if (controller.controller != VrCore.LEFT) {
             sideways = sideways.mul(-1);
         }
         Vec3d pos = controller.pos(5).add(sideways.mul(1.5)).sub(controller.forwards().mul(.3));

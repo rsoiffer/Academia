@@ -1,7 +1,7 @@
 package hero.game.particles;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import hero.game.ModelBehavior;
 import hero.graphics.Platonics;
 import hero.graphics.drawables.DrawableSupplier;
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class ParticleEmitter extends Behavior {
 
-    public final ModelBehavior model = require(ModelBehavior.class);
+    public final ModelBehavior model = new ModelBehavior(this);
 
     public Material<DrawableSupplier> material;
     public Consumer<Particle> archetype;
@@ -27,14 +27,13 @@ public class ParticleEmitter extends Behavior {
         return p;
     }
 
-    @Override
-    public void createInner() {
+    public ParticleEmitter() {
         var pds = new ParticlesDS(Platonics.square, () -> particles.stream().map(Particle::getTransform));
         model.node.addChild(material.buildRenderable(pds));
     }
 
     @Override
-    public void step() {
+    public void onStep() {
         particles.forEach(p -> p.update(dt()));
         particles.removeIf(p -> !p.alive);
     }

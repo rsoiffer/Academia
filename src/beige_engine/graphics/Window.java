@@ -1,18 +1,17 @@
 package beige_engine.graphics;
 
-import beige_engine.engine.Settings;
+import beige_engine.core.Settings;
 import beige_engine.graphics.opengl.GLState;
+import java.nio.IntBuffer;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
+import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
-
-import java.nio.IntBuffer;
-
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {

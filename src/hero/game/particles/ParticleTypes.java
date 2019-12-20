@@ -29,7 +29,6 @@ public abstract class ParticleTypes {
             p.scale = () -> new Vec3d(1, 1, 1).mul(1 / (1 + 4 * p.time));
             p.fadeTime = .1;
         };
-        FIRE.create();
 
         SMOKE = new ParticleEmitter();
         var smokeMaterial = new ColorMaterial();
@@ -43,7 +42,6 @@ public abstract class ParticleTypes {
             p.friction = 1;
             p.fadeTime = .5;
         };
-        SMOKE.create();
 
         ICE = new ParticleEmitter();
         var iceMaterial = new EmissiveTexMaterial();
@@ -58,7 +56,6 @@ public abstract class ParticleTypes {
             p.acceleration = new Vec3d(0, 0, -5);
             p.fadeTime = .2;
         };
-        ICE.create();
     }
 
     public static void explosion(Vec3d position, Vec3d velocity, int numParticles) {

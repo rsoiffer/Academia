@@ -1,11 +1,10 @@
 package beige_engine.graphics;
 
-import beige_engine.engine.Settings;
+import beige_engine.core.Settings;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import org.joml.*;
-
 import java.lang.Math;
+import org.joml.*;
 
 public abstract class Camera {
 

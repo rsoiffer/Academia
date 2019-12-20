@@ -1,26 +1,23 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
+import static beige_engine.vr.VrCore.TRIGGER;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 
 public class Hookshot extends Behavior {
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public Vec3d hookPos, hookVel;
     public boolean grabbing;
     public ModelNode lineNode;
 
-    @Override
-    public void createInner() {
+    public Hookshot() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, .5, .5);
         lineNode = new ModelNode(material.buildRenderable(Platonics.cube));
@@ -28,12 +25,7 @@ public class Hookshot extends Behavior {
     }
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             hookPos = controller.pos();
             hookVel = controller.forwards().mul(100);

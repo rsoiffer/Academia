@@ -1,15 +1,14 @@
 package beige_engine.vr;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 import org.joml.Matrix4x3d;
 import org.lwjgl.openvr.*;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
-abstract class OpenVRUtils {
+abstract class VrUtils {
 
     static void checkError(int ecode) {
         if (ecode != 0) {
@@ -17,17 +16,8 @@ abstract class OpenVRUtils {
         }
     }
 
-    //    static Matrix4d getDeviceToAbsoluteTrackingPose() {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            ByteBuffer bb = stack.malloc(128); // value unknown, 128 is a safe upper bound
-//            TrackedDevicePose.Buffer tdp = new TrackedDevicePose.Buffer(bb);
-//            VRSystem.VRSystem_GetDeviceToAbsoluteTrackingPose(
-//                    VR.ETrackingUniverseOrigin_TrackingUniverseStanding, 0, tdp);
-//            return read4x3Matrix(tdp.mDeviceToAbsoluteTracking().m()).invert();
-//        }
-//    }
     static Matrix4d getEyeProjectionMatrix(boolean leftEye) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try ( MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer bb = stack.malloc(64);
             VRSystem.VRSystem_GetProjectionMatrix(leftEye ? VR.EVREye_Eye_Left : VR.EVREye_Eye_Right, .2f, 2000, new HmdMatrix44(bb));
             return read4x4Matrix(bb.asFloatBuffer());
@@ -35,7 +25,7 @@ abstract class OpenVRUtils {
     }
 
     static Matrix4d getEyeToHeadTransform(boolean leftEye) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try ( MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer bb = stack.malloc(48);
             VRSystem.VRSystem_GetEyeToHeadTransform(leftEye ? VR.EVREye_Eye_Left : VR.EVREye_Eye_Right, new HmdMatrix34(bb));
             return read4x3Matrix(bb.asFloatBuffer()).invert();
@@ -56,7 +46,7 @@ abstract class OpenVRUtils {
     }
 
     static Matrix4d waitGetPoses() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try ( MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer bb1 = stack.malloc(128); // value unknown, 128 is a safe upper bound
             TrackedDevicePose.Buffer tdp1 = new TrackedDevicePose.Buffer(bb1);
             ByteBuffer bb2 = stack.malloc(128); // value unknown, 128 is a safe upper bound

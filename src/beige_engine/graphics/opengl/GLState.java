@@ -1,11 +1,9 @@
 package beige_engine.graphics.opengl;
 
-import beige_engine.engine.Settings;
-
+import beige_engine.core.Settings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;

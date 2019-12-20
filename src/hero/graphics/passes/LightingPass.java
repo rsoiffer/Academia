@@ -1,6 +1,6 @@
 package hero.graphics.passes;
 
-import beige_engine.engine.Settings;
+import beige_engine.core.Settings;
 import beige_engine.graphics.Camera;
 import beige_engine.graphics.Color;
 import beige_engine.graphics.opengl.Framebuffer;
@@ -16,7 +16,6 @@ import hero.game.ModelBehavior;
 import hero.graphics.passes.RenderPipeline.RenderPass;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;

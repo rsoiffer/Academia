@@ -1,12 +1,10 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
+import static beige_engine.vr.VrCore.TRIGGER;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import static hero.graphics.VertexAttrib.NORMALS;
@@ -19,13 +17,12 @@ import java.util.List;
 
 public class Teleport extends Behavior {
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public final List<Transformation> particles = new ArrayList<>();
     public ModelNode markerNode, arcNode;
 
-    @Override
-    public void createInner() {
+    public Teleport() {
         var material = new ColorMaterial();
         material.color = new Vec3d(.6, .2, .8);
 
@@ -43,16 +40,11 @@ public class Teleport extends Behavior {
         controller.ovrNode.addChild(blade);
     }
 
-    @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
     public double dash = 0;
     public Vec3d dashDir = null;
 
     @Override
-    public void step() {
+    public void onStep() {
         dash -= dt();
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             dashDir = controller.forwards().setLength(100);

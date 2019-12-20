@@ -1,11 +1,9 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Layer;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import static beige_engine.vr.Vive.TRIGGER;
-import static hero.game.Player.POSTPHYSICS;
+import static beige_engine.vr.VrCore.TRIGGER;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
@@ -13,7 +11,7 @@ import java.util.OptionalDouble;
 
 public class WebSlinger extends Behavior {
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     public Vec3d web;
     public double prefLength;
@@ -21,8 +19,7 @@ public class WebSlinger extends Behavior {
 
     public static boolean godMode;
 
-    @Override
-    public void createInner() {
+    public WebSlinger() {
         var material = new ColorMaterial();
         material.color = new Vec3d(1, 1, 1);
         webNode = new ModelNode(material.buildRenderable(Platonics.cube));
@@ -30,12 +27,7 @@ public class WebSlinger extends Behavior {
     }
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.controllerPose().applyRotation(new Vec3d(1, 0, -.2)).normalize();

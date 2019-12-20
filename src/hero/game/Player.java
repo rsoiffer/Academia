@@ -1,30 +1,26 @@
 package hero.game;
 
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Layer;
 import beige_engine.graphics.Camera;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
+import beige_engine.vr.VrCore;
 import hero.physics.PhysicsBehavior;
+import hero.physics.PhysicsManager;
 import hero.physics.PoseBehavior;
-import java.util.Collection;
 import org.ode4j.ode.internal.DxMass;
 import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
 public class Player extends Behavior {
 
-    public static final Collection<Player> ALL = track(Player.class);
-
-    public static final Layer POSTPHYSICS = new Layer(6);
-
-    public final PoseBehavior pose = require(PoseBehavior.class);
-    public final PhysicsBehavior physics = require(PhysicsBehavior.class);
+    public final PoseBehavior pose = new PoseBehavior(this);
+    public final PhysicsBehavior physics;
 
     public Vec3d cameraOffset = new Vec3d(0, 0, .8);
     public Vec3d prevVelocity = new Vec3d(0, 0, 0);
 
-    @Override
-    public void createInner() {
+    public Player(PhysicsManager manager) {
+        physics = new PhysicsBehavior(this, manager);
+
         var mass = new DxMass();
         mass.setSphereTotal(100, 1);
         physics.setMass(mass);
@@ -33,24 +29,17 @@ public class Player extends Behavior {
         physics.setGeom(geom);
 
         // physics.centerOfMass = () -> Vive.footTransform.get().position().lerp(EyeCamera.headPose().position(), .5);
-        Vive.footTransform = () -> pose.getTransform().translate(new Vec3d(0, 0, -1));
+        VrCore.footTransform = () -> pose.getTransform().translate(new Vec3d(0, 0, -1));
     }
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         if (cameraOffset != null) {
             Camera.camera3d.position = pose.position.add(cameraOffset);
         }
-        if (Vive.running) {
-            if (physics.velocity().sub(prevVelocity).lengthSquared() > 50) {
-                Vive.LEFT.hapticPulse(5);
-                Vive.RIGHT.hapticPulse(5);
-            }
+        if (physics.velocity().sub(prevVelocity).lengthSquared() > 50) {
+            VrCore.LEFT.hapticPulse(5);
+            VrCore.RIGHT.hapticPulse(5);
         }
         prevVelocity = physics.velocity();
     }

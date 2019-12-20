@@ -1,6 +1,6 @@
 package hero.game;
 
-import beige_engine.engine.Behavior;
+import beige_engine.samples.Behavior;
 import beige_engine.util.Noise;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
@@ -33,8 +33,8 @@ public class World extends Behavior {
     public static final double BLOCK_WIDTH = 2 * BUILDING_SIZE + STREET_WIDTH;
     public static final double BLOCK_HEIGHT = 8 * BUILDING_SIZE + STREET_WIDTH;
 
-    public final ModelBehavior modelNode = require(ModelBehavior.class);
-    public final PhysicsManager manager = require(PhysicsManager.class);
+    public final ModelBehavior modelNode = new ModelBehavior(this);
+    public final PhysicsManager manager = new PhysicsManager();
 
     public Random random = new Random();
     public Noise noise = new Noise(random);
@@ -50,8 +50,7 @@ public class World extends Behavior {
         s.getSubstructures().forEach(this::addStructure);
     }
 
-    @Override
-    public void createInner() {
+    public World() {
         for (int i = 0; i < 2000; i += BLOCK_WIDTH) {
             for (int j = 0; j < 2000; j += BLOCK_HEIGHT) {
                 double buffer1 = 4;
@@ -136,7 +135,7 @@ public class World extends Behavior {
     private Map<Mesh, DGeom> meshes = new HashMap();
 
     @Override
-    public void step() {
+    public void onStep() {
         var newMeshes = new HashMap<Mesh, DGeom>();
         IceCaster.iceModel.getMeshes().forEach(m -> {
             if (meshes.containsKey(m)) {

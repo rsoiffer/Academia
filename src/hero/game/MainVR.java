@@ -1,21 +1,19 @@
 package hero.game;
 
-import beige_engine.behaviors.FPSBehavior;
-import beige_engine.behaviors.QuitOnEscapeBehavior;
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Core;
-import beige_engine.engine.Input;
-import static beige_engine.engine.Layer.UPDATE;
-import beige_engine.engine.Settings;
+import beige_engine.core.*;
 import beige_engine.graphics.Camera;
+import beige_engine.samples.Behavior;
+import static beige_engine.samples.Behavior.BEHAVIOR_SYSTEM;
+import beige_engine.samples.FPSBehavior;
+import beige_engine.samples.QuitOnEscapeBehavior;
 import beige_engine.util.Mutable;
 import beige_engine.util.math.MathUtils;
 import static beige_engine.util.math.MathUtils.floor;
 import static beige_engine.util.math.MathUtils.mod;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
-import static beige_engine.vr.Vive.*;
+import beige_engine.vr.VrCore;
+import static beige_engine.vr.VrCore.*;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import hero.game.controllers.*;
@@ -33,27 +31,26 @@ public class MainVR {
         Settings.ENABLE_VSYNC = false;
         Core.init();
 
-        new FPSBehavior().create();
-        new QuitOnEscapeBehavior().create();
-        Camera.current = Camera.camera3d;
-        Vive.init();
+        Core.ROOT.add(BEHAVIOR_SYSTEM);
 
-        UPDATE.onStep(() -> {
-            Vive.update();
+        new FPSBehavior();
+        new QuitOnEscapeBehavior();
+        Camera.current = Camera.camera3d;
+        VrCore.init();
+
+        var vrUpdateSystem = AbstractSystem.of(() -> {
+            VrCore.update();
 //            if (LEFT.buttonDown(MENU) && RIGHT.buttonDown(MENU)) {
 //                Vive.resetRightLeft();
 //                Vive.resetSeatedZeroPose();
 //            }
         });
 
-        World world = new World();
-        world.create();
+        var world = new World();
 
-        Player p = new Player();
+        var p = new Player(world.manager);
         p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-        p.physics.manager = world.manager;
         p.cameraOffset = new Vec3d(0, 0, -1);
-        p.create();
 
         Class[] c = {WebSlinger.class, Thruster.class, IceCaster.class,
             Wing.class, Hand.class, Teleport.class};
@@ -62,7 +59,7 @@ public class MainVR {
         Mutable<Integer> rightType = new Mutable(1);
         Mutable<Behavior> right = new Mutable(null);
 
-        UPDATE.onStep(() -> {
+        var updateSystem = AbstractSystem.of(() -> {
             if (LEFT.buttonJustPressed(TRACKPAD)) {
                 if (left.o != null) {
                     left.o.destroy();
@@ -77,10 +74,9 @@ public class MainVR {
                 } catch (InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
-                left.o.get(ControllerBehavior.class).controller = LEFT;
-                left.o.get(ControllerBehavior.class).player = p;
-                left.o.get(ControllerBehavior.class).myNum = leftType.o;
-                left.o.create();
+                left.o.getComponent(Controller.class).controller = LEFT;
+                left.o.getComponent(Controller.class).player = p;
+                left.o.getComponent(Controller.class).myNum = leftType.o;
             }
             if (RIGHT.buttonJustPressed(TRACKPAD)) {
                 if (right.o != null) {
@@ -96,35 +92,29 @@ public class MainVR {
                 } catch (InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
                 }
-                right.o.get(ControllerBehavior.class).controller = RIGHT;
-                right.o.get(ControllerBehavior.class).player = p;
-                right.o.get(ControllerBehavior.class).myNum = rightType.o;
-                right.o.create();
+                right.o.getComponent(Controller.class).controller = RIGHT;
+                right.o.getComponent(Controller.class).player = p;
+                right.o.getComponent(Controller.class).myNum = rightType.o;
             }
-        });
 
-        UPDATE.onStep(() -> {
             if (LEFT.buttonJustPressed(MENU) || RIGHT.buttonJustPressed(MENU) || Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
-                Drone d = new Drone();
+                Drone d = new Drone(world.manager);
                 d.pose.position = p.pose.position.add(new Vec3d(0, 0, 100))
                         .add(MathUtils.randomInSphere(new Random()).mul(50));
-                d.physics.manager = world.manager;
-                d.create();
             }
             if (Input.keyJustPressed(GLFW_KEY_G)) {
                 WebSlinger.godMode = !WebSlinger.godMode;
             }
             for (var controller : Arrays.asList(LEFT, RIGHT)) {
                 if (controller.buttonJustPressed(GRIP)) {
-                    var drone = Drone.ALL.stream().max(Comparator.comparingDouble(d -> {
+                    var drone = AbstractEntity.getAll(Drone.class).stream().max(Comparator.comparingDouble(d -> {
                         var delPos = d.pose.position.sub(controller.pose().position());
                         var dir = controller.pose().applyRotation(new Vec3d(1, 0, 0));
                         return delPos.normalize().dot(dir);
                     }));
 
-                    Missile m = new Missile();
+                    Missile m = new Missile(world.manager);
                     m.pose.position = controller.pose().position();
-                    m.physics.manager = world.manager;
                     m.physics.ignore.add(p.physics);
                     m.isFriendly = true;
                     if (drone.isEmpty()) {
@@ -137,7 +127,7 @@ public class MainVR {
 
                         if (closeness > .8) {
                             m.targetDir = () -> {
-                                if (drone.get().isCreated()) {
+                                if (!drone.get().isDestroyed()) {
                                     return drone.get().pose.position.sub(m.pose.position);
                                 } else {
                                     return null;
@@ -149,7 +139,6 @@ public class MainVR {
                         }
 
                     }
-                    m.create();
                     m.physics.setVelocity(p.physics.velocity());
                 }
             }
@@ -157,9 +146,9 @@ public class MainVR {
         AssimpLoader.load("drone model/optimized.fbx");
         AssimpLoader.load("bomb/mk83.obj");
 
-        RenderPipeline rp = new RenderPipeline();
+        var rp = new RenderPipeline();
         rp.isVR = true;
-        rp.create();
+        Core.ROOT.add(rp);
 
 //        var timeOfDay = new Mutable<>(0.);
 //        UPDATE.onStep(() -> {

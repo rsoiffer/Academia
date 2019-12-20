@@ -1,32 +1,30 @@
 package hero.game;
 
-import beige_engine.behaviors.FPSBehavior;
-import beige_engine.behaviors.QuitOnEscapeBehavior;
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Core;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Input;
-import static beige_engine.engine.Layer.UPDATE;
-import beige_engine.engine.Settings;
+import beige_engine.core.AbstractSystem;
+import beige_engine.core.Core;
+import beige_engine.core.Input;
+import beige_engine.core.Settings;
 import static beige_engine.graphics.Camera.camera3d;
+import beige_engine.samples.Behavior;
+import static beige_engine.samples.Behavior.BEHAVIOR_SYSTEM;
+import beige_engine.samples.FPSBehavior;
+import beige_engine.samples.QuitOnEscapeBehavior;
 import static beige_engine.util.math.MathUtils.clamp;
-import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
 import static hero.game.controllers.IceCaster.iceModel;
-import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
 import hero.graphics.utils.SDF;
 import static hero.graphics.utils.SDF.*;
 import hero.physics.PhysicsBehavior;
+import hero.physics.PhysicsManager;
 import hero.physics.PinkBox;
 import hero.physics.PoseBehavior;
 import hero.physics.shapes.AABB;
 import java.util.Arrays;
 import static org.lwjgl.glfw.GLFW.*;
-import org.ode4j.ode.DJoint;
 import org.ode4j.ode.internal.DxMass;
 import static org.ode4j.ode.internal.DxSphere.dCreateSphere;
 
@@ -39,35 +37,30 @@ public class MainPC {
         Settings.ANTI_ALIASING = 4;
         Core.init();
 
-        new FPSBehavior().create();
-        new QuitOnEscapeBehavior().create();
+        Core.ROOT.add(BEHAVIOR_SYSTEM);
 
-        World world = new World();
-        world.create();
+        new FPSBehavior();
+        new QuitOnEscapeBehavior();
 
-        PlayerPC p = new PlayerPC();
+        var world = new World();
+
+        var p = new PlayerPC(world.manager);
         p.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 10, 10);
-        p.physics.manager = world.manager;
-        p.create();
 
-        UPDATE.onStep(() -> {
+        var updateSystem = AbstractSystem.of(() -> {
             if (Input.keyJustPressed(GLFW_KEY_F) || Input.keyDown(GLFW_KEY_T)) {
-                Drone d = new Drone();
+                Drone d = new Drone(world.manager);
                 d.pose.position = new Vec3d(8 * BLOCK_WIDTH - 10, 2 * BLOCK_HEIGHT - 12, 2.5);
-                d.physics.manager = world.manager;
-                d.create();
             }
             if (Input.mouseDown(0)) {
                 var v = world.manager.raycast(camera3d.position, camera3d.facing());
                 v.ifPresent(t -> {
-                    explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
+//                    explosion(camera3d.position.add(camera3d.facing().mul(t)), new Vec3d(0, 0, 0), round(10000 * dt()));
                 });
             }
             if (Input.keyJustPressed(GLFW_KEY_B)) {
-                var b = new PinkBox();
+                var b = new PinkBox(world.manager);
                 b.pose.position = camera3d.position.add(new Vec3d(0, 0, -2));
-                b.physics.manager = world.manager;
-                b.create();
             }
 
             if (Input.mouseDown(1)) {
@@ -81,8 +74,8 @@ public class MainPC {
         });
         AssimpLoader.load("drone model/optimized.fbx");
 
-        RenderPipeline rp = new RenderPipeline();
-        rp.create();
+        var rp = new RenderPipeline();
+        Core.ROOT.add(rp);
 
 //        var timeOfDay = new Mutable<>(0.);
 //        UPDATE.onStep(() -> {
@@ -98,15 +91,17 @@ public class MainPC {
 
     public static class PlayerPC extends Behavior {
 
-        public final PoseBehavior pose = require(PoseBehavior.class);
-        public final PhysicsBehavior physics = require(PhysicsBehavior.class);
+        public final PoseBehavior pose;
+        public final PhysicsBehavior physics;
 
         public boolean flyMode = true;
-        public Web web;
-        public DJoint myJoint;
+//        public Web web;
+//        public DJoint myJoint;
 
-        @Override
-        public void createInner() {
+        public PlayerPC(PhysicsManager manager) {
+            pose = add(new PoseBehavior(this));
+            physics = add(new PhysicsBehavior(this, manager));
+
             var mass = new DxMass();
             mass.setSphereTotal(100, 1);
             physics.setMass(mass);
@@ -139,7 +134,7 @@ public class MainPC {
         }
 
         @Override
-        public void step() {
+        public void onStep() {
             camera3d.horAngle -= Input.mouseDelta().x * 16. / 3;
             camera3d.vertAngle -= Input.mouseDelta().y * 3;
             camera3d.vertAngle = clamp(camera3d.vertAngle, -1.55, 1.55);
@@ -164,30 +159,29 @@ public class MainPC {
                 }
 //                }
 
-                if (Input.mouseJustPressed(1)) {
-                    web = new Web();
-                    web.initialPos = pose.position;
-                    web.initialBaseVel = physics.velocity();
-                    web.initialEndVel = camera3d.facing().mul(100);
-                    web.manager = physics.manager;
-                    web.toIgnore.add(physics);
-                    web.create();
-                    myJoint = web.attachTo(physics);
-                }
-                if (web != null) {
-                    web.prefLength += Input.mouseWheel();
-                }
-                if (Input.mouseJustReleased(1)) {
-                    if (web != null) {
-                        web.destroy();
-                        web = null;
-                    }
-                    if (myJoint != null) {
-                        myJoint.destroy();
-                        myJoint = null;
-                    }
-                }
-
+//                if (Input.mouseJustPressed(1)) {
+//                    web = new Web();
+//                    web.initialPos = pose.position;
+//                    web.initialBaseVel = physics.velocity();
+//                    web.initialEndVel = camera3d.facing().mul(100);
+//                    web.manager = physics.manager;
+//                    web.toIgnore.add(physics);
+//                    web.create();
+//                    myJoint = web.attachTo(physics);
+//                }
+//                if (web != null) {
+//                    web.prefLength += Input.mouseWheel();
+//                }
+//                if (Input.mouseJustReleased(1)) {
+//                    if (web != null) {
+//                        web.destroy();
+//                        web = null;
+//                    }
+//                    if (myJoint != null) {
+//                        myJoint.destroy();
+//                        myJoint = null;
+//                    }
+//                }
                 if (Input.keyJustPressed(GLFW_KEY_SPACE)) {
                     physics.setVelocity(physics.velocity().setZ(5));
                 }

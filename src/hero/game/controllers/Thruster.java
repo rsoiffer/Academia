@@ -1,31 +1,24 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import static beige_engine.engine.Core.dt;
-import beige_engine.engine.Layer;
+import static beige_engine.core.Core.dt;
+import beige_engine.samples.Behavior;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
-import static hero.game.Player.POSTPHYSICS;
+import beige_engine.vr.VrCore;
 import static hero.game.particles.ParticleTypes.FIRE;
 import static hero.game.particles.ParticleTypes.SMOKE;
 import java.util.Random;
 
 public class Thruster extends Behavior {
 
-    public final ControllerBehavior controller = require(ControllerBehavior.class);
+    public final Controller controller = new Controller(this);
 
     @Override
-    public Layer layer() {
-        return POSTPHYSICS;
-    }
-
-    @Override
-    public void step() {
+    public void onStep() {
         double t = controller.controller.trigger();
         if (t > .1) {
             Vec3d pullDir = controller.sideways();
-            if (controller.controller == Vive.LEFT) {
+            if (controller.controller == VrCore.LEFT) {
                 pullDir = pullDir.mul(-1);
             }
 //            pullDir = pullDir.lerp(controller.forwards().mul(-1), 1).normalize();

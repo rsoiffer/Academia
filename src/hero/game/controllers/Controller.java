@@ -1,14 +1,13 @@
 package hero.game.controllers;
 
-import beige_engine.engine.Behavior;
-import beige_engine.engine.Layer;
-import static beige_engine.engine.Layer.POSTUPDATE;
+import beige_engine.core.AbstractComponent;
+import beige_engine.core.AbstractEntity;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
-import beige_engine.vr.Vive;
-import static beige_engine.vr.Vive.footTransform;
-import beige_engine.vr.ViveController;
+import beige_engine.vr.VrController;
+import beige_engine.vr.VrCore;
+import static beige_engine.vr.VrCore.footTransform;
 import hero.game.ModelBehavior;
 import hero.game.Player;
 import hero.graphics.ModelNode;
@@ -16,13 +15,13 @@ import hero.graphics.Platonics;
 import hero.graphics.loading.OpenVRLoader;
 import hero.graphics.materials.DiffuseMaterial;
 
-public class ControllerBehavior extends Behavior {
+public class Controller extends AbstractComponent {
 
     private static final Vec3d OFFSET = new Vec3d(0, 0, 1.2);
 
     public final ModelBehavior model = require(ModelBehavior.class);
 
-    public ViveController controller;
+    public VrController controller;
     public Player player;
     public int myNum;
     public ModelNode ovrNode = new ModelNode();
@@ -39,8 +38,8 @@ public class ControllerBehavior extends Behavior {
                 .mul(controller.poseRaw());
     }
 
-    @Override
-    public void createInner() {
+    public Controller(AbstractEntity entity) {
+        super(entity);
         model.node.addChild(ovrNode);
         ovrNode.addChild(new OpenVRLoader(controller).rootNode);
 
@@ -53,7 +52,7 @@ public class ControllerBehavior extends Behavior {
             ovrNode.addChild(icon);
 
             var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .25)
-                    .mul(new Vec3d(1, controller == Vive.LEFT ? -1 : 1, 1));
+                    .mul(new Vec3d(1, controller == VrCore.LEFT ? -1 : 1, 1));
             var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
             var trans = Transformation.create(offset.mul(.08), quat, .05);
             icon.transform = trans;
@@ -64,25 +63,20 @@ public class ControllerBehavior extends Behavior {
         var selected = new ModelNode(selectedMat.buildRenderable(Platonics.square));
         ovrNode.addChild(selected);
 
-        model.beforeRender = () -> {
-            ovrNode.transform = controllerPose();
-
-            var i = (7 - myNum) % 6;
-            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
-                    .mul(new Vec3d(1, controller == Vive.LEFT ? -1 : 1, 1));
-            var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
-            var trans = Transformation.create(offset.mul(.08), quat, .05);
-            selected.transform = trans;
-        };
+//        model.beforeRender = () -> {
+//            ovrNode.transform = controllerPose();
+//
+//            var i = (7 - myNum) % 6;
+//            var offset = new Vec3d(Math.cos(i * Math.PI / 3) - .5, Math.sin(i * Math.PI / 3), .24)
+//                    .mul(new Vec3d(1, controller == Vive.LEFT ? -1 : 1, 1));
+//            var quat = Quaternion.fromAngleAxis(new Vec3d(0, 0, -Math.PI / 2));
+//            var trans = Transformation.create(offset.mul(.08), quat, .05);
+//            selected.transform = trans;
+//        };
     }
 
     public Vec3d forwards() {
         return controllerPose().applyRotation(new Vec3d(1, 0, 0));
-    }
-
-    @Override
-    public Layer layer() {
-        return POSTUPDATE;
     }
 
     public Vec3d pos() {

@@ -1,11 +1,11 @@
 package hero.physics;
 
-import beige_engine.engine.Behavior;
+import beige_engine.core.AbstractComponent;
+import beige_engine.core.AbstractEntity;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Vec3d;
 import static hero.physics.OdeUtils.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.ode4j.ode.DGeom;
 import org.ode4j.ode.internal.DxBody;
@@ -13,13 +13,11 @@ import static org.ode4j.ode.internal.DxBody.dBodyCreate;
 import org.ode4j.ode.internal.DxGeom;
 import org.ode4j.ode.internal.DxMass;
 
-public class PhysicsBehavior extends Behavior {
-
-    public static Collection<PhysicsBehavior> ALL = track(PhysicsBehavior.class);
+public class PhysicsBehavior extends AbstractComponent {
 
     public final PoseBehavior pose = require(PoseBehavior.class);
 
-    public PhysicsManager manager;
+    public final PhysicsManager manager;
 
     public List<PhysicsBehavior> ignore = new ArrayList();
     public double drag = .02;
@@ -38,15 +36,16 @@ public class PhysicsBehavior extends Behavior {
         totalForce = totalForce.add(force);
     }
 
-    @Override
-    public void createInner() {
+    public PhysicsBehavior(AbstractEntity entity, PhysicsManager manager) {
+        super(entity);
+        this.manager = manager;
         body = dBodyCreate(manager.world);
         setPosition(pose.position);
         lastClearPos = pose.position;
     }
 
     @Override
-    public void destroyInner() {
+    public void onDestroy() {
         body.destroy();
         geom.destroy();
     }
