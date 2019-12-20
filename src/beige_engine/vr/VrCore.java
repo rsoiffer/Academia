@@ -32,7 +32,7 @@ public class VrCore {
     /**
      * The left and right VR controllers (or null if the controller is disconnected)
      */
-    public static VrController RIGHT, LEFT;
+    public static VrController LEFT, RIGHT;
 
     /**
      * Checks if we can start the VR runtime
@@ -43,13 +43,24 @@ public class VrCore {
         return VR.VR_IsRuntimeInstalled() && VR.VR_IsHmdPresent();
     }
 
+    public static VrController getController(VrSide hand) {
+        switch (hand) {
+            case LEFT_HAND:
+                return LEFT;
+            case RIGHT_HAND:
+                return RIGHT;
+            default:
+                return null;
+        }
+    }
+
     /**
      * Gets the size of the display for one eye in the VR headset
      *
      * @return The size of the display, in pixels
      */
     public static Vec2d getRecommendedRenderTargetSize() {
-        try ( MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             VRSystem.VRSystem_GetRecommendedRenderTargetSize(w, h);
@@ -61,7 +72,7 @@ public class VrCore {
      * Initializes the VR runtime
      */
     public static void init() {
-        try ( MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer peError = stack.mallocInt(1);
             int token = VR.VR_InitInternal(peError, VR.EVRApplicationType_VRApplication_Scene);
             checkError(peError.get());

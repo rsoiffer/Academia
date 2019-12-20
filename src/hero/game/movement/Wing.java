@@ -1,28 +1,33 @@
-package hero.game.controllers;
+package hero.game.movement;
 
 import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
 import static beige_engine.util.math.MathUtils.clamp;
 import beige_engine.util.math.Quaternion;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.VrCore;
+import hero.game.Controller;
+import hero.game.ModelBehavior;
+import hero.game.Player;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 
-public class Wing extends Behavior {
+public class Wing extends MovementMode {
 
-    public final Controller controller = new Controller(this);
+    public final ModelBehavior model;
 
     public Vec3d prevPos = null;
-    public ModelNode wingNode;
 
-    public Wing() {
+    public Wing(Player player, Controller controller) {
+        super(player, controller);
+
+        model = add(new ModelBehavior(this));
+
         var material = new ColorMaterial();
         material.color = new Vec3d(.3, .5, .1);
-        wingNode = new ModelNode(material.buildRenderable(Platonics.cube));
-        controller.ovrNode.addChild(wingNode);
+        var wingNode = new ModelNode(material.buildRenderable(Platonics.cube));
+        model.node.addChild(wingNode);
 
         var size = new Vec3d(.8, 1.6, .05);
         var offset = new Vec3d(-.3, controller.controller == VrCore.LEFT ? 1 : -1, 0);
@@ -31,6 +36,8 @@ public class Wing extends Behavior {
 
     @Override
     public void onStep() {
+        updateModelNode(model.node);
+
         Vec3d sideways = controller.sideways();
         if (controller.controller != VrCore.LEFT) {
             sideways = sideways.mul(-1);
@@ -51,14 +58,14 @@ public class Wing extends Behavior {
                     System.out.println(strength);
                 }
                 strength = clamp(strength, -1e5, 1e5);
-                controller.player.physics.applyForce(wingUp.mul(strength));
+                player.physics.applyForce(wingUp.mul(strength));
             }
         }
         prevPos = pos;
 
-        if (!controller.player.physics.onGround) {
+        if (!player.physics.onGround) {
             double thrustStrength = 200;
-            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength));
+            player.physics.applyForce(controller.forwards().mul(thrustStrength));
         }
     }
 }

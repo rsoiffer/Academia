@@ -1,17 +1,17 @@
-package hero.game.controllers;
+package hero.game.movement;
 
-import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import static beige_engine.vr.VrCore.TRIGGER;
+import hero.game.Controller;
+import hero.game.ModelBehavior;
+import hero.game.Player;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 import java.util.OptionalDouble;
 
-public class WebSlinger extends Behavior {
-
-    public final Controller controller = new Controller(this);
+public class WebSlinger extends MovementMode {
 
     public Vec3d web;
     public double prefLength;
@@ -19,11 +19,15 @@ public class WebSlinger extends Behavior {
 
     public static boolean godMode;
 
-    public WebSlinger() {
+    public WebSlinger(Player player, Controller controller) {
+        super(player, controller);
+
+        var model = add(new ModelBehavior(this));
+
         var material = new ColorMaterial();
         material.color = new Vec3d(1, 1, 1);
         webNode = new ModelNode(material.buildRenderable(Platonics.cube));
-        controller.model.node.addChild(webNode);
+        model.node.addChild(webNode);
     }
 
     @Override
@@ -31,7 +35,7 @@ public class WebSlinger extends Behavior {
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             Vec3d start = controller.pos();
             Vec3d dir = controller.controllerPose().applyRotation(new Vec3d(1, 0, -.2)).normalize();
-            OptionalDouble t = controller.player.physics.manager.raycast(start, dir);
+            OptionalDouble t = player.physics.manager.raycast(start, dir);
             if (t.isPresent()) {
                 web = start.add(dir.mul(t.getAsDouble()));
                 prefLength = t.getAsDouble() - 4;
@@ -47,10 +51,10 @@ public class WebSlinger extends Behavior {
             prefLength = Math.min(prefLength, web.sub(controller.pos(exag)).length() - controller.controller.trigger());
             Vec3d pullDir = web.sub(controller.pos(exag)).normalize();
             double strength = (godMode ? 10000 : 1000) * Math.max(controller.pos(exag).sub(web).length() - prefLength, 0);
-            controller.player.physics.applyForce(pullDir.mul(strength));
+            player.physics.applyForce(pullDir.mul(strength));
 
             double thrustStrength = 200;
-            controller.player.physics.applyForce(controller.forwards().mul(thrustStrength));
+            player.physics.applyForce(controller.forwards().mul(thrustStrength));
 
 //            Vec3d pullDir = web.sub(controller.pos()).normalize();
 //            pullDir = pullDir.lerp(controller.controller.forwards(), .2);

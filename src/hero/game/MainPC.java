@@ -15,7 +15,7 @@ import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Vec3d;
 import static hero.game.World.BLOCK_HEIGHT;
 import static hero.game.World.BLOCK_WIDTH;
-import static hero.game.controllers.IceCaster.iceModel;
+import static hero.game.movement.IceCaster.iceModel;
 import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.loading.AssimpLoader;
 import hero.graphics.passes.RenderPipeline;
@@ -75,7 +75,7 @@ public class MainPC {
         Core.ROOT.add(updateSystem);
         AssimpLoader.load("drone model/optimized.fbx");
 
-        var rp = new RenderPipeline();
+        var rp = new RenderPipeline(false);
         Core.ROOT.add(rp);
 
 //        var timeOfDay = new Mutable<>(0.);

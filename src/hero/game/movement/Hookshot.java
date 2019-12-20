@@ -1,27 +1,31 @@
-package hero.game.controllers;
+package hero.game.movement;
 
 import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import static beige_engine.vr.VrCore.TRIGGER;
+import hero.game.Controller;
+import hero.game.ModelBehavior;
+import hero.game.Player;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import hero.graphics.materials.ColorMaterial;
 
-public class Hookshot extends Behavior {
-
-    public final Controller controller = new Controller(this);
+public class Hookshot extends MovementMode {
 
     public Vec3d hookPos, hookVel;
     public boolean grabbing;
     public ModelNode lineNode;
 
-    public Hookshot() {
+    public Hookshot(Player player, Controller controller) {
+        super(player, controller);
+
+        var model = add(new ModelBehavior(this));
+
         var material = new ColorMaterial();
         material.color = new Vec3d(.5, .5, .5);
         lineNode = new ModelNode(material.buildRenderable(Platonics.cube));
-        controller.model.node.addChild(lineNode);
+        model.node.addChild(lineNode);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class Hookshot extends Behavior {
             } else {
                 Vec3d pullDir = hookPos.sub(controller.pos()).normalize();
                 pullDir = pullDir.lerp(controller.forwards(), .2);
-                controller.player.physics.setVelocity(controller.player.physics.velocity().lerp(
+                player.physics.setVelocity(player.physics.velocity().lerp(
                         pullDir.mul(40), 1 - Math.exp(-1 * dt())));
             }
         }

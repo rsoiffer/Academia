@@ -19,17 +19,20 @@ import static org.lwjgl.opengl.GL11.glFlush;
 public class RenderPipeline extends AbstractSystem {
 
     public static RenderPass currentPass;
-    private final List<GeometryPass> gpList = new ArrayList();
-    private final List<ShadowPass> spList = new ArrayList();
-    private final List<LightingPass> lpList = new ArrayList();
+
     public Color skyColor = new Color(.3, .6, .9, 1);
     public Vec3d sunColor = new Vec3d(10, 9, 8).mul(.25);
     public Vec3d sunDirection = new Vec3d(.3, -.15, 1);
-    public boolean isVR;
-    private List<Camera> cameras;
-    private List<Vec2d> framebufferSizes;
 
-    public RenderPipeline() {
+    private final boolean isVR;
+    private final List<GeometryPass> gpList = new ArrayList();
+    private final List<ShadowPass> spList = new ArrayList();
+    private final List<LightingPass> lpList = new ArrayList();
+    private final List<Camera> cameras;
+    private final List<Vec2d> framebufferSizes;
+
+    public RenderPipeline(boolean isVR) {
+        this.isVR = isVR;
         cameras = isVR ? Arrays.asList(new VrEyeCamera(true), new VrEyeCamera(false)) : Arrays.asList(Camera.camera3d);
         framebufferSizes = isVR ? Arrays.asList(VrCore.getRecommendedRenderTargetSize(), VrCore.getRecommendedRenderTargetSize()) : Arrays.asList((Vec2d) null);
 

@@ -1,10 +1,11 @@
-package hero.game.controllers;
+package hero.game.movement;
 
 import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
 import beige_engine.util.math.MathUtils;
 import beige_engine.util.math.Vec3d;
 import beige_engine.vr.VrEyeCamera;
+import hero.game.Controller;
+import hero.game.Player;
 import static hero.game.particles.ParticleTypes.ICE;
 import hero.graphics.utils.SDF;
 import static hero.graphics.utils.SDF.*;
@@ -15,11 +16,9 @@ import hero.physics.shapes.AABB;
 import java.util.Arrays;
 import java.util.Random;
 
-public class IceCaster extends Behavior {
+public class IceCaster extends MovementMode {
 
     public static final SurfaceNet iceModel = new SurfaceNet(.5);
-
-    public final Controller controller = new Controller(this);
 
     public double timer;
     public double timer2;
@@ -59,12 +58,16 @@ public class IceCaster extends Behavior {
         }
     }
 
+    public IceCaster(Player player, Controller controller) {
+        super(player, controller);
+    }
+
     private void moveTowards(Vec3d vel) {
         timer += dt();
         timer2 += dt();
 
-        PoseBehavior pose = controller.player.pose;
-        PhysicsBehavior physics = controller.player.physics;
+        PoseBehavior pose = player.pose;
+        PhysicsBehavior physics = player.physics;
 
 //        double height = controller.player.hero.physics.world.raycastDown(position.position);
 //        double speedMod = 8 + 50 * Math.pow(.7, height);

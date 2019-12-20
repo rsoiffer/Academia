@@ -4,7 +4,7 @@ import beige_engine.core.AbstractEntity;
 import beige_engine.util.Noise;
 import beige_engine.util.math.Vec2d;
 import beige_engine.util.math.Vec3d;
-import static hero.game.controllers.IceCaster.iceModel;
+import static hero.game.movement.IceCaster.iceModel;
 import hero.game.world.CityBlock;
 import hero.game.world.ParkBlock;
 import hero.game.world.Structure;

@@ -1,10 +1,14 @@
-package hero.game.controllers;
+package hero.game.movement;
 
 import static beige_engine.core.Core.dt;
-import beige_engine.samples.Behavior;
+import static beige_engine.util.math.MathUtils.round;
 import beige_engine.util.math.Transformation;
 import beige_engine.util.math.Vec3d;
 import static beige_engine.vr.VrCore.TRIGGER;
+import hero.game.Controller;
+import hero.game.ModelBehavior;
+import hero.game.Player;
+import static hero.game.particles.ParticleTypes.explosion;
 import hero.graphics.ModelNode;
 import hero.graphics.Platonics;
 import static hero.graphics.VertexAttrib.NORMALS;
@@ -15,29 +19,31 @@ import hero.graphics.materials.ColorMaterial;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Teleport extends Behavior {
-
-    public final Controller controller = new Controller(this);
+public class Teleport extends MovementMode {
 
     public final List<Transformation> particles = new ArrayList<>();
-    public ModelNode markerNode, arcNode;
+    public ModelNode markerNode, arcNode, blade;
 
-    public Teleport() {
+    public Teleport(Player player, Controller controller) {
+        super(player, controller);
+
+        var model = add(new ModelBehavior(this));
+
         var material = new ColorMaterial();
         material.color = new Vec3d(.6, .2, .8);
 
         markerNode = new ModelNode(material.buildRenderable(Platonics.cube));
-        controller.model.node.addChild(markerNode);
+        model.node.addChild(markerNode);
         arcNode = new ModelNode(material.buildRenderable(new ParticlesDS(Platonics.cube, particles::stream)));
-        controller.model.node.addChild(arcNode);
+        model.node.addChild(arcNode);
 
         var bladeMat = new ColorMaterial();
         bladeMat.color = new Vec3d(0, 0, 0);
-        bladeMat.emissive = new Vec3d(1, 4, 2).mul(12);
+        bladeMat.emissive = new Vec3d(1, 3, 4).mul(8);
         var mesh = new RawMeshBuilder(POSITIONS, NORMALS)
                 .addCylinder(new Vec3d(.05, 0, -.05), new Vec3d(1, 0, 0), .015, 12);
-        var blade = new ModelNode(bladeMat.buildRenderable(mesh));
-        controller.ovrNode.addChild(blade);
+        blade = new ModelNode(bladeMat.buildRenderable(mesh));
+        model.node.addChild(blade);
     }
 
     public double dash = 0;
@@ -45,6 +51,8 @@ public class Teleport extends Behavior {
 
     @Override
     public void onStep() {
+        updateModelNode(blade);
+
         dash -= dt();
         if (controller.controller.buttonJustPressed(TRIGGER)) {
             dashDir = controller.forwards().setLength(100);
@@ -60,12 +68,12 @@ public class Teleport extends Behavior {
         }
 
         var startPos = controller.pos().add(controller.upwards().mul(-.05));
-//        var v = controller.player.physics.manager.collisionShape.raycast(startPos, controller.forwards());
-//        v.ifPresent(t -> {
-//            if (t < 1)
-//            explosion(startPos.add(controller.forwards().mul(t)), new Vec3d(0, 0, 0), round(1000 * dt()), .02);
-//        });
-
+        var v = player.physics.manager.raycast(startPos, controller.forwards());
+        v.ifPresent(t -> {
+            if (t < 1) {
+                explosion(startPos.add(controller.forwards().mul(t)), new Vec3d(0, 0, 0), round(1000 * dt()), .02);
+            }
+        });
 //        if (controller.controller.buttonJustPressed(TRIGGER)) {
 //            Vec3d newPos = findPos();
 //            if (newPos != null) {
