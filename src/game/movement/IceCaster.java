@@ -2,9 +2,9 @@ package game.movement;
 
 import static engine.core.Core.dt;
 import engine.physics.AABB;
+import engine.rendering.surfaces.SDFSurface;
 import engine.rendering.utils.SDF;
 import static engine.rendering.utils.SDF.*;
-import engine.rendering.utils.SurfaceNet;
 import engine.util.math.MathUtils;
 import engine.util.math.Vec3d;
 import engine.vr.VrEyeCamera;
@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class IceCaster extends MovementMode {
 
-    public static final SurfaceNet iceModel = new SurfaceNet(.5);
+    public static final SDFSurface iceModel = new SDFSurface(.5);
 
     public double timer;
 
@@ -25,71 +25,63 @@ public class IceCaster extends MovementMode {
     }
 
     public static void createIce(Vec3d pos1, Vec3d pos2, Vec3d up) {
-        double radius = 2, thickness = 1.5, negRadius = 1.5;
+        double radius = 2, thickness = 2, negRadius = 2;
         Vec3d dir = pos2.sub(pos1);
-
-        SDF shape2 = intersectionSmooth(3,
-                cylinder(pos1, dir, negRadius),
-                halfSpace(pos1, dir),
-                halfSpace(pos2.add(dir.setLength(1)), dir.mul(-1))).invert();
-        AABB bounds2 = AABB.boundingBox(Arrays.asList(pos1.sub(negRadius), pos1.add(negRadius), pos2.sub(negRadius), pos2.add(negRadius)));
-        iceModel.intersectionSDF(shape2, bounds2);
 
         Vec3d side = dir.cross(up).normalize();
         Vec3d normal = dir.cross(side).normalize();
-        pos1 = pos1.add(normal);
-        pos2 = pos2.add(normal);
+        var foot1 = pos1.add(normal.mul(1.5));
+        var foot2 = pos2.add(normal.mul(1.5));
 
-        SDF shape = intersectionSmooth(3,
-                cylinder(pos1, dir, radius),
-                halfSpace(pos1, normal),
-                halfSpace(pos1.add(normal.mul(thickness)), normal.mul(-1)),
-                halfSpace(pos1, dir),
-                halfSpace(pos2, dir.mul(-1)));
-        AABB bounds = AABB.boundingBox(Arrays.asList(pos1.sub(radius), pos1.add(radius), pos2.sub(radius), pos2.add(radius)));
+        SDF shape = intersectionSmooth(6,
+                cylinder(foot1, dir, radius),
+                halfSpace(foot1, normal),
+                halfSpace(foot1.add(normal.mul(thickness)), normal.mul(-1)),
+                halfSpace(foot1, dir),
+                halfSpace(foot2, dir.mul(-1)));
+        AABB bounds = AABB.boundingBox(Arrays.asList(foot1, foot2)).expand(radius);
         iceModel.unionSDF(shape, bounds);
+
+        SDF shape2 = intersectionSmooth(6,
+                cylinder(pos1, dir, negRadius),
+                halfSpace(pos1, dir),
+                halfSpace(pos2.add(dir.setLength(1)), dir.mul(-1))).invert();
+        AABB bounds2 = AABB.boundingBox(Arrays.asList(pos1, pos2)).expand(negRadius);
+        iceModel.intersectionSDF(shape2, bounds2);
 
         for (int i = 0; i < 500 * dt() * dir.length(); i++) {
             var sideAmt = Math.random() - .5;
             var p = ICE.addParticle();
-            p.position = pos1.lerp(pos2, Math.random()).add(side.mul(sideAmt * 4));
+            p.position = foot1.lerp(foot2, Math.random()).add(side.mul(sideAmt * 4));
             var randVel = side.mul(sideAmt * 10).add(normal.mul(-1))
                     .add(MathUtils.randomInSphere(new Random()).mul(2));
             p.velocity = dir.mul(1 / .3).add(randVel);
         }
     }
 
-    private void moveTowards(Vec3d vel) {
-        timer += dt();
-
-        var pose = player.pose;
-        var physics = player.physics;
-
-//        double height = controller.player.engine.physics.world.raycastDown(position.position);
-//        double speedMod = 8 + 50 * Math.pow(.7, height);
-//        Vec3d side = velocity.velocity.add(MathUtils.randomInSphere(new Random()).mul(1e-12)).cross(new Vec3d(0, 0, 1));
-//        Vec3d accel = vel.add(side.mul(.01 * Math.sin(5 * timer))).add(new Vec3d(0, 0, speedMod));
-//        velocity.velocity = velocity.velocity.add(accel.mul(dt()));
-//        if (velocity.velocity.length() > 20) {
-//            velocity.velocity = velocity.velocity.setLength(20);
-//        }
-        Vec3d along = vel.setLength(vel.normalize().dot(physics.velocity()));
-        Vec3d opposite = physics.velocity().sub(along);
-        Vec3d newVel = opposite.mul(Math.pow(.001, dt())).add(along).add(vel.mul(dt() * Math.exp(-.05 * physics.velocity().dot(vel.normalize()))));
-        Vec3d accel = newVel.sub(physics.velocity());
-        physics.setVelocity(newVel);
-
-        if (timer > 0) {
-            timer -= 1 / 30.;
-            createIce(pose.position, pose.position.add(physics.velocity().mul(.3)), accel);
-        }
-    }
-
     @Override
     public void onStep() {
         if (controller.controller.trigger() > .01) {
-            Vec3d goalDir = controller.forwards().lerp(VrEyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)), .2);
-            moveTowards(goalDir.mul(10 * controller.controller.trigger()));
+            var goalDir = controller.forwards().lerp(VrEyeCamera.headPose().applyRotation(new Vec3d(1, 0, 0)), .2);
+
+            double maxSpeed = 20;
+            double accel = 10;
+            double keepLine = 3;
+
+            var vel = player.physics.velocity();
+            var myUp = new Vec3d(0, 0, 1).cross(goalDir).cross(goalDir);
+
+            var runPart = goalDir.setLength(Math.max(0, accel * (controller.controller.trigger() - vel.length() / maxSpeed)));
+            var keepLinePart = goalDir.projectAgainst(vel).mul(vel.length() * keepLine);
+            var antiGravPart = new Vec3d(0, 0, 9.81).projectOnto(myUp);
+            var totalAccel = runPart.add(keepLinePart).add(antiGravPart);
+            player.physics.applyForce(totalAccel.mul(100));
+
+            timer += dt();
+            if (timer > 0) {
+                timer -= 1 / 30.;
+                createIce(player.pose.position, player.pose.position.add(player.physics.velocity().mul(.3)), totalAccel);
+            }
         }
     }
 }

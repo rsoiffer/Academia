@@ -1,9 +1,8 @@
 package game.world;
 
 import engine.core.AbstractEntity;
-import engine.util.Noise;
-import engine.util.math.Vec2d;
-import engine.util.math.Vec3d;
+import engine.physics.AABB;
+import engine.physics.PhysicsManager;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
 import engine.rendering.Renderable;
@@ -11,8 +10,11 @@ import engine.rendering.loading.RawMeshBuilder;
 import static engine.rendering.loading.VoxelModelLoader.DIRS;
 import engine.rendering.materials.Material;
 import engine.rendering.materials.PBRMaterial;
-import engine.physics.PhysicsManager;
-import engine.physics.AABB;
+import engine.util.Noise;
+import engine.util.math.Vec2d;
+import engine.util.math.Vec3d;
+import game.entities.DynamicSurface;
+import static game.movement.IceCaster.iceModel;
 import java.util.*;
 
 public class World extends AbstractEntity {
@@ -63,7 +65,7 @@ public class World extends AbstractEntity {
 
         modelNode.node = createModelNode();
 
-        // new DynamicSurface(iceModel, PBRMaterial.load("ice"), manager);
+        new DynamicSurface(iceModel, PBRMaterial.load("ice"), manager);
     }
 
     public ModelNode createModelNode() {

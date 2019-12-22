@@ -1,27 +1,26 @@
 package game.entities;
 
 import engine.physics.PhysicsManager;
+import static engine.physics.StaticShape.triMesh;
 import engine.rendering.Mesh;
 import engine.rendering.ModelComponent;
 import engine.rendering.ModelNode;
-import static engine.rendering.VertexAttrib.POSITIONS;
 import engine.rendering.materials.Material;
-import engine.rendering.utils.SurfaceNet;
+import engine.rendering.surfaces.SDFSurface;
 import engine.samples.Behavior;
+import engine.util.math.Vec3d;
 import java.util.HashMap;
 import java.util.Map;
 import org.ode4j.ode.DGeom;
-import static org.ode4j.ode.OdeHelper.createTriMesh;
-import static org.ode4j.ode.OdeHelper.createTriMeshData;
 
 public class DynamicSurface extends Behavior {
 
-    public final SurfaceNet surfaceNet;
+    public final SDFSurface surfaceNet;
     public final PhysicsManager manager;
 
     private Map<Mesh, DGeom> meshes = new HashMap();
 
-    public DynamicSurface(SurfaceNet surfaceNet, Material material, PhysicsManager manager) {
+    public DynamicSurface(SDFSurface surfaceNet, Material material, PhysicsManager manager) {
         this.surfaceNet = surfaceNet;
         this.manager = manager;
 
@@ -37,20 +36,14 @@ public class DynamicSurface extends Behavior {
                 newMeshes.put(m, meshes.get(m));
             } else {
                 // add a new mesh to the world (and the map)
-                var t = createTriMeshData();
-                t.build(m.data.get(POSITIONS), m.indices);
-                t.preprocess();
-                var t2 = createTriMesh(null, t, null, null, null);
-                System.out.println("Created mesh!");
-                newMeshes.put(m, t2);
+                var t = manager.addStatic(triMesh(m), new Vec3d(0, 0, 0));
+                newMeshes.put(m, t);
             }
         });
         for (var m : meshes.keySet()) {
             if (!newMeshes.containsKey(m)) {
                 // remove a mesh from the world
                 meshes.get(m).destroy();
-                System.out.println("Destroyed mesh!");
-                System.out.println(newMeshes.size());
             }
         }
         meshes = newMeshes;

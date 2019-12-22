@@ -50,10 +50,11 @@ public class PhysicsManager extends AbstractSystem {
         dynamics.add(geom);
     }
 
-    public void addStatic(StaticShape shape, Vec3d position) {
+    public DGeom addStatic(StaticShape shape, Vec3d position) {
         var geom = shape.build();
         geom.setPosition(toDVector3(position));
         statics.add(geom);
+        return geom;
     }
 
     public void destroy() {

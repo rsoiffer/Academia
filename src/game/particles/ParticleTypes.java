@@ -1,18 +1,17 @@
 package game.particles;
 
 import engine.graphics.Color;
-import engine.graphics.opengl.Texture;
-import engine.util.Resources;
-import engine.util.math.MathUtils;
-import engine.util.math.Quaternion;
-import engine.util.math.Vec3d;
-import static game.movement.IceCaster.iceModel;
+import engine.physics.AABB;
 import engine.rendering.materials.ColorMaterial;
 import engine.rendering.materials.EmissiveMaterial;
 import engine.rendering.materials.EmissiveTexMaterial;
 import engine.rendering.utils.SDF;
 import static engine.rendering.utils.SDF.sphere;
-import engine.physics.AABB;
+import engine.util.Resources;
+import engine.util.math.MathUtils;
+import engine.util.math.Quaternion;
+import engine.util.math.Vec3d;
+import static game.movement.IceCaster.iceModel;
 import java.util.Arrays;
 import java.util.Random;
 

@@ -9,7 +9,9 @@ import engine.util.math.Quaternion;
 import engine.util.math.SplineAnimation;
 import engine.util.math.Vec3d;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.ode4j.ode.DBody;
 import org.ode4j.ode.DGeom;
 import org.ode4j.ode.DMass;
@@ -25,7 +27,6 @@ public class PhysicsComponent extends AbstractComponent {
 
         physics.pose.position = SplineAnimation.cubicInterp(1 + physics.manager.timeSinceLastStep() / -STEP_SIZE,
                 physics.prevPos1, physics.prevVel1.mul(-STEP_SIZE), physics.prevPos2, physics.prevVel2.mul(-STEP_SIZE));
-        System.out.println(physics.pose.position + " " + physics.prevPos1 + " " + physics.prevPos2);
         physics.velocity = SplineAnimation.cubicInterpDerivative(1 + physics.manager.timeSinceLastStep() / -STEP_SIZE,
                 physics.prevPos1, physics.prevVel1.mul(-STEP_SIZE), physics.prevPos2, physics.prevVel2.mul(-STEP_SIZE))
                 .div(-STEP_SIZE);
@@ -63,7 +64,7 @@ public class PhysicsComponent extends AbstractComponent {
 
     public final PhysicsManager manager;
 
-    public List<PhysicsComponent> ignore = new ArrayList();
+    public Set<PhysicsComponent> ignore = new HashSet();
     public double drag = .02;
     public boolean onGround = false;
     public boolean allowRotation = false;

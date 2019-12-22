@@ -61,12 +61,15 @@ public class MainPC {
             }
 
             if (Input.mouseDown(1)) {
+                var startPos = camera3d.position.add(camera3d.facing());
+                var endPos = camera3d.position.add(camera3d.facing().mul(10));
                 SDF shape2 = intersectionSmooth(3,
                         cylinder(camera3d.position, camera3d.facing(), .5),
-                        halfSpace(camera3d.position.add(camera3d.facing()), camera3d.facing()),
-                        halfSpace(camera3d.position, camera3d.facing()));
-                AABB bounds2 = AABB.boundingBox(Arrays.asList(camera3d.position.sub(10), camera3d.position.add(10)));
+                        halfSpace(startPos, camera3d.facing()),
+                        halfSpace(endPos, camera3d.facing().mul(-1)));
+                var bounds2 = AABB.boundingBox(Arrays.asList(startPos, endPos)).expand(.5);
                 iceModel.unionSDF(shape2, bounds2);
+                iceModel.getMeshes().count(); // Force a rebuild (for testing purposes)
             }
         });
         Core.ROOT.add(updateSystem);
